@@ -9,14 +9,16 @@
 % moveCell(X,Y,H). --> cell where I can move unit 
 % enemyMoveCell(X,Y,H,U).
 
-offset(-1..1).
-
+os(-1..1).
+maxRow(4).
+maxCol(4).
 
 %%AUXILIARY
+offset(X,Y) :- os(X), os(Y), &abs(X;Xabs), &abs(Y;Yabs), &sum(Xabs,Yabs;Z), Z<>0. % offset can't be 0,0
 myUnit(X,Y,H,U):- unit(X,Y,H,U,_), choosedUnit(U). 
 friendUnit(X,Y,H,U):- unit(X,Y,H,U,P), player(P).
 enemyUnit(X,Y,H,U):- unit(X,Y,H,U,Penemy), player(P), Penemy<>P.
-validCell(X,Y,H,P) :-cell(X,Y,H,P), H<>4.
+validCell(X,Y,H,P) :-cell(X,Y,H,P), H>=0, H<4, X>=0, Y>=0, X<=Xmax, Y<= Ymax, maxRow(Xmax), maxCol(Ymax).
 
 %%GUESS
 moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y,_).
@@ -34,36 +36,39 @@ moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y,_).
 % need this to always get an optimal answerset
 :~ moveIn(X,Y). [0@10 ]
 
+%
+% 1
+%
 % prefer moving to an height 3 cell 
 :~ moveIn(X,Y), moveCell(X,Y,H), H<>3. [1@10] %penalty for moving to an height != 3
 
 %
-% 1
-%
-% prefer not moving away from a (not moveable for myUnit) height 3 cell if the enemy can move to it
-nearEnemyMoveCell3(SX,SY,X,Y) :- enemyMoveCell(X,Y,3,U), offset(OffX), &sum(X,OffX;SX), offset(OffY), &sum(Y,OffY;SY), not enemyMoveCell(SX,SY,3,U).
-
-:~ moveIn(X,Y), nearEnemyMoveCell3(X2,Y2,_,_), X<>X2.  [1@9]   % penalty if move to a cell where myUnit can't build on enemyMoveCell(X,Y,3,_)  
-:~ moveIn(X,Y), nearEnemyMoveCell3(X2,Y2,_,_), Y<>Y2.  [1@9]   % penalty if move to a cell where myUnit can't build on enemyMoveCell(X,Y,3,_)  
-
 % 2
 %
+% prefer moving to a cell from where myUnit can block enemyUnit to win 
+nearEnemyMoveCell3(Xnear,Ynear) :- enemyMoveCell(X,Y,3,U), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,_,_).
 
+:~ not moveIn(X,Y), moveCell(X,Y,_), nearEnemyMoveCell3(X,Y).  [1@9, X,Y]   % penalty if move to a cell where myUnit can't build on enemyMoveCell(X,Y,3,_)  
 
-% prefer moving to a height 2 cell if the cell is near an height 3 ->
-h2_nearMoveCell3(X,Y,X2,Y2):- validCell(X,Y,3,_), moveCell(X2,Y2,H), H=2, offset(OffX), offset(OffY), &sum(X2,OffX;X), &sum(Y2,OffY;Y), not moveCell(X,Y,3).
-
-:~ moveIn(X,Y), h2_nearMoveCell3(_,_,X2,Y2), X<>X2. [1@8] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
-:~ moveIn(X,Y), h2_nearMoveCell3(_,_,X2,Y2), Y<>Y2. [1@8] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
 
 %
-%3
+% 3
+%
+% prefer moving to a height 2 cell if the cell is near an height 3 ->
+h2_nearMoveCell3(Xnear,Ynear,X,Y):- validCell(X,Y,3,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,_,_).
+
+:~ not moveIn(X,Y), moveCell(X,Y,_), h2_nearMoveCell3(X,Y,_,_). [1@8, X,Y] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
+
+%
+%4
 %
 % prefer moving on higher cell
 :~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy  . [1@7]
 :~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-1. [2@7]
 :~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-2. [3@7]
 
-
-% avvicinarsi al nemico
-
+%
+%5
+%
+% prefer moving near the enemy
+:~ moveIn(X,Y), moveCell(X,Y,_), enemyMoveCell(X,Y,Henemy,_), &sum(H,-Henemy;Z), Z>0. [Z@6, X,Y]

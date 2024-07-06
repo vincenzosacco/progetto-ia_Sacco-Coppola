@@ -14,6 +14,7 @@ import org.example.embAsp.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+//TODO: IMPLEMENTA CAMBIO STRATEGIA SE GIOCO PER PRIMO O SECONDO. CHI GIOCA PER PRIMA CONVIENE MUOVERSI LONTANO DALL'AVVERSARIO
 
 public class Group1 implements Group {
     private Board myBoard;
@@ -127,15 +128,13 @@ public class Group1 implements Group {
     //--CAN BUILD
 
         //buildCell(X,Y,H)
-        for (Point cell : buildableArea)
-            myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell)+ ")");
-
-
-
+        for (Point cell : buildableArea) {
+            myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell) + ")");
+        }
 
 
         myHandler.startSync();
-//        System.out.println(myHandler.getFactsString());
+
         //ADDING FACTS
         for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {
             if (atom instanceof buildIn){
@@ -155,7 +154,7 @@ public class Group1 implements Group {
      */
     private void refreshFacts() throws Exception {
         ASPInputProgram myGridState = new ASPInputProgram();
-        int [][] grid = myBoard.getGrid();
+        int[][] grid = myBoard.getGrid();
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 myGridState.addObjectInput((new cell(i, j, grid[i][j], myBoard.playerCodeAt(i, j))));
@@ -166,11 +165,11 @@ public class Group1 implements Group {
         myHandler.setFactProgram(myGridState);
 
         //myPlayer(p)
-        myHandler.addFactAsString("player("+myPlayer.getPlayerCode()+")");
+        myHandler.addFactAsString("player(" + myPlayer.getPlayerCode() + ")");
 
         //unit(X,Y,H,U,P)
         myHandler.addFactAsObject(new unitASP(myUnit, myBoard.heightAt(myUnit.coord())));
-        enemyUnits.forEach(unit-> {
+        enemyUnits.forEach(unit -> {
             try {
                 myHandler.addFactAsObject(new unitASP(unit, myBoard.heightAt(unit.coord())));
             } catch (Exception e) {
@@ -179,34 +178,30 @@ public class Group1 implements Group {
         });
 
         //choosedUnit(U)
-        myHandler.addFactAsString("choosedUnit("+myUnit.unitCode()+")");
+        myHandler.addFactAsString("choosedUnit(" + myUnit.unitCode() + ")");
 
         //enemyMoveCell(X,Y,H,U).
-        for (Unit enemyUnit : enemyPlayer.getUnits() )
-            for (Point cell : myBoard.moveableArea(enemyUnit))
-                myHandler.addFactAsString("enemyMoveCell("+ cell.x+","+cell.y+","+ myBoard.heightAt(cell)+","+enemyUnit.unitCode()+")");
+        for (Unit enemyUnit : enemyPlayer.getUnits())
+            for (Point cell : myBoard.moveableArea(enemyUnit)) {
+                myHandler.addFactAsString("enemyMoveCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell) + "," + enemyUnit.unitCode() + ")");
+            }
     }
+
 
 //--TEST----------------------------------------------------------------------------------------------------------------
     //TODO: ELIMINARE DOPO FASE SVILUPPO
     //TEST IF UNIT DOESN'T MOVE TO A CELL WITH HEIGHT 3
-    private void testOptimalMove(Point move, int[][] grid, ArrayList<Point> moveAbleArea){
+    private void testOptimalMove(Point move, int[][] grid, ArrayList<Point> moveAbleArea) {
 //      % prefer moving to an height 3 cell
-        if (grid[move.x][move.y] != 3 ){
+        if (grid[move.x][move.y] != 3) {
             for (Point cell : moveAbleArea)
-                if (grid[cell.x][cell.y] == 3 && ! move.equals(cell))
-                    throw new RuntimeException("TEST FAILED, Move Not Optimal. Group1 move to ("+move.x+","+move.y+")"+
-                            " instead of ("+cell.x+","+cell.y+")");
+                if (grid[cell.x][cell.y] == 3 && !move.equals(cell)){
+                    System.out.println(myHandler.getFactsString());
+                    throw new RuntimeException("TEST FAILED, Move Not Optimal. Group1 move to (" + move.x + "," + move.y + ")" +
+                            " instead of (" + cell.x + "," + cell.y + ")");
+                }
         }
-
-//      % prefer moving on higher cell
-        for (Point cell : moveAbleArea)
-            if (grid[move.x][move.y] < grid[cell.x][cell.y] && ! move.equals(cell))
-                throw new RuntimeException("TEST FAILED, Move Not Optimal. Group1 move to ("+move.x+","+move.y+")"+
-                        " instead of ("+cell.x+","+cell.y+")");
-
     }
-
 
 //--
     @Override

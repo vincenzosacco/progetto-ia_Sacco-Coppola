@@ -34,11 +34,20 @@ buildIn(X,Y) | buildOut(X,Y) :- buildCell(X,Y,_).
 %1
 %
 % prefer build (height 4) on a buildable height 3 cell near the enemy
-:~ not buildIn(X,Y), buildCell(X,Y,3), enemyMoveCell(X,Y,3,_). [1@9, X,Y] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
+:~ not buildIn(X2,Y2), enemyMoveCell(X2,Y2,3,_), buildCell(X2,Y2,3). [1@10] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
 
 %
 %2
 %
+% avoid build height 4 near myUnit 
+:~ buildIn(X,Y), buildCell(X,Y,3). [1@9] 
+
+
+%
+%1
+%
+% near enemy preferences
+
 % avoid enemy climbing
 :~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=1. [3@7] 
 :~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=0. [2@7] 
@@ -46,17 +55,20 @@ buildIn(X,Y) | buildOut(X,Y) :- buildCell(X,Y,_).
 :~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=3. [0@7] 
 
 %
+%2
+%
+
+
+%
 %3
 %
-% avoid build height 4 near myUnit 
-:~ buildIn(X,Y), buildCell(X,Y,3). [1@8] 
-
-%
-%4
-%
 % prefer myUnit climbing
-:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z=0. [1@6]
-:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z>1. [Z@6]
+% :~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z=0. [1@7]
+% :~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z>1. [Z@7]
+
+% Z = 1 -> best build
+:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z<>1. [1@7] 
 
 
 
+cell(0,0,0,-1). cell(0,1,0,-1). cell(0,2,0,-1). cell(0,3,0,-1). cell(0,4,0,-1). cell(1,0,0,-1). cell(1,1,0,-1). cell(1,2,0,-1). cell(1,3,0,-1). cell(1,4,0,1). cell(2,0,0,-1). cell(2,1,1,0). cell(2,2,0,-1). cell(2,3,1,-1). cell(2,4,0,-1). cell(3,0,0,-1). cell(3,1,0,-1). cell(3,2,0,-1). cell(3,3,0,-1). cell(3,4,0,-1). cell(4,0,0,-1). cell(4,1,0,-1). cell(4,2,0,-1). cell(4,3,0,-1). cell(4,4,0,-1). player(0). unit(2,1,1,1,0). unit(1,4,0,2,1). choosedUnit(1). enemyMoveCell(0,4,0,2). enemyMoveCell(2,4,0,2). enemyMoveCell(2,3,1,2). enemyMoveCell(1,3,0,2). enemyMoveCell(0,3,0,2). buildCell(1,1,0). buildCell(1,2,0). buildCell(2,2,0). buildCell(3,2,0). buildCell(3,1,0). buildCell(3,0,0). buildCell(2,0,0). buildCell(1,0,0).

@@ -15,7 +15,7 @@ public class Main {
         MyHandler.setRelPathToDLV2(Settings.PATH_TO_DLV2);
 
 //COMMENTARE SE NON SI VUOLE ESEGUIRE TEST
-//        GameHandler.testAiBruteForce(PlayerAi.GROUP_3, PlayerAi.GROUP_1);
+//        GameHandler.testAiBruteForce(PlayerAi.GROUP_1, PlayerAi.GROUP_1);
 
 
 
