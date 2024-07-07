@@ -71,4 +71,4 @@ h2_nearMoveCell3(Xnear,Ynear,X,Y):- validCell(X,Y,3,_), offset(OffX,OffY), &sum(
 %5
 %
 % prefer moving near the enemy
-:~ moveIn(X,Y), moveCell(X,Y,_), enemyMoveCell(X,Y,Henemy,_), &sum(H,-Henemy;Z), Z>0. [Z@6, X,Y]
+% :~ moveIn(X,Y), moveCell(X,Y,_), enemyMoveCell(X,Y,Henemy,_), &sum(H,-Henemy;Z), Z>0. [Z@6, X,Y]
