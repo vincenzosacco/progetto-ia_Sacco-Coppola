@@ -2,7 +2,7 @@ package org.project.Logic.embAsp.gruppo_1;
 
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
-import org.project.Logic.Game.mode.Unit;
+import org.project.Logic.Game.player.Unit;
 
 import java.awt.*;
 import java.util.Objects;

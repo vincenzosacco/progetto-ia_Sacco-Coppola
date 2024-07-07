@@ -1,4 +1,4 @@
-package org.project.Logic.Game.mode;
+package org.project.Logic.Game.player;
 
 import java.awt.*;
 import java.util.Objects;

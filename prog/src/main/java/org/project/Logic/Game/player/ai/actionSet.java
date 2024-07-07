@@ -1,10 +1,12 @@
-package org.project.Logic.Game.mode.ai;
+package org.project.Logic.Game.player.ai;
 
-import org.project.Logic.Game.gameManager.Board;
-import org.project.Logic.Game.mode.Unit;
+import org.project.Logic.Game.player.Unit;
 
 import java.awt.*;
 import java.util.Objects;
+
+import static org.project.UI.Settings.BOARD_COLS;
+import static org.project.UI.Settings.BOARD_ROWS;
 
 public class actionSet {
     private final Unit unit;
@@ -35,12 +37,12 @@ public class actionSet {
             throw new IllegalArgumentException("playerCode must be 0 or 1");
         }
 
-        if (move.x < 0 || move.x > Board.ROW_SIZE-1 || move.y < 0 || move.y > Board.COL_SIZE-1 ) {
-            throw new IllegalArgumentException("move coordinates must be between 0" + (Board.ROW_SIZE-1)+"and" + (Board.COL_SIZE-1));
+        if (move.x < 0 || move.x > BOARD_ROWS-1 || move.y < 0 || move.y > BOARD_COLS-1 ) {
+            throw new IllegalArgumentException("move coordinates must be between 0" + (BOARD_ROWS-1)+"and" + (BOARD_COLS-1));
         }
 
-        if (build.x < 0 || build.x > Board.ROW_SIZE-1 || build.y < 0 || build.y > Board.COL_SIZE-1 ) {
-            throw new IllegalArgumentException("build coordinates must be between 0" + (Board.ROW_SIZE-1)+"and" + (Board.COL_SIZE-1));
+        if (build.x < 0 || build.x > BOARD_ROWS-1 || build.y < 0 || build.y > BOARD_COLS-1 ) {
+            throw new IllegalArgumentException("build coordinates must be between 0" + (BOARD_ROWS-1)+"and" + (BOARD_COLS-1));
         }
 
         this.unit = unit;

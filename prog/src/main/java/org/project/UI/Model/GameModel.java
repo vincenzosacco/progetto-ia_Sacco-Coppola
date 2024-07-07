@@ -1,6 +1,7 @@
-package org.project.UI.Model.game;
+package org.project.UI.Model;
 
 
+import org.project.Logic.Game.Board;
 import org.project.UI.View.panels.GamePanel;
 
 /**
@@ -8,7 +9,7 @@ import org.project.UI.View.panels.GamePanel;
  */
 public class GameModel {
     private static GameModel instance = null;
-    private  Board board;
+    private Board board;
 
     private GameModel() {
     }

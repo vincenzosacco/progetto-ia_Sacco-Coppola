@@ -1,10 +1,13 @@
-package org.project.Logic.Game.mode;
+package org.project.Logic.Game.player;
 
 
-import org.project.Logic.Game.gameManager.Board;
+import org.project.Logic.Game.Board;
 
 import java.awt.*;
 import java.util.ArrayList;
+
+import static org.project.UI.Settings.BOARD_COLS;
+import static org.project.UI.Settings.BOARD_ROWS;
 
 public abstract class Player {
     protected final char symbol;
@@ -148,7 +151,7 @@ public abstract class Player {
     }
     protected void checkCoord(Point coord) {
         if (coord == null) throw new IllegalArgumentException("coord cannot be null");
-        if (coord.x < 0 || coord.x >= Board.ROW_SIZE || coord.y < 0 || coord.y >= Board.COL_SIZE) {
+        if (coord.x < 0 || coord.x >= BOARD_ROWS  || coord.y < 0 || coord.y >= BOARD_COLS) {
             throw new IllegalArgumentException("coordinate must be inside the grid");
         }
     }

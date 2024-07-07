@@ -1,6 +1,7 @@
-package org.project.UI.Model.game;
+package org.project.UI.Model;
 
-import org.project.Logic.Game.mode.Player;
+import org.project.Logic.Game.Board;
+import org.project.Logic.Game.player.Player;
 
 /**
  * Class that represents the game board.

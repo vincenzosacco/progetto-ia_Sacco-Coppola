@@ -1,6 +1,6 @@
-package org.project.Logic.Game.mode.manual;
+package org.project.Logic.Game.player.human;
 
-import org.project.Logic.Game.mode.Player;
+import org.project.Logic.Game.player.Player;
 
 import java.util.Objects;
 

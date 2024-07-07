@@ -1,6 +1,7 @@
 package org.project.UI.View.panels;
-import org.project.UI.Model.game.Board;
-import org.project.UI.Model.game.GameModel;
+import org.project.Logic.Game.Board;
+import org.project.UI.Model.GameModel;
+
 import java.awt.*;
 
 import static org.project.UI.Settings.*;

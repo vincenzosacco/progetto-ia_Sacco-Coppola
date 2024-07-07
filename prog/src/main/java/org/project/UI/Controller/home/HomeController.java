@@ -1,6 +1,6 @@
 package org.project.UI.Controller.home;
 
-import org.project.UI.Model.game.GameModel;
+import org.project.UI.Model.GameModel;
 import org.project.UI.View.ProjectView;
 import org.project.UI.View.panels.GamePanel;
 

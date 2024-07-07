@@ -1,11 +1,11 @@
-package org.project.Logic.Game.gameManager;
+package org.project.Logic.Game.board;
 
 
-import org.project.Logic.Game.mode.Player;
-import org.project.Logic.Game.mode.ai.NullAction;
-import org.project.Logic.Game.mode.ai.PlayerAi;
-import org.project.Logic.Game.mode.ai.actionSet;
-import org.project.Logic.Game.mode.manual.PlayerManual;
+import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.player.ai.NullAction;
+import org.project.Logic.Game.player.ai.PlayerAi;
+import org.project.Logic.Game.player.ai.actionSet;
+import org.project.Logic.Game.player.human.PlayerManual;
 import org.project.Logic.embAsp.cell;
 
 import java.awt.*;
@@ -135,27 +135,27 @@ public class GameHandler {
 
 //--GAME METHODS--------------------------------------------------------------------------------------------------------
 
-    private static void initGame(Player player1, Player player2) {
-    //--ADD PLAYERS
-        board = new Board(player1, player2);
-
-    //--RANDOM SET UNIT POSITION
-        Random rand = new Random();
-
-        for (int p = 0; p < Board.N_PLAYERS; p++) {
-            for (int u = 0; u < Board.UNIT_PER_PLAYER  ; u++) {
-
-                Point coord = new Point(rand.nextInt(Board.ROW_SIZE), rand.nextInt(Board.COL_SIZE));
-                while (board.isOccupied(coord)){
-                      coord = new Point(rand.nextInt(Board.ROW_SIZE), rand.nextInt(Board.COL_SIZE));
-                }
-                board.addUnit(p, coord) ;
-
-
-
-            }
-        }
-    }
+//    private static void initGame(Player player1, Player player2) {
+//    //--ADD PLAYERS
+//        board = new Board(player1, player2);
+//
+//    //--RANDOM SET UNIT POSITION
+//        Random rand = new Random();
+//
+//        for (int p = 0; p < Board.N_PLAYERS; p++) {
+//            for (int u = 0; u < Board.UNIT_PER_PLAYER  ; u++) {
+//
+//                Point coord = new Point(rand.nextInt(Board.ROW_SIZE), rand.nextInt(Board.COL_SIZE));
+//                while (board.isOccupied(coord)){
+//                      coord = new Point(rand.nextInt(Board.ROW_SIZE), rand.nextInt(Board.COL_SIZE));
+//                }
+//                board.addUnit(p, coord) ;
+//
+//
+//
+//            }
+//        }
+//    }
 
 
     private static synchronized void playTurn(actionSet action) throws Exception {
@@ -214,40 +214,40 @@ public class GameHandler {
      * @throws Exception
      */
 
-    public static void testAiBruteForce(int groupID1, int groupID2) throws Exception {
-        while (true) {
-            char[] symbols = {'a', 'b'};
-            PlayerAi player1 = new PlayerAi(symbols[0], 0, groupID1);
-            PlayerAi player2 = new PlayerAi(symbols[1], 1, groupID2);
-            initGame(player1, player2);
-            refreshGridState();
-
-
-            System.out.print("\n\nSPAWN UNITS");
-            board.display();
-
-            //--THREADS
-            ExecutorService executorService = Executors.newFixedThreadPool(2);
-            try {
-                while (!board.win()) {
-                    for (Player p : board.getPlayers()) {
-                        actionSet action = executorService.submit((PlayerAi) p).get();
-                        playTurn(action);
-                        if (board.win())
-                            break;
-
-//                        Thread.sleep(3000);
-                    }
+//    public static void testAiBruteForce(int groupID1, int groupID2) throws Exception {
+//        while (true) {
+//            char[] symbols = {'a', 'b'};
+//            PlayerAi player1 = new PlayerAi(symbols[0], 0, groupID1);
+//            PlayerAi player2 = new PlayerAi(symbols[1], 1, groupID2);
+//            initGame(player1, player2);
+//            refreshGridState();
+//
+//
+//            System.out.print("\n\nSPAWN UNITS");
+//            board.display();
+//
+//            //--THREADS
+//            ExecutorService executorService = Executors.newFixedThreadPool(2);
+//            try {
+//                while (!board.win()) {
+//                    for (Player p : board.getPlayers()) {
+//                        actionSet action = executorService.submit((PlayerAi) p).get();
+//                        playTurn(action);
+//                        if (board.win())
+//                            break;
+//
+////                        Thread.sleep(3000);
+//                    }
 
                 }
 
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                executorService.shutdown();
-            }
-        }
-    }
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            } finally {
+//                executorService.shutdown();
+//            }
+//        }
+//    }
 
 
 

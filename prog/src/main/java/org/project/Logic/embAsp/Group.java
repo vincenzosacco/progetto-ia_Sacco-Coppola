@@ -1,6 +1,6 @@
 package org.project.Logic.embAsp;
-import org.project.Logic.Game.mode.ai.PlayerAi;
-import org.project.Logic.Game.mode.ai.actionSet;
+import org.project.Logic.Game.player.ai.PlayerAi;
+import org.project.Logic.Game.player.ai.actionSet;
 
 
 

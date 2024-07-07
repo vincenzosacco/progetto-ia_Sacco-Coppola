@@ -1,21 +1,22 @@
-package org.project.UI.View.panels;
+package org.project.UI.View.panels.home;
 
 import org.project.UI.Controller.home.HomeController;
+import org.project.UI.View.panels.MyPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class HomePanel extends MyPanel {
-    private SpringLayout layout;
+class center extends MyPanel {
+    private final SpringLayout layout;
 
     private JButton play_AIvsAI, play_AIvsHuman, play_HumanvsHuman;
 
 
-    public HomePanel() {
+     center() {
         super();
         buttonListener = new HomeController();
         setupButtons();
-        
+
 
     //--LAYOUT
         layout = new SpringLayout();
@@ -23,8 +24,6 @@ public class HomePanel extends MyPanel {
 
         setupConstraints();
 
-
-        setBackground(Color.GRAY);
     }
 
     private final HomeController buttonListener;

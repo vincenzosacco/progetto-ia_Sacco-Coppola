@@ -1,21 +1,24 @@
-package org.project.Logic.Game.gameManager;
+package org.project.Logic.Game;
 
-import org.project.Logic.Game.mode.Player;
-import org.project.Logic.Game.mode.Unit;
+import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.player.Unit;
 import org.project.Logic.embAsp.cell;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import static org.project.UI.Settings.BOARD_ROWS;
+import static org.project.UI.Settings.BOARD_COLS;
 
 /**
  * Class that represents the game board.
  */
-public class Board {
+public abstract class Board {
     public static final int N_PLAYERS = 2;
     public static final int UNIT_PER_PLAYER = 1;
-    public static final int ROW_SIZE = 5;
-    public static final int COL_SIZE = 5;
+
+//    public static final int BOARD_ROWS = Settings.BOARD_ROWS;
+//    public static final int BOARD_COLS = Settings.BOARD_COLS;
 
     public static final int FLOOR_HEIGHT_0= 0;
     public static final int FLOOR_HEIGHT_1= 1;
@@ -27,20 +30,14 @@ public class Board {
 
     private final int[][] grid;
     private final Player[] players ;
-//    private final HashMap<Integer, Point> unitCoord = new HashMap<>(); // unitCode, coord
-
-    //    private final Object lock;
     private boolean win ;
 
     //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
-    Board(Player player1, Player player2) {
-        grid = new int[ROW_SIZE][COL_SIZE];
+    protected Board(){
+        grid = new int[BOARD_ROWS][BOARD_COLS];
         players = new Player [N_PLAYERS];
-        this.players[0] = player1.copy();
-        this.players[1] = player2.copy();
-
-        for (int i = 0; i < ROW_SIZE; i++) {
-            for (int j = 0; j < ROW_SIZE; j++) {
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_COLS; j++) {
                 grid[i][j] = FLOOR_START;
             }
         }
@@ -48,11 +45,19 @@ public class Board {
         win=false;
     }
 
-public Board copy(){
-        Board myBoard = new Board(players[0],players[1]);
-        myBoard.setGrid(grid);
-        myBoard.win = win;
-        return myBoard;
+    protected Board(Player player1, Player player2) {
+        grid = new int[BOARD_ROWS][BOARD_COLS];
+        players = new Player [N_PLAYERS];
+        this.players[0] = player1.copy();
+        this.players[1] = player2.copy();
+
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_ROWS; j++) {
+                grid[i][j] = FLOOR_START;
+            }
+        }
+
+        win=false;
     }
 
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
@@ -66,15 +71,6 @@ public Board copy(){
         return grid;
     }
 
-    private void setGrid(int[][] grid){
-        for (int i = 0; i < ROW_SIZE; i++) {
-            this.grid[i] = Arrays.copyOf(grid[i], grid[i].length);
-        }
-    }
-
-    public Player[] getPlayers() {
-        return players;
-    }
 
     public boolean win() {
         return win;
@@ -108,7 +104,13 @@ public Board copy(){
         return false;
     }
 
-    private Unit unitAt(int x, int y){
+    /**
+     * Check if the cell is occupied by a unit.
+     * @param x
+     * @param y
+     * @return {@code Unit} if the cell is occupied, {@code null} otherwise
+     */
+    public Unit unitAt(int x, int y){
         for (Player p : players){
             if ( p.unitAt(x,y) != null)
                 return p.unitAt(x,y);
@@ -116,11 +118,12 @@ public Board copy(){
         }
         return null;
     }
+
     private Unit unitAt(Point coord){
         return unitAt(coord.x,coord.y);
     }
 
-    public int playerCodeAt(int x, int y){
+    int playerCodeAt(int x, int y){
         for (Player p : players){
             if ( p.isUnit(x,y))
                 return p.getPlayerCode();
@@ -139,13 +142,13 @@ public Board copy(){
 
 
 //--GAME----------------------------------------------------------------------------------------------------------------
-    public void display() {
-        String [][] display = new String[ROW_SIZE][COL_SIZE];
+    void display() {
+        String [][] display = new String[BOARD_ROWS][BOARD_COLS];
         System.out.println();
 
     //--REFRESH toDisplay
-        for (int i = 0; i < ROW_SIZE; i++) {
-            for (int j = 0; j < COL_SIZE; j++) {
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_COLS; j++) {
                 display[i][j] = "  " + grid[i][j] +"  ";
             }
         }
@@ -160,8 +163,8 @@ public Board copy(){
 
 
         //--PRINT GRID
-        for (int i = 0; i < ROW_SIZE; i++) {
-            for (int j = 0; j < COL_SIZE; j++){
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_COLS; j++){
                 System.out.print(display[i][j] );
             }
             System.out.println();
@@ -171,7 +174,7 @@ public Board copy(){
     }
 
 
-    public int addUnit(int playerCode, Point coord) {
+    int addUnit(int playerCode, Point coord) {
         if(playerCode < 0 || playerCode > N_PLAYERS-1){
             throw new IllegalArgumentException("playerCode must be between 0 and " + (N_PLAYERS-1));
         }
@@ -202,7 +205,7 @@ public Board copy(){
      */
 
 //--ACTIONS-------------------------------------------------------------------------------------------------------------
-    public boolean moveUnitSafe(Unit unit , Point coord){
+    boolean moveUnitSafe(Unit unit , Point coord){
         if (canMove(unit,coord)){
             if (!players[unit.player().getPlayerCode()].moveUnitSafe(unit,coord))
                 throw new RuntimeException("Qualcosa non va ");
@@ -224,11 +227,11 @@ public Board copy(){
      * @param y
      * @return
      */
-    public boolean moveUnitSafe(Unit unit, int x, int y){
+    boolean moveUnitSafe(Unit unit, int x, int y){
         return moveUnitSafe(unit, new Point(x,y));
     }
 
-    public boolean buildFloor(Unit unit, Point coord) {
+    boolean buildFloor(Unit unit, Point coord) {
         if (canBuild(unit, coord)){
             grid[coord.x][coord.y]++;
             return true;
@@ -237,7 +240,7 @@ public Board copy(){
 
     }
 
-    public boolean canMove(Point unitCoord, Point toMove){
+     boolean canMove(Point unitCoord, Point toMove){
 //    The unit may only move on the same level, step up one level or step down any number of levels.
 //    After every movement, the unit must be able to build onto an adjacent cell of its new position.
 //    This causes the cell in question to gain 1 unit of height.
@@ -255,11 +258,11 @@ public Board copy(){
         return true;
 
     }
-    public boolean canMove(Unit unit, Point coord){
+    boolean canMove(Unit unit, Point coord){
         return canMove(unit.coord(),coord);
     }
 
-    private boolean canMethods(Point start, Point end){
+    boolean canMethods(Point start, Point end){
 
         int currentX = start.x;
         int currentY = start.y;
@@ -267,7 +270,7 @@ public Board copy(){
         int toY = end.y;
 
         //--Can't make action outside the grid
-        if (toX < 0 || toX >= ROW_SIZE || toY< 0 || toY >= COL_SIZE)
+        if (toX < 0 || toX >= BOARD_ROWS || toY< 0 || toY >= BOARD_COLS)
             return false;
 
         //--A unit cannot make action to the same cell it is currently in.
@@ -301,7 +304,7 @@ public Board copy(){
     private boolean canBuild(Point unitCoord, Point toBuild){
         return canMethods(unitCoord,toBuild);
     }
-    public boolean canBuild(Unit unit , Point coord) {
+    boolean canBuild(Unit unit , Point coord) {
         return canBuild(unit.coord(),coord);
     }
 
@@ -315,7 +318,7 @@ public Board copy(){
      * @param unitCoord the cell where the unit is
      * @return
      */
-    public ArrayList<Point> moveableArea(Point unitCoord){
+    ArrayList<Point> moveableArea(Point unitCoord){
         ArrayList<Point> area = new ArrayList<>(8);
         initArea(area,unitCoord);
         area.removeIf(toMove -> ! canMove(unitCoord,toMove));
@@ -329,7 +332,7 @@ public Board copy(){
      * @param unit
      * @return
      */
-    public ArrayList<Point> moveableArea(Unit unit){
+    ArrayList<Point> moveableArea(Unit unit){
         return moveableArea(unit.coord());
     }
 
@@ -339,7 +342,7 @@ public Board copy(){
      * @param unitCoord the cell where the unit is
      * @return
      */
-    public ArrayList<Point> buildableArea(Point unitCoord){
+    ArrayList<Point> buildableArea(Point unitCoord){
         ArrayList<Point> area = new ArrayList<>(8);
         initArea(area,unitCoord);
         area.removeIf(toBuild -> ! canBuild(unitCoord,toBuild));
@@ -352,7 +355,7 @@ public Board copy(){
      * @param unit
      * @return
      */
-    public ArrayList<Point> buildableArea(Unit unit){
+    ArrayList<Point> buildableArea(Unit unit){
         return buildableArea(unit.coord());
     }
 
@@ -380,6 +383,17 @@ public Board copy(){
         area.add(new Point(x-1,y-1));
 
     }
+//--VIEW
 
+    /**
+     * @return all the units on the board
+     */
+    public ArrayList<Unit> getUnits(){
+        ArrayList<Unit> units = new ArrayList<>();
+        for (Player p : players){
+            units.addAll(p.getUnits());
+        }
+        return units;
+    }
 
 }

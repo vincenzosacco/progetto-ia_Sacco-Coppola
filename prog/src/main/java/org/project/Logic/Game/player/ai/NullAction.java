@@ -1,6 +1,6 @@
-package org.project.Logic.Game.mode.ai;
+package org.project.Logic.Game.player.ai;
 
-import org.project.Logic.Game.mode.Unit;
+import org.project.Logic.Game.player.Unit;
 
 import java.awt.*;
 

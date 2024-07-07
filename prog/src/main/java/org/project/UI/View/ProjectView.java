@@ -2,7 +2,7 @@ package org.project.UI.View;
 
 import org.project.UI.Settings;
 import org.project.UI.View.panels.GamePanel;
-import org.project.UI.View.panels.HomePanel;
+import org.project.UI.View.panels.home.HomePanel;
 import org.project.UI.View.panels.MyPanel;
 
 import javax.swing.*;
@@ -20,8 +20,12 @@ public class ProjectView extends JFrame {
     private ProjectView() {
         super();
 
+        setName("ProjectView");
+        getContentPane().setName("ProjectView.ContentPane");
+
         setTitle("WondevWoman");
         setSize(Settings.GAME_SIZE_DEFAULT);
+        getContentPane().setSize(Settings.GAME_SIZE_DEFAULT);
 
     //--LAYOUT
         setLayout(cardLayout = new CardLayout());

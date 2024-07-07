@@ -1,8 +1,8 @@
-package org.project.Logic.Game.mode.ai;
+package org.project.Logic.Game.player.ai;
 
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
-import org.project.Logic.Game.mode.Player;
+import org.project.Logic.Game.player.Player;
 import org.project.Logic.Settings;
 import org.project.Logic.embAsp.Group;
 import org.project.Logic.embAsp.WondevWomanHandler;
