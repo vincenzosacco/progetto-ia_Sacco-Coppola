@@ -3,40 +3,52 @@ package org.project.UI.View.panels.home;
 import org.project.UI.View.panels.MyPanel;
 
 import javax.swing.*;
+import java.awt.*;
 
-public class side extends MyPanel {
-    private final JLabel header;
-    private final JTextField nameField;
-
-
+public class side extends JPanel {
     public side(String title) {
         super();
-        SpringLayout layout = new SpringLayout();
-        setLayout(layout);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
     //--HEADER
-        header = new JLabel(title);
+        JLabel header = new JLabel(title);
+        header.setBackground(Color.GRAY);
         add(header);
 
-    //--NAME
-        JLabel nameLabel = new JLabel("Nome");
-        add(nameLabel);
-        nameField = new JTextField(title.replace(" ", "_").toLowerCase());
-        add(nameField);
+    //--TAB
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("AI", new TabPanel(title+"_AI"));
+        tabbedPane.addTab("Umano", new TabPanel(title));
 
-    //--LAYOUT CONSTRAINTS
-
-        // HEADER
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, header, 0, SpringLayout.HORIZONTAL_CENTER, this);
-        layout.putConstraint(SpringLayout.NORTH, header, 10, SpringLayout.NORTH, this);
-
-        // NAME
-        layout.putConstraint(SpringLayout.EAST, nameLabel, -10, SpringLayout.WEST, nameField);
-        layout.putConstraint(SpringLayout.VERTICAL_CENTER, nameLabel, 0, SpringLayout.VERTICAL_CENTER, nameField);
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, nameField, 0, SpringLayout.HORIZONTAL_CENTER, this);
-        layout.putConstraint(SpringLayout.NORTH, nameField, 10, SpringLayout.SOUTH, header);
-
+        add(tabbedPane);
     }
 
 
+
+    private class TabPanel extends MyPanel {
+
+        private final JTextField nameField;
+
+        TabPanel(String title) {
+            super();
+            SpringLayout layout = new SpringLayout();
+            setLayout(layout);
+
+
+
+        //--NAME
+            JLabel nameLabel = new JLabel("Nome");
+            add(nameLabel);
+            nameField = new JTextField(title.replace(" ", "").toLowerCase());
+            add(nameField);
+
+        //--LAYOUT CONSTRAINTS
+
+
+            // NAME
+            layout.putConstraint(SpringLayout.EAST, nameLabel, -10, SpringLayout.WEST, nameField);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, nameLabel, 0, SpringLayout.VERTICAL_CENTER, nameField);
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, nameField, 0, SpringLayout.HORIZONTAL_CENTER, this);
+        }
+    }
 }

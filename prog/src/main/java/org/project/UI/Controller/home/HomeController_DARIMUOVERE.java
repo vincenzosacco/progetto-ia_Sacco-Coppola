@@ -12,13 +12,26 @@ import java.awt.event.ActionListener;
  * This listener is shared by the buttons in the HomePanel and is used to start the game with the selected game mode.
  * </p>
  */
-public class HomeController implements ActionListener {
+public class HomeController_DARIMUOVERE implements ActionListener {
     private int gameMode;
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        System.out.println(e.getActionCommand());
+        switch (e.getActionCommand()) {
+            case "AI vs AI":
+                gameMode = GamePanel.AI_VS_AI;
+                break;
+            case "AI vs Umano":
+                gameMode = GamePanel.AI_VS_HUMAN;
+                break;
+            case "Umano vs Umano":
+                gameMode = GamePanel.HUMAN_VS_HUMAN;
+                break;
+            default: throw new IllegalArgumentException("Invalid action command");
+
+        }
+
         GameModel.getInstance().startGame(gameMode);
         ProjectView.getInstance().startGame(gameMode);
     }
