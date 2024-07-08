@@ -75,7 +75,7 @@ public class actionSet {
 
 //--UTILITY-------------------------------------------------------------------------------------------------------------
     public String display() {
-        return "\nPlayer " + unit.player().getSymbol() + " moves to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
+        return "\nPlayer " + unit.player().getPlayerCode() + " moves to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
     }
 
     @Override

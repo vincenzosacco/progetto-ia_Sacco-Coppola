@@ -7,7 +7,6 @@ import org.project.UI.Model.GameModel;
 import org.project.UI.View.ProjectView;
 import org.project.UI.View.panels.home.HomePanel;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

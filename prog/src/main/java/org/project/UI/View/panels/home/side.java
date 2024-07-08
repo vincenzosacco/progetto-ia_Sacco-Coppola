@@ -2,11 +2,13 @@ package org.project.UI.View.panels.home;
 
 import org.project.Logic.FilesFromEncodings;
 import org.project.UI.View.panels.MyPanel;
+
 import javax.swing.*;
 import java.awt.*;
 
 class side extends JPanel {
     final JTabbedPane tabbedPane;
+    final TabPanel ai, human;
 
      side(String title) {
         super();
@@ -19,45 +21,90 @@ class side extends JPanel {
 
     //--TAB
         tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("AI", new TabPanel(title + "_AI"));
-        tabbedPane.addTab("Umano", new TabPanel(title));
+        ai = new TabPanel(title + "_AI");
+        human = new TabPanel(title);
+        tabbedPane.addTab("AI", ai);
+        tabbedPane.addTab("Umano", human);
 
         add(tabbedPane);
     }
 
 
-//--INNER CLASSES-----------------------------------------------------------------------------------------------
-    private static class TabPanel extends MyPanel {
 
+
+//--INNER CLASSES-----------------------------------------------------------------------------------------------
+     static class TabPanel extends MyPanel {
+        protected final SpringLayout layout;
+        protected final JPanel name, color;
         private final JTextField nameField;
+        private final JButton colorButton;
+
+        private static final Color[] COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE};
+        private static int NEXT_COLOR = 0;
 
         TabPanel(String title) {
             super();
-            SpringLayout layout = new SpringLayout();
+            layout = new SpringLayout();
             setLayout(layout);
-
-
 
         //--NAME
             JLabel nameLabel = new JLabel("Nome");
-            add(nameLabel);
             nameField = new JTextField(title.replace(" ", "").toLowerCase());
-            add(nameField);
+
+            name = new JPanel();
+            name.add(nameLabel);
+            name.add(nameField);
+
+            add(name);
+
+        //--COLOR
+            JLabel colorLabel = new JLabel("Colore");
+            colorButton = new JButton();
+            colorButton.setBackground(COLORS[NEXT_COLOR++]);
+            colorButton.addActionListener(e -> {
+                colorButton.setBackground(COLORS[NEXT_COLOR++]);
+                if (NEXT_COLOR == COLORS.length) NEXT_COLOR = 0;
+            });
+
+            color = new JPanel();
+            color.add(colorLabel);
+            color.add(colorButton);
+
+            add(color);
 
         //--LAYOUT CONSTRAINTS
-
             // NAME
-            layout.putConstraint(SpringLayout.EAST, nameLabel, -10, SpringLayout.WEST, nameField);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, nameLabel, 0, SpringLayout.VERTICAL_CENTER, nameField);
-            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, nameField, 0, SpringLayout.HORIZONTAL_CENTER, this);
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, name, 0, SpringLayout.HORIZONTAL_CENTER, this);
+
+            // COLOR
+            layout.putConstraint(SpringLayout.NORTH, color, 10, SpringLayout.SOUTH, name);
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, color, 0, SpringLayout.HORIZONTAL_CENTER, this);
+        }
+
+        Color choosedColor(){
+            return colorButton.getBackground();
         }
     }
 
     private static class AiTabPanel extends TabPanel{
-        private final JComboBox<String> strategy;
+        private final JComboBox<String> strategyBox;
+        private final JLabel strategyLabel;
+
         AiTabPanel(String title) {
             super(title);
-            strategy = new JComboBox<>();
+
+            strategyLabel = new JLabel("Strategia");
+            strategyBox = new JComboBox<String>(FilesFromEncodings.STRATEGIES);
+
+            JPanel strategy= new JPanel();
+            strategy.add(strategyLabel);
+            strategy.add(strategyBox);
+
+            add(strategy);
+
+            // LAYOUT CONSTRAINTS
+            layout.putConstraint(SpringLayout.NORTH, strategy, 10, SpringLayout.SOUTH, color);
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, strategy, 0, SpringLayout.HORIZONTAL_CENTER, this);
         }
 
     }

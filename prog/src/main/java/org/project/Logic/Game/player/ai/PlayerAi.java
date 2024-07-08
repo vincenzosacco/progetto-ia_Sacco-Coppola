@@ -3,11 +3,12 @@ package org.project.Logic.Game.player.ai;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.player.Player;
-import org.project.Logic.Settings;
+import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.Group;
 import org.project.Logic.embAsp.WondevWomanHandler;
 import org.project.Logic.embAsp.cell;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -29,23 +30,25 @@ public class PlayerAi extends Player implements Callable<actionSet> {
     private final String encPath;
     private final String embAspPath;
     private final  String embAspPackage;
+    private final int groupId;
     private Group myGroup;
     public static final int GROUP_1 = 1;
     public static final int GROUP_2 = 2;
     public static final int GROUP_3 = 3;
     public static final int GROUP_4 = 4;
 
-    public PlayerAi(char symbol, int playerCode, int GROUP_ID) {
-        super(symbol, playerCode);
+    public PlayerAi(Color color, int GROUP_ID) {
+        super(color);
         switch (GROUP_ID){
             case GROUP_1 ->{
-                encPath = Settings.PATH_ENCOD_GROUP1;
-                embAspPath = Settings.PATH_EMBASP_GROUP1;
-                embAspPackage = Settings.PACKAGE_EMBASP_GROUP1;
+                encPath = LogicSettings.PATH_ENCOD_GROUP1;
+                embAspPath = LogicSettings.PATH_EMBASP_GROUP1;
+                embAspPackage = LogicSettings.PACKAGE_EMBASP_GROUP1;
             }
             default -> throw new IllegalArgumentException("Group not found");
         }
 
+        groupId = GROUP_ID;
         handler = new WondevWomanHandler();
         encodings = new ArrayList<>();
 
@@ -62,7 +65,7 @@ public class PlayerAi extends Player implements Callable<actionSet> {
         handler = new WondevWomanHandler(player.getHandler());
         encodings = player.getEncodings();
         myGroup = player.myGroup;
-
+        groupId = player.groupId;
     }
 
 
@@ -211,24 +214,10 @@ public class PlayerAi extends Player implements Callable<actionSet> {
 
 
 
-    //--JAVA UTILITY--------------------------------------------------------------------------------------------------------
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PlayerAi playerAi)) return false;
-
-        if (playerCode != playerAi.playerCode) return false;
-        if (symbol != playerAi.symbol) return false;
-        if (!encodings.equals(playerAi.encodings)) return false;
-        if (!handler.equals(playerAi.handler)) return false;
-        if (!encPath.equals(playerAi.encPath)) return false;
-        if (!embAspPath.equals(playerAi.embAspPath)) return false;
-        if (!embAspPackage.equals(playerAi.embAspPackage)) return false;
-        return myGroup.equals(playerAi.myGroup);
-    }
+    //--JAVA OBJECT--------------------------------------------------------------------------------------------------------
 
     @Override
     public int hashCode() {
-        return Objects.hash(encodings, handler, encPath, embAspPath, embAspPackage, myGroup);
+        return Objects.hash(playerCode, color, groupId);
     }
 }

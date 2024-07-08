@@ -1,5 +1,6 @@
 package org.project.UI.View.panels;
 import org.project.Logic.Game.Board;
+import org.project.Logic.Game.player.Unit;
 import org.project.UI.Model.GameModel;
 
 import java.awt.*;
@@ -9,44 +10,38 @@ import static org.project.UI.Settings.*;
 
 
 public class GamePanel extends MyPanel {
+    private final int gameMode;
+
     /**
-     * Constructor for the GamePanel class.
-     * @param gameMode the game mode to be played. It can be AI_VS_AI, AI_VS_HUMAN or HUMAN_VS_HUMAN.
+     * Constructor used to create a new GamePanel.
+     * @param gameMode static constant from {@code GameModel}.
      */
     public GamePanel(int gameMode) {
         super();
-        init(gameMode);
 
+        String name = switch (gameMode) {
+            case AI_VS_AI -> "AI vs AI";
+            case AI_VS_HUMAN -> "AI vs Human";
+            case HUMAN_VS_HUMAN -> "Human vs Human";
+            default -> throw new IllegalArgumentException("Invalid game mode");
+        };
+        setName(name);
+
+        this.gameMode = gameMode;
 
         setBackground(Color.LIGHT_GRAY);
 
     }
 
-    private void init(int gameMode) {
-        String name;
-        switch (gameMode) {
-            case AI_VS_AI:
-                name = "AI vs AI";
 
-                break;
-            case AI_VS_HUMAN:
-                name = "AI vs Human";
-                break;
-            case HUMAN_VS_HUMAN:
-                name = "Human vs Human";
-                break;
-            default: throw new IllegalArgumentException("Invalid game mode");
-        }
+//--DRAW METHODS--------------------------------------------------------------------------------------------------------
+    //TODO: implentare per input da mouse quando si gioca come Umano
 
-        setName(name);
-    }
-
-//--VIEW METHODS--------------------------------------------------------------------------------------------------------
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-    //--DRAW MATRIX
+    //--DRAW BOARD
         drawBoard(g);
     }
 
@@ -56,64 +51,73 @@ public class GamePanel extends MyPanel {
         int startY = (getHeight() - BOARD_HEIGHT) / 2;
         Board board = GameModel.getInstance().getBoard();
 
+        int x, y;
         for (int i = 0; i < BOARD_ROWS; i++) {
             for (int j = 0; j < BOARD_COLS; j++) {
-        //--DRAW CELL
-                int x = startX + j * BOARD_CELL_SIZE;
-                int y = startY + i * BOARD_CELL_SIZE;
-//                g.drawRect(x, y, BOARD_CELL_SIZE, BOARD_CELL_SIZE);
-                g.setColor(Color.GRAY);
-                g.fill3DRect(x, y, BOARD_CELL_SIZE, BOARD_CELL_SIZE, true);
+                x = startX + j * BOARD_CELL_SIZE;
+                y = startY + i * BOARD_CELL_SIZE;
 
-        //--FLOOR
-                int floor = board.heightAt(i, j);
-                if (floor>0){
-                    int offset;
-                    switch (floor) {
-                        case 1 -> {
-                            drawFloor(g, x, y, 0, Color.DARK_GRAY);
-                        }
+            //--CELL
+                drawCell(g, x, y);
 
-                        case 2 -> {
-                            drawFloor(g, x, y, 0, Color.DARK_GRAY);
-                            drawFloor(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
-                        }
-                        case 3 -> {
-                            drawFloor(g, x, y, 0, Color.DARK_GRAY);
-                            drawFloor(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
-                            drawFloor(g, x, y, FLOOR_3_OFFSET, new Color(231, 214, 0));
-                        }
-                        case 4 ->{
-                            drawFloor(g, x, y, 0, Color.DARK_GRAY);
-                            drawFloor(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
-                            drawFloor(g, x, y, FLOOR_3_OFFSET, new Color(231, 214, 0));
+            //--FLOOR
+                drawFloor(g, x, y, i, j, board);
 
-                            // Draw an X on the cell
-                            g.setColor(Color.RED);
-                            g.drawLine(x, y, x+BOARD_CELL_SIZE, y+BOARD_CELL_SIZE);
-                            g.drawLine(x+BOARD_CELL_SIZE, y, x, y+BOARD_CELL_SIZE);
-
-
-                            // Makes the cell opaque
-                            g.setColor(new Color(0, 0, 0, 100));
-                            g.fillRect(x, y, BOARD_CELL_SIZE, BOARD_CELL_SIZE);
-                        }
-                        default -> throw new IllegalArgumentException("Invalid height");
-                    }
-                }
-
-        //--UNIT
-                if (board.unitAt(i, j) != null) {
-                    g.setColor(Color.BLUE);
-
-                    x = x + 5;
-                    y = y + 5;
-
-                    g.fillOval(x , y , UNIT_SIZE, UNIT_SIZE);
-                }
             }
         }
 
+    //--UNIT
+        for (Unit unit : board.getUnits()) {
+            g.setColor(unit.player().getColor());
+            x = (startX + unit.coord().y * BOARD_CELL_SIZE ) + UNIT_OFFSET/2;
+            y = (startY + unit.coord().x * BOARD_CELL_SIZE) + UNIT_OFFSET/2;
+            g.fillOval(x, y, BOARD_CELL_SIZE - UNIT_OFFSET , BOARD_CELL_SIZE - UNIT_OFFSET );
+        }
+
+    }
+
+    private void drawCell(Graphics g, int x, int y) {
+        g.setColor(Color.GRAY);
+        g.fill3DRect(x, y, BOARD_CELL_SIZE, BOARD_CELL_SIZE, true);
+    }
+
+
+    private void drawFloor(Graphics g, int x, int y, int i, int j,  Board board) {
+        int floor = board.heightAt(i, j);
+        if (floor > 0) {
+            int offset;
+            switch (floor) {
+                case 1 -> {
+                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
+                }
+
+                case 2 -> {
+                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
+                }
+                case 3 -> {
+                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_3_OFFSET, new Color(231, 214, 0));
+                }
+                case 4 -> {
+                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_3_OFFSET, new Color(231, 214, 0));
+
+                    // Draw an X on the cell
+                    g.setColor(Color.RED);
+                    g.drawLine(x, y, x + BOARD_CELL_SIZE, y + BOARD_CELL_SIZE);
+                    g.drawLine(x + BOARD_CELL_SIZE, y, x, y + BOARD_CELL_SIZE);
+
+
+                    // Makes the cell opaque
+                    g.setColor(new Color(0, 0, 0, 100));
+                    g.fillRect(x, y, BOARD_CELL_SIZE, BOARD_CELL_SIZE);
+                }
+                default -> throw new IllegalArgumentException("Invalid height");
+            }
+        }
     }
 
     /**
@@ -124,14 +128,18 @@ public class GamePanel extends MyPanel {
      * @param offset the offset of the floor.
      * @param color the color of the floor.
      */
-    private void drawFloor(Graphics g, int x, int y, int offset, Color color) {
+    private void drawFloorHeight(Graphics g, int x, int y, int offset, Color color) {
         if (offset > 0){
             x = x + offset/2;
             y = y + offset/2;
         }
         g.setColor(color);
-        g.fill3DRect(x, y, BOARD_CELL_SIZE-offset, BOARD_CELL_SIZE-offset, true);
+        if (offset != 3)
+            g.fill3DRect(x, y, BOARD_CELL_SIZE-offset, BOARD_CELL_SIZE-offset, true);
+        else
+            g.fillRoundRect(x, y, BOARD_CELL_SIZE-offset, BOARD_CELL_SIZE-offset, 10, 10);
     }
+
 
 
 

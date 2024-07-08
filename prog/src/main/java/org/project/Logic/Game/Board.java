@@ -6,9 +6,11 @@ import org.project.Logic.embAsp.cell;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
-import static org.project.UI.Settings.BOARD_ROWS;
 import static org.project.UI.Settings.BOARD_COLS;
+import static org.project.UI.Settings.BOARD_ROWS;
 
 /**
  * Class that represents the game board.
@@ -28,23 +30,25 @@ public abstract class Board {
     public static final int FLOOR_START= FLOOR_HEIGHT_0;
     public static final int FLOOR_REMOVED= FLOOR_HEIGHT_4;
 
-    private final int[][] grid;
-    private final Player[] players ;
-    private boolean win ;
+    protected final int[][] grid;
+    protected final Player[] players ;
+    protected boolean win ;
 
     //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
-//    protected Board(){
-//        grid = new int[BOARD_ROWS][BOARD_COLS];
-//        players = new Player [N_PLAYERS];
-//        for (int i = 0; i < BOARD_ROWS; i++) {
-//            for (int j = 0; j < BOARD_COLS; j++) {
-//                grid[i][j] = FLOOR_START;
-//            }
-//        }
-//
-//        win=false;
-//    }
-    protected abstract void init();
+    protected void spawnUnits() {
+        Random rand = new Random();
+
+        for (int p = 0; p < N_PLAYERS; p++) {
+            for (int u = 0; u < UNIT_PER_PLAYER; u++) {
+                Point coord = new Point(rand.nextInt(BOARD_ROWS), rand.nextInt(BOARD_COLS));
+                while (isOccupied(coord)) {
+                    coord = new Point(rand.nextInt(BOARD_ROWS), rand.nextInt(BOARD_COLS));
+                }
+                addUnit(p, coord);
+            }
+        }
+
+    }
 
     protected Board(Player player1, Player player2) {
         grid = new int[BOARD_ROWS][BOARD_COLS];
@@ -58,9 +62,12 @@ public abstract class Board {
             }
         }
 
+        spawnUnits();
+
         win=false;
     }
 
+    public abstract Board copy();
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
 
     /**
@@ -70,6 +77,16 @@ public abstract class Board {
      */
     public int[][] getGrid() {
         return grid;
+    }
+
+    protected void setGrid(int[][] grid){
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            this.grid[i] = Arrays.copyOf(grid[i], grid[i].length);
+        }
+    }
+
+    public Player[] getPlayers() {
+        return players;
     }
 
 
@@ -124,7 +141,7 @@ public abstract class Board {
         return unitAt(coord.x,coord.y);
     }
 
-    int playerCodeAt(int x, int y){
+    public int playerCodeAt(int x, int y){
         for (Player p : players){
             if ( p.isUnit(x,y))
                 return p.getPlayerCode();
@@ -143,38 +160,6 @@ public abstract class Board {
 
 
 //--GAME----------------------------------------------------------------------------------------------------------------
-    void display() {
-        String [][] display = new String[BOARD_ROWS][BOARD_COLS];
-        System.out.println();
-
-    //--REFRESH toDisplay
-        for (int i = 0; i < BOARD_ROWS; i++) {
-            for (int j = 0; j < BOARD_COLS; j++) {
-                display[i][j] = "  " + grid[i][j] +"  ";
-            }
-        }
-
-        for (Player p : players){
-            for (Unit u : p.getUnits()){
-                Point coord = u.coord();
-                String floor = display[coord.x][coord.y].substring(0,3);
-                display[coord.x][coord.y] = floor+ p.getSymbol() + u.unitCode();
-            }
-        }
-
-
-        //--PRINT GRID
-        for (int i = 0; i < BOARD_ROWS; i++) {
-            for (int j = 0; j < BOARD_COLS; j++){
-                System.out.print(display[i][j] );
-            }
-            System.out.println();
-        }
-
-
-    }
-
-
     int addUnit(int playerCode, Point coord) {
         if(playerCode < 0 || playerCode > N_PLAYERS-1){
             throw new IllegalArgumentException("playerCode must be between 0 and " + (N_PLAYERS-1));
@@ -206,7 +191,7 @@ public abstract class Board {
      */
 
 //--ACTIONS-------------------------------------------------------------------------------------------------------------
-    boolean moveUnitSafe(Unit unit , Point coord){
+    public boolean moveUnitSafe(Unit unit, Point coord){
         if (canMove(unit,coord)){
             if (!players[unit.player().getPlayerCode()].moveUnitSafe(unit,coord))
                 throw new RuntimeException("Qualcosa non va ");
@@ -333,7 +318,7 @@ public abstract class Board {
      * @param unit
      * @return
      */
-    ArrayList<Point> moveableArea(Unit unit){
+    public ArrayList<Point> moveableArea(Unit unit){
         return moveableArea(unit.coord());
     }
 
@@ -356,7 +341,7 @@ public abstract class Board {
      * @param unit
      * @return
      */
-    ArrayList<Point> buildableArea(Unit unit){
+    public ArrayList<Point> buildableArea(Unit unit){
         return buildableArea(unit.coord());
     }
 

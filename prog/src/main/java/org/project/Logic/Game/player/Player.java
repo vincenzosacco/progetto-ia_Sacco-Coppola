@@ -10,23 +10,24 @@ import static org.project.UI.Settings.BOARD_COLS;
 import static org.project.UI.Settings.BOARD_ROWS;
 
 public abstract class Player {
-    protected final char symbol;
     protected final int playerCode;
-
+    protected final Color color;
     private static int NEXT_UNIT_CODE = 0;
+    private static int NEXT_PLAYER_CODE = 0;
+    
 
 //    public record unit(int unitCode, int playerCode, Point coord){ };
     protected final ArrayList<Unit> Units;
 
-    protected Player(char symbol, int playerCode) {
-        this.symbol = symbol;
-        this.playerCode = playerCode;
+    protected Player(Color color) {
+        this.playerCode = ++NEXT_PLAYER_CODE;
+        this.color = color;
         this.Units = new ArrayList<>();
     }
 
     protected Player(Player player) {
-        symbol = player.symbol;
         playerCode = player.playerCode;
+        color = player.color;
         Units = new ArrayList<>();
         for (Unit u : player.Units) {
             Units.add(new Unit(u.unitCode, u.player, u.coord));
@@ -35,14 +36,13 @@ public abstract class Player {
 
     abstract public Player copy();
 
-    public char getSymbol() {
-        return symbol;
-    }
-
     public int getPlayerCode() {
         return playerCode;
     }
 
+    public Color getColor() {
+        return color;
+    }
 
     /**
      * Get the first unit of the player.<p>
@@ -138,8 +138,19 @@ public abstract class Player {
 
     }
 
+    /**
+     * Two players are equal if they have the same playerCode.
+     * @param o
+     * @return
+     */
     @Override
-    abstract public boolean equals(Object o);
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return playerCode == player.playerCode;
+    }
+
     @Override
     abstract public int hashCode();
 

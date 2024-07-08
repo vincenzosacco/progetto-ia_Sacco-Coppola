@@ -3,7 +3,6 @@ package org.project.UI.View.panels.home;
 import org.project.Logic.Game.player.Player;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.human.PlayerManual;
-import org.project.UI.Model.GameModel;
 import org.project.UI.View.panels.MyPanel;
 
 import javax.swing.*;
@@ -49,14 +48,14 @@ public class HomePanel extends MyPanel {
         Player player1, player2;
 
         player1 = switch (left.tabbedPane.getSelectedIndex()) {
-            case 0 -> new PlayerAi('A', 0, PlayerAi.GROUP_1);
-            case 1 -> new PlayerManual('A', 0);
+            case 0 -> new PlayerAi(left.ai.choosedColor(), PlayerAi.GROUP_1);
+            case 1 -> new PlayerManual(left.human.choosedColor());
             default -> throw new IllegalStateException("Unexpected value: " + left.tabbedPane.getSelectedIndex());
         };
 
         player2 = switch (right.tabbedPane.getSelectedIndex()) {
-            case 0 -> new PlayerAi('B', 1, PlayerAi.GROUP_1);
-            case 1 -> new PlayerManual('B', 1);
+            case 0 -> new PlayerAi(right.ai.choosedColor(), PlayerAi.GROUP_1);
+            case 1 -> new PlayerManual(right.ai.choosedColor());
             default -> throw new IllegalStateException("Unexpected value: " + right.tabbedPane.getSelectedIndex());
         };
 

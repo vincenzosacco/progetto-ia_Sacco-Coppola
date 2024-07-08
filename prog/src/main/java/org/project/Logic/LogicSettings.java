@@ -1,7 +1,9 @@
 package org.project.Logic;
 
-public interface Settings {
-    String PATH_TO_DLV2 = "prog/lib/dlv2.exe";
+public interface LogicSettings {
+    String PATH_TO_DLV2_WINDOWS = "prog/lib/dlv2.exe";
+    String PATH_TO_DLV2_LINUX = "prog/lib/dlv2";
+    String PATH_TO_DLV2_MAC = "prog/lib/dlv2-macOS-64bit.mac_5";
 
     String PATH_ENCOD = "prog/encodings";
     String PATH_ENCOD_GROUP1 = "prog/encodings/gruppo_1";

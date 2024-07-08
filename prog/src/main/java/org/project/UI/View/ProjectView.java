@@ -3,7 +3,6 @@ package org.project.UI.View;
 import org.project.UI.Settings;
 import org.project.UI.View.panels.GamePanel;
 import org.project.UI.View.panels.home.HomePanel;
-import org.project.UI.View.panels.MyPanel;
 
 import javax.swing.*;
 import java.awt.*;
