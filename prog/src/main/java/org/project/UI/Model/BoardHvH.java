@@ -2,18 +2,19 @@ package org.project.UI.Model;
 
 import org.project.Logic.Game.Board;
 import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.player.human.PlayerManual;
 
 /**
  * Class that represents the game board.
  */
 public class BoardHvH extends Board {
-
-    BoardHvH() {
-        super();
+    BoardHvH(PlayerManual[] players) {
+        super(players[0], players[1]);
     }
 
-    BoardHvH(Player player1, Player player2) {
-        super(player1, player2);
+    @Override
+    protected void init() {
+
     }
 }
 

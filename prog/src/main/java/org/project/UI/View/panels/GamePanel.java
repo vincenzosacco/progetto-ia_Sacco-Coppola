@@ -4,14 +4,11 @@ import org.project.UI.Model.GameModel;
 
 import java.awt.*;
 
+import static org.project.UI.Model.GameModel.*;
 import static org.project.UI.Settings.*;
 
 
 public class GamePanel extends MyPanel {
-    public static final int AI_VS_AI = 0;
-    public static final int AI_VS_HUMAN = 1;
-    public static final int HUMAN_VS_HUMAN = 2;
-
     /**
      * Constructor for the GamePanel class.
      * @param gameMode the game mode to be played. It can be AI_VS_AI, AI_VS_HUMAN or HUMAN_VS_HUMAN.

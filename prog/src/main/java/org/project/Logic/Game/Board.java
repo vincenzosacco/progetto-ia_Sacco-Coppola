@@ -33,17 +33,18 @@ public abstract class Board {
     private boolean win ;
 
     //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
-    protected Board(){
-        grid = new int[BOARD_ROWS][BOARD_COLS];
-        players = new Player [N_PLAYERS];
-        for (int i = 0; i < BOARD_ROWS; i++) {
-            for (int j = 0; j < BOARD_COLS; j++) {
-                grid[i][j] = FLOOR_START;
-            }
-        }
-
-        win=false;
-    }
+//    protected Board(){
+//        grid = new int[BOARD_ROWS][BOARD_COLS];
+//        players = new Player [N_PLAYERS];
+//        for (int i = 0; i < BOARD_ROWS; i++) {
+//            for (int j = 0; j < BOARD_COLS; j++) {
+//                grid[i][j] = FLOOR_START;
+//            }
+//        }
+//
+//        win=false;
+//    }
+    protected abstract void init();
 
     protected Board(Player player1, Player player2) {
         grid = new int[BOARD_ROWS][BOARD_COLS];

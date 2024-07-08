@@ -2,6 +2,8 @@ package org.project.UI.Model;
 
 
 import org.project.Logic.Game.Board;
+import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.player.human.PlayerManual;
 import org.project.UI.View.panels.GamePanel;
 
 /**
@@ -10,6 +12,10 @@ import org.project.UI.View.panels.GamePanel;
 public class GameModel {
     private static GameModel instance = null;
     private Board board;
+
+    public static final int AI_VS_AI = 0;
+    public static final int AI_VS_HUMAN = 1;
+    public static final int HUMAN_VS_HUMAN = 2;
 
     private GameModel() {
     }
@@ -27,17 +33,31 @@ public class GameModel {
     }
 
 
-    public void startGame(int gameMode) {
+    public void startGame(int gameMode, Player[] players) {
         switch (gameMode) {
-            case GamePanel.AI_VS_AI:
+            case AI_VS_AI:
 //                board = new Board();
                 break;
-            case GamePanel.AI_VS_HUMAN:
+
+            case AI_VS_HUMAN:
 //                board = new Board();
                 break;
-            case GamePanel.HUMAN_VS_HUMAN:
-                board = new BoardHvH();
+
+            case HUMAN_VS_HUMAN:
+                PlayerManual[] playersManual ;
+                try {
+                    playersManual = new PlayerManual[]{(PlayerManual) players[0], (PlayerManual) players[1]};
+                }
+                catch (ClassCastException e) {
+                    throw new IllegalArgumentException("Invalid player type");
+                }
+
+                board = new BoardHvH(playersManual);
                 break;
+
+
+            default:
+                throw new IllegalArgumentException("Invalid game mode");
         }
     }
 
