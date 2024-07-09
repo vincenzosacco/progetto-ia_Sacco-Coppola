@@ -33,20 +33,18 @@ public class Group1 implements Group {
      * @throws Exception
      */
     public actionSet callEmbAsp(PlayerAi player) throws Exception {
-
-
         myBoard = GameModel.getInstance().getBoard().copy();
 
     //--SET PLAYERS
         for (Player p : myBoard.getPlayers() ){
-            if (p.getPlayerCode() == player.getPlayerCode())
+            if (p.equals(player))
                 myPlayer =(PlayerAi) p;
             else
                 enemyPlayer = (PlayerAi) p;
         }
 
     //--SET HANDLER
-        myHandler = new WondevWomanHandler(player.getHandler());
+        myHandler = new WondevWomanHandler();
         myHandler.mapToEmb(unitASP.class);
 
     //--CHOSE UNIT
@@ -74,6 +72,8 @@ public class Group1 implements Group {
 
         return new actionSet(player.getFirstUnit(), move, build);
     }
+
+
 
     private Point makeMove() throws Exception {
         ASPInputProgram moveProgram = new ASPInputProgram();
@@ -150,9 +150,9 @@ public class Group1 implements Group {
 //--UTILITY-------------------------------------------------------------------------------------------------------------
 
     /**
-     * Refresh facts in myHandler without calling PlayerAi.refreshGridstate().
+     * Refresh facts in myHandler.
      */
-    private void refreshFacts() throws Exception {
+    public void refreshFacts() throws Exception {
         ASPInputProgram myGridState = new ASPInputProgram();
         int[][] grid = myBoard.getGrid();
         for (int i = 0; i < grid.length; i++) {

@@ -1,5 +1,6 @@
 package org.project.Logic.Game.player.ai;
 
+import org.project.Logic.Game.player.Player;
 import org.project.Logic.Game.player.Unit;
 
 import java.awt.*;
@@ -33,8 +34,8 @@ public class actionSet {
             throw new NullPointerException("null values are not allowed, Null arguments: "+ nullArgs );
         }
 
-        if (unit.player().getPlayerCode() < 0 || unit.player().getPlayerCode() > 1) {
-            throw new IllegalArgumentException("playerCode must be 0 or 1");
+        if (unit.player().getPlayerCode() < PlayerAi.MIN_PLAYER_CODE() || unit.player().getPlayerCode() > Player.LAST_PLAYER_CODE()) {
+            throw new IllegalArgumentException("playerCode must be" + PlayerAi.MIN_PLAYER_CODE() + "and" + Player.LAST_PLAYER_CODE());
         }
 
         if (move.x < 0 || move.x > BOARD_ROWS-1 || move.y < 0 || move.y > BOARD_COLS-1 ) {
@@ -75,7 +76,7 @@ public class actionSet {
 
 //--UTILITY-------------------------------------------------------------------------------------------------------------
     public String display() {
-        return "\nPlayer " + unit.player().getPlayerCode() + " moves to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
+        return "\nPlayer " + unit.player().getPlayerCode() + " moves unit "+ unit.unitCode()+  " to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
     }
 
     @Override

@@ -15,7 +15,7 @@ public class ProjectView extends JFrame {
 
     private CardLayout cardLayout;
     private HomePanel homePanel;
-    private GamePanel gamePanel;
+    private GamePanel gamePanel ;
 
     private ProjectView() {
         super();
@@ -45,10 +45,19 @@ public class ProjectView extends JFrame {
         }
         return instance;
     }
-
+//--GAME
     public void startGame(int gameMode) {
-        homePanel.setCenterPanel(new GamePanel(gameMode));
+        gamePanel = new GamePanel(gameMode);
+
+        homePanel.setCenterPanel(gamePanel);
     }
+
+    public void refreshGamePanel() {
+        homePanel.revalidate();
+        homePanel.repaint();
+    }
+
+
 
 //--UTILITY
 

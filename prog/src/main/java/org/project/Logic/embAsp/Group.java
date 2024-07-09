@@ -3,8 +3,10 @@ import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.ai.actionSet;
 
 
-
-public interface Group {
+/**
+ * Interface used to manage the embAsp logic, as Singleton class.
+ */
+public interface  Group {
     /**
     * Method used to set all the necessary settings for running embAsp<p>
     * @param player

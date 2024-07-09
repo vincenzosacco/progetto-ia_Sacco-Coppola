@@ -11,7 +11,7 @@ public class centerPanel extends MyPanel {
 
 
     centerPanel() {
-        super();
+        super("centerPanel");
 
         layout = new SpringLayout();
         setLayout(layout);
@@ -27,18 +27,23 @@ public class centerPanel extends MyPanel {
 
     }
 
+    private boolean added = false;
     @Override
     public void addNotify() {
         super.addNotify();
-        HomePanel parent;
-        try {
-            parent = (HomePanel) getParent();
-        }
-        catch (ClassCastException e) {
-            throw new RuntimeException("centerPanel must be added to a HomePanel");
-        }
+        if (! added) {
 
-        play.addActionListener(new PlayButtonController(parent));
+            HomePanel parent;
+            try {
+                parent = (HomePanel) getParent();
+            }
+            catch (ClassCastException e) {
+                throw new RuntimeException("centerPanel must be added to a HomePanel");
+            }
+
+            play.addActionListener(new PlayButtonController(parent));
+            added = true;
+        }
     }
 
     private void setupConstraints() {

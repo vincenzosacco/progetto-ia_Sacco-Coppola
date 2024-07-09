@@ -14,7 +14,7 @@ public class HomePanel extends MyPanel {
 
 
     public HomePanel() {
-        super();
+        super("HomePanel");
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         left = new side("PLAYER 1");
@@ -46,22 +46,44 @@ public class HomePanel extends MyPanel {
 
     public Player[] getPlayers() {
         Player player1, player2;
+        Color colorLeft, colorRight;
+        Component selectedLeft = left.tabbedPane.getSelectedComponent();
+        Component selectedRight = right.tabbedPane.getSelectedComponent();
+        
+    //--GET COLORS
+        if (selectedLeft instanceof side.TabPanel && selectedRight instanceof side.TabPanel) {
+            colorLeft = ((side.TabPanel) selectedLeft).choosedColor();
+            colorRight = ((side.TabPanel) selectedRight).choosedColor();
+        } else {
+            throw new RuntimeException("Unexpected component: " + selectedLeft + " " + selectedRight);
+        }
 
-        player1 = switch (left.tabbedPane.getSelectedIndex()) {
-            case 0 -> new PlayerAi(left.ai.choosedColor(), PlayerAi.GROUP_1);
-            case 1 -> new PlayerManual(left.human.choosedColor());
-            default -> throw new IllegalStateException("Unexpected value: " + left.tabbedPane.getSelectedIndex());
-        };
 
-        player2 = switch (right.tabbedPane.getSelectedIndex()) {
-            case 0 -> new PlayerAi(right.ai.choosedColor(), PlayerAi.GROUP_1);
-            case 1 -> new PlayerManual(right.ai.choosedColor());
-            default -> throw new IllegalStateException("Unexpected value: " + right.tabbedPane.getSelectedIndex());
-        };
+    //--CHECK COLORS
+        if (colorLeft.equals(colorRight)) {
+            showColorError();
+            return null;
+        }
+
+    //--CREATE PLAYERS
+        if (selectedLeft == left.ai && selectedRight == right.ai) {
+            player1 = new PlayerAi(colorLeft, ((side.AiTabPanel) selectedLeft).choosedStrategy());
+            player2 = new PlayerAi(colorRight, ((side.AiTabPanel) selectedRight).choosedStrategy());
+        } else if (selectedLeft == left.human && selectedRight == right.human) {
+            player1 = new PlayerManual(colorLeft);
+            player2 = new PlayerManual(colorRight);
+        } else {
+            throw new RuntimeException("Unexpected component: " + selectedLeft + " " + selectedRight);
+        }
 
         return new Player[]{player1, player2};
     }
 
+
+
+    public void showColorError() {
+        JOptionPane.showMessageDialog(this, "Players must have different colors", "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
 
     @Override

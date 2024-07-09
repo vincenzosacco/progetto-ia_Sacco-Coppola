@@ -19,7 +19,7 @@ public interface Settings {
     int FLOOR_3_OFFSET = (int) (BOARD_CELL_SIZE - (BOARD_CELL_SIZE * 0.6));
 
     //UNIT
-    int UNIT_OFFSET = (int) (FLOOR_3_OFFSET * 0.8); // must be smaller than floor 3 size
+    int UNIT_OFFSET = (int) (FLOOR_3_OFFSET * 1.4); // must be smaller than floor 3 size
 
 
 

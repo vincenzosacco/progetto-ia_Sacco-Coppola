@@ -14,6 +14,10 @@ public class Unit {
         this.coord = new Point(coord);
     }
 
+    public Unit(Unit unit) {
+        this(unit.unitCode, unit.player, unit.coord);
+    }
+
 
     public int unitCode() {
         return unitCode;
@@ -25,6 +29,12 @@ public class Unit {
 
     public Point coord() {
         return coord;
+    }
+    public int x() {
+        return coord.x;
+    }
+    public int y() {
+        return coord.y;
     }
 
     @Override

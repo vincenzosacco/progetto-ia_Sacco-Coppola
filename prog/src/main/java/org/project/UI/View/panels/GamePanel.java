@@ -1,8 +1,12 @@
 package org.project.UI.View.panels;
 import org.project.Logic.Game.Board;
 import org.project.Logic.Game.player.Unit;
+import org.project.UI.Controller.InputButtonAction;
+import org.project.UI.Controller.home.PlayButtonController;
 import org.project.UI.Model.GameModel;
+import org.project.UI.View.panels.home.HomePanel;
 
+import javax.swing.*;
 import java.awt.*;
 
 import static org.project.UI.Model.GameModel.*;
@@ -11,13 +15,13 @@ import static org.project.UI.Settings.*;
 
 public class GamePanel extends MyPanel {
     private final int gameMode;
-
+    private final JButton restartButton ;
     /**
      * Constructor used to create a new GamePanel.
      * @param gameMode static constant from {@code GameModel}.
      */
     public GamePanel(int gameMode) {
-        super();
+        super("GamePanel");
 
         String name = switch (gameMode) {
             case AI_VS_AI -> "AI vs AI";
@@ -27,14 +31,28 @@ public class GamePanel extends MyPanel {
         };
         setName(name);
 
+        restartButton = new JButton("Restart");
         this.gameMode = gameMode;
-
         setBackground(Color.LIGHT_GRAY);
 
     }
 
+    private boolean added = false;
+    @Override
+    public void addNotify() {
+        super.addNotify();
 
-//--DRAW METHODS--------------------------------------------------------------------------------------------------------
+    //--RESTART BUTTON
+        // IF GamePanel is added to an HomePanel
+        if (!added && getParent() instanceof HomePanel){
+            restartButton.addActionListener(new PlayButtonController((HomePanel) getParent()));
+            add(restartButton);
+            added = true;
+        }
+
+    }
+
+    //--DRAW METHODS--------------------------------------------------------------------------------------------------------
     //TODO: implentare per input da mouse quando si gioca come Umano
 
     @Override
@@ -58,7 +76,7 @@ public class GamePanel extends MyPanel {
                 y = startY + i * BOARD_CELL_SIZE;
 
             //--CELL
-                drawCell(g, x, y);
+                drawCell(g, x, y, i, j);
 
             //--FLOOR
                 drawFloor(g, x, y, i, j, board);
@@ -75,10 +93,14 @@ public class GamePanel extends MyPanel {
         }
 
     }
-
-    private void drawCell(Graphics g, int x, int y) {
-        g.setColor(Color.GRAY);
+    private void drawCell(Graphics g, int x, int y, int i, int j) {
+        g.setColor(Color.LIGHT_GRAY);
         g.fill3DRect(x, y, BOARD_CELL_SIZE, BOARD_CELL_SIZE, true);
+
+    //--INVISIBLE BUTTONS FOR MOUSE INPUT
+        if (gameMode != AI_VS_AI){
+            add(new InputButton(x, y, i, j));
+        }
     }
 
 
@@ -88,21 +110,21 @@ public class GamePanel extends MyPanel {
             int offset;
             switch (floor) {
                 case 1 -> {
-                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
+                    drawFloorHeight(g, x, y, 0, Color.GRAY);
                 }
 
                 case 2 -> {
-                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
-                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
+                    drawFloorHeight(g, x, y, 0, Color.GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.DARK_GRAY);
                 }
                 case 3 -> {
-                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
-                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
+                    drawFloorHeight(g, x, y, 0, Color.GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.DARK_GRAY);
                     drawFloorHeight(g, x, y, FLOOR_3_OFFSET, new Color(231, 214, 0));
                 }
                 case 4 -> {
-                    drawFloorHeight(g, x, y, 0, Color.DARK_GRAY);
-                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.GRAY);
+                    drawFloorHeight(g, x, y, 0, Color.GRAY);
+                    drawFloorHeight(g, x, y, FLOOR_2_OFFSET, Color.DARK_GRAY);
                     drawFloorHeight(g, x, y, FLOOR_3_OFFSET, new Color(231, 214, 0));
 
                     // Draw an X on the cell
@@ -140,7 +162,29 @@ public class GamePanel extends MyPanel {
             g.fillRoundRect(x, y, BOARD_CELL_SIZE-offset, BOARD_CELL_SIZE-offset, 10, 10);
     }
 
+    public static class InputButton extends JButton {
+        private final int i,j;
+        InputButton(int x, int y, int i, int j) {
+            super();
+            setBounds(x, y, BOARD_CELL_SIZE, BOARD_CELL_SIZE);
+            this.i = i;
+            this.j = j;
 
+//            setOpaque(false);
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setAction(new InputButtonAction(this));
+
+        }
+
+        int getRow(){
+             return i;
+        }
+
+        int getCol(){
+             return j;
+        }
+    }
 
 
 }

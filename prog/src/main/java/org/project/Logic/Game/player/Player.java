@@ -2,14 +2,16 @@ package org.project.Logic.Game.player;
 
 
 import org.project.Logic.Game.Board;
+import org.project.Logic.Game.player.ai.actionSet;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import static org.project.UI.Settings.BOARD_COLS;
 import static org.project.UI.Settings.BOARD_ROWS;
 
-public abstract class Player {
+public abstract class Player implements Callable<actionSet> {
     protected final int playerCode;
     protected final Color color;
     private static int NEXT_UNIT_CODE = 0;
@@ -20,21 +22,52 @@ public abstract class Player {
     protected final ArrayList<Unit> Units;
 
     protected Player(Color color) {
-        this.playerCode = ++NEXT_PLAYER_CODE;
-        this.color = color;
+        this.playerCode = NEXT_PLAYER_CODE++;
+        this.color = new Color(color.getRGB());
         this.Units = new ArrayList<>();
     }
 
     protected Player(Player player) {
         playerCode = player.playerCode;
-        color = player.color;
+        color = new Color(player.color.getRGB());
         Units = new ArrayList<>();
         for (Unit u : player.Units) {
-            Units.add(new Unit(u.unitCode, u.player, u.coord));
+            Units.add(new Unit(u));
         }
     }
 
     abstract public Player copy();
+
+//--GETTER--------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Get the unit code assigned to the last unit created.
+     * @return
+     */
+    public static int LAST_UNIT_CODE() {
+        return NEXT_UNIT_CODE-1;
+    }
+    /**
+     * Get the minimum value of unit code that can be assigned to a unit.
+     * @return
+     */
+    public static int MIN_UNIT_CODE() {
+        return 0;
+    }
+    /**
+     * Get the player code assigned to the last player created.
+     * @return
+     */
+    public static int LAST_PLAYER_CODE() {
+        return NEXT_PLAYER_CODE-1;
+    }
+    /**
+     * Get the minimum value of player code that can be assigned to a player.
+     * @return
+     */
+    public static int MIN_PLAYER_CODE() {
+        return 0;
+    }
 
     public int getPlayerCode() {
         return playerCode;
@@ -64,7 +97,7 @@ public abstract class Player {
         if (Units.size() > Board.UNIT_PER_PLAYER) {
             throw new IllegalStateException("Player already has the maximum number of units");
         }
-        Units.add(new Unit(++NEXT_UNIT_CODE, this, coord));
+        Units.add(new Unit(NEXT_UNIT_CODE++, this, coord));
 
 
         return NEXT_UNIT_CODE;
@@ -156,8 +189,8 @@ public abstract class Player {
 
     //--CHECK EXEPTION------------------------------------------------------------------------------------------------------
     protected void checkUnitCode(int unitCode) {
-        if (unitCode < 1 || unitCode > NEXT_UNIT_CODE) {
-            throw new IllegalArgumentException("unitCode must be between 1 and " + NEXT_UNIT_CODE);
+        if (unitCode < MIN_UNIT_CODE() || unitCode > LAST_UNIT_CODE()) {
+            throw new IllegalArgumentException("unitCode must be between 1 and " + LAST_UNIT_CODE() + " included");
         }
     }
     protected void checkCoord(Point coord) {

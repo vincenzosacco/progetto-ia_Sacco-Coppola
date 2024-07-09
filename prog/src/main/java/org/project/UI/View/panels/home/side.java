@@ -21,7 +21,7 @@ class side extends JPanel {
 
     //--TAB
         tabbedPane = new JTabbedPane();
-        ai = new TabPanel(title + "_AI");
+        ai = new AiTabPanel(title + "_AI");
         human = new TabPanel(title);
         tabbedPane.addTab("AI", ai);
         tabbedPane.addTab("Umano", human);
@@ -39,11 +39,11 @@ class side extends JPanel {
         private final JTextField nameField;
         private final JButton colorButton;
 
-        private static final Color[] COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE};
+        private static final Color[] COLORS = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE};
         private static int NEXT_COLOR = 0;
 
         TabPanel(String title) {
-            super();
+            super("TabPanel");
             layout = new SpringLayout();
             setLayout(layout);
 
@@ -86,7 +86,7 @@ class side extends JPanel {
         }
     }
 
-    private static class AiTabPanel extends TabPanel{
+      static class AiTabPanel extends TabPanel{
         private final JComboBox<String> strategyBox;
         private final JLabel strategyLabel;
 
@@ -94,7 +94,7 @@ class side extends JPanel {
             super(title);
 
             strategyLabel = new JLabel("Strategia");
-            strategyBox = new JComboBox<String>(FilesFromEncodings.STRATEGIES);
+            strategyBox = new JComboBox<String>(FilesFromEncodings.getStrategies());
 
             JPanel strategy= new JPanel();
             strategy.add(strategyLabel);
@@ -105,6 +105,10 @@ class side extends JPanel {
             // LAYOUT CONSTRAINTS
             layout.putConstraint(SpringLayout.NORTH, strategy, 10, SpringLayout.SOUTH, color);
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, strategy, 0, SpringLayout.HORIZONTAL_CENTER, this);
+        }
+
+        String choosedStrategy(){
+            return (String) strategyBox.getSelectedItem();
         }
 
     }

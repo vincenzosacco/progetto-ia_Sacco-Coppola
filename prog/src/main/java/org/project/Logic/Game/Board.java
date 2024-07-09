@@ -1,5 +1,6 @@
 package org.project.Logic.Game;
 
+import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.player.Player;
 import org.project.Logic.Game.player.Unit;
 import org.project.Logic.embAsp.cell;
@@ -19,8 +20,6 @@ public abstract class Board {
     public static final int N_PLAYERS = 2;
     public static final int UNIT_PER_PLAYER = 1;
 
-//    public static final int BOARD_ROWS = Settings.BOARD_ROWS;
-//    public static final int BOARD_COLS = Settings.BOARD_COLS;
 
     public static final int FLOOR_HEIGHT_0= 0;
     public static final int FLOOR_HEIGHT_1= 1;
@@ -34,7 +33,8 @@ public abstract class Board {
     protected final Player[] players ;
     protected boolean win ;
 
-    //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
+
+//--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
     protected void spawnUnits() {
         Random rand = new Random();
 
@@ -50,6 +50,12 @@ public abstract class Board {
 
     }
 
+    /**
+     * Constructor for the Board class.<p>
+     * Make a copy of the players and initialize the grid.
+     * @param player1
+     * @param player2
+     */
     protected Board(Player player1, Player player2) {
         grid = new int[BOARD_ROWS][BOARD_COLS];
         players = new Player [N_PLAYERS];
@@ -67,7 +73,24 @@ public abstract class Board {
         win=false;
     }
 
+    protected Board(){
+        grid = new int[BOARD_ROWS][BOARD_COLS];
+        players = new Player [N_PLAYERS];
+        win=false;
+    }
+
     public abstract Board copy();
+
+    protected void copyGrid(int[][] grid){
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            this.grid[i] = Arrays.copyOf(grid[i], grid[i].length);
+        }
+    }
+    protected void copyPlayers(Player[] players){
+        this.players[0] = players[0].copy();
+        this.players[1] = players[1].copy();
+    }
+
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
 
     /**
@@ -79,11 +102,6 @@ public abstract class Board {
         return grid;
     }
 
-    protected void setGrid(int[][] grid){
-        for (int i = 0; i < BOARD_ROWS; i++) {
-            this.grid[i] = Arrays.copyOf(grid[i], grid[i].length);
-        }
-    }
 
     public Player[] getPlayers() {
         return players;
@@ -141,6 +159,12 @@ public abstract class Board {
         return unitAt(coord.x,coord.y);
     }
 
+    /**
+     * Get the player code of the cell.
+     * @param x
+     * @param y
+     * @return the player code of the cell, -1 if there is no player
+     */
     public int playerCodeAt(int x, int y){
         for (Player p : players){
             if ( p.isUnit(x,y))
@@ -148,6 +172,22 @@ public abstract class Board {
 
         }
         return cell.PLAYERCODE_NO_PLAYER;
+    }
+
+    /**
+     * Get the player on cell. If there is no player return null.
+     * @param x
+     * @param y
+     * @return
+     */
+     Player playerAt(int x, int y){
+        if (x < 0 || x >= BOARD_ROWS || y < 0 || y >= BOARD_COLS)
+            throw new IllegalArgumentException("Cell out of bounds");
+
+        for (Player p : players)
+            if ( p.isUnit(x,y)) return p;
+
+        return null;
     }
 
     public int heightAt(Point coord){
@@ -193,7 +233,9 @@ public abstract class Board {
 //--ACTIONS-------------------------------------------------------------------------------------------------------------
     public boolean moveUnitSafe(Unit unit, Point coord){
         if (canMove(unit,coord)){
-            if (!players[unit.player().getPlayerCode()].moveUnitSafe(unit,coord))
+            Player p = playerAt(unit.x(), unit.y());
+//            if (p == null) return false;
+            if (! playerAt(unit.x(), unit.y()).moveUnitSafe(unit,coord))
                 throw new RuntimeException("Qualcosa non va ");
 
             //--WIN
@@ -217,7 +259,7 @@ public abstract class Board {
         return moveUnitSafe(unit, new Point(x,y));
     }
 
-    boolean buildFloor(Unit unit, Point coord) {
+    public boolean buildFloor(Unit unit, Point coord) {
         if (canBuild(unit, coord)){
             grid[coord.x][coord.y]++;
             return true;

@@ -2,6 +2,8 @@ package org.project.Logic.embAsp;
 
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
+import org.project.Logic.Game.Board;
+import org.project.Logic.Game.player.Player;
 
 import java.util.Objects;
 
@@ -45,7 +47,7 @@ public class cell {
         return height;
     }
     public void setHeight(int height) {
-        if (height < 0 || height > 4)
+        if (height < Board.FLOOR_START || height > Board.FLOOR_REMOVED)
             throw new IllegalArgumentException("Invalid height, must be between 0 and 4");
         this.height = height;
     }
@@ -53,8 +55,13 @@ public class cell {
     public int getPlayerCode() {
         return playerCode;
     }
+
+    /**
+     * Set the player code of the cell.
+     * @param playerCode the player code of the cell, must be -1 if there is no player
+     */
     public void setPlayerCode(int playerCode) throws IllegalArgumentException {
-        if(playerCode < -1 || playerCode > 1)
+        if(playerCode < -1 || playerCode > Player.LAST_PLAYER_CODE())
             throw new IllegalArgumentException("Invalid player code, must be {-1(No Player),0,1}");
         this.playerCode = playerCode;
     }
