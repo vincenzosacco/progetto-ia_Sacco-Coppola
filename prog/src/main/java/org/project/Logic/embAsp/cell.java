@@ -7,6 +7,11 @@ import org.project.Logic.Game.player.Player;
 
 import java.util.Objects;
 
+/**
+ * The class is used to represent a cell of the board in the ASP logic for EmbASP.
+ * Each cell gives information about the coordinates in the grid, the height of the floor and the {@code playerCode}.
+ * The {@code playerCode} is -1 if there is no player in the cell.
+ */
 @Id("cell") //%cell(X,Y,H,P))
 public class cell {
     @Param(0)

@@ -9,6 +9,7 @@ import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.*;
+import org.project.UI.Model.BoardAivsAi;
 import org.project.UI.Model.GameModel;
 
 import java.awt.*;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 //TODO: IMPLEMENTA CAMBIO STRATEGIA SE GIOCO PER PRIMO O SECONDO. CHI GIOCA PER PRIMA CONVIENE MUOVERSI LONTANO DALL'AVVERSARIO
 
 public class Group1 implements Group {
-    private Board myBoard;
+    private BoardAivsAi myBoard;
     private PlayerAi myPlayer;
     private PlayerAi enemyPlayer;
     private WondevWomanHandler myHandler;
@@ -33,7 +34,7 @@ public class Group1 implements Group {
      * @throws Exception
      */
     public actionSet callEmbAsp(PlayerAi player) throws Exception {
-        myBoard = GameModel.getInstance().getBoard().copy();
+        myBoard = (BoardAivsAi) GameModel.getInstance().getBoard().copy();
 
     //--SET PLAYERS
         for (Player p : myBoard.getPlayers() ){

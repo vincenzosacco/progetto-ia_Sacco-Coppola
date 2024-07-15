@@ -155,7 +155,7 @@ public abstract class Board {
         return null;
     }
 
-    private Unit unitAt(Point coord){
+    public Unit unitAt(Point coord){
         return unitAt(coord.x,coord.y);
     }
 
@@ -200,6 +200,7 @@ public abstract class Board {
 
 
 //--GAME----------------------------------------------------------------------------------------------------------------
+
     int addUnit(int playerCode, Point coord) {
         if(playerCode < 0 || playerCode > N_PLAYERS-1){
             throw new IllegalArgumentException("playerCode must be between 0 and " + (N_PLAYERS-1));
@@ -218,20 +219,16 @@ public abstract class Board {
 
     }
 
-    public int addUnit(char symbol, int x, int y) {
-        return addUnit(symbol, new Point(x,y));
 
-    }
 
+//--ACTIONS-------------------------------------------------------------------------------------------------------------
     /**
      * Move a unit to a new position. <p>
      * @param unit
      * @param coord
      * @return
      */
-
-//--ACTIONS-------------------------------------------------------------------------------------------------------------
-    public boolean moveUnitSafe(Unit unit, Point coord){
+     protected boolean moveUnitSafe(Unit unit, Point coord){
         if (canMove(unit,coord)){
             Player p = playerAt(unit.x(), unit.y());
 //            if (p == null) return false;
@@ -255,20 +252,38 @@ public abstract class Board {
      * @param y
      * @return
      */
-    boolean moveUnitSafe(Unit unit, int x, int y){
+    protected boolean moveUnitSafe(Unit unit, int x, int y){
         return moveUnitSafe(unit, new Point(x,y));
     }
 
-    public boolean buildFloor(Unit unit, Point coord) {
+    /**
+     * Build a floor on a cell. <p>
+     * Cells at height 4 are considered removed from game.
+     * @param unit
+     * @param coord
+     * @return
+     */
+    protected boolean buildFloor(Unit unit, Point coord) {
         if (canBuild(unit, coord)){
             grid[coord.x][coord.y]++;
             return true;
         }
         return false;
-
     }
 
-     boolean canMove(Point unitCoord, Point toMove){
+    /**
+     * Build a floor on a cell. <p>
+     * Cells at height 4 are considered removed from game.
+     * @param unit
+     * @param x
+     * @param y
+     * @return
+     */
+    protected boolean buildFloor(Unit unit, int x, int y) {
+        return buildFloor(unit, new Point(x,y));
+    }
+
+     public boolean canMove(Point unitCoord, Point toMove){
 //    The unit may only move on the same level, step up one level or step down any number of levels.
 //    After every movement, the unit must be able to build onto an adjacent cell of its new position.
 //    This causes the cell in question to gain 1 unit of height.
@@ -286,7 +301,7 @@ public abstract class Board {
         return true;
 
     }
-    boolean canMove(Unit unit, Point coord){
+    public boolean canMove(Unit unit, Point coord){
         return canMove(unit.coord(),coord);
     }
 
@@ -329,10 +344,10 @@ public abstract class Board {
     }
 
 
-    private boolean canBuild(Point unitCoord, Point toBuild){
+    public boolean canBuild(Point unitCoord, Point toBuild){
         return canMethods(unitCoord,toBuild);
     }
-    boolean canBuild(Unit unit , Point coord) {
+    public boolean canBuild(Unit unit , Point coord) {
         return canBuild(unit.coord(),coord);
     }
 
@@ -346,7 +361,7 @@ public abstract class Board {
      * @param unitCoord the cell where the unit is
      * @return
      */
-    ArrayList<Point> moveableArea(Point unitCoord){
+    public ArrayList<Point> moveableArea(Point unitCoord){
         ArrayList<Point> area = new ArrayList<>(8);
         initArea(area,unitCoord);
         area.removeIf(toMove -> ! canMove(unitCoord,toMove));
@@ -370,7 +385,7 @@ public abstract class Board {
      * @param unitCoord the cell where the unit is
      * @return
      */
-    ArrayList<Point> buildableArea(Point unitCoord){
+    public ArrayList<Point> buildableArea(Point unitCoord){
         ArrayList<Point> area = new ArrayList<>(8);
         initArea(area,unitCoord);
         area.removeIf(toBuild -> ! canBuild(unitCoord,toBuild));

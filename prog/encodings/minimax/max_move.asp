@@ -38,8 +38,8 @@ moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y,_).
 %3
 %
 % avoid moving on lower cell
-:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy  . [1@9]
-:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-1. [2@9]
 :~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-2. [3@9]
+:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-1. [2@9]
+:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy  . [1@9]
 
 

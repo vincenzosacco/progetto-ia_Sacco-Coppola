@@ -1,16 +1,12 @@
 package org.project.UI.Model;
 
 
-import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.Board;
 import org.project.Logic.Game.player.Player;
 import org.project.Logic.Game.player.ai.NullAction;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.Game.player.human.PlayerManual;
-import org.project.Logic.embAsp.cell;
-
-import java.util.ArrayList;
 
 /**
  * Singleton class used to manage the model of the game.
@@ -25,7 +21,7 @@ public class GameModel {
 
 
     private GameModel() {
-        gridState= new ASPInputProgram();
+//        gridState= new ASPInputProgram();
     }
 
     public static GameModel getInstance() {
@@ -54,7 +50,6 @@ public class GameModel {
             throw new RuntimeException("To implement");
         }
 
-        refreshGridState();
     }
 
 //--GAME METHODS--------------------------------------------------------------------------------------------------------
@@ -69,7 +64,12 @@ public class GameModel {
 
         System.out.print( action.display());
 
-        //--MOVE AND BUILD
+    //--MOVE AND BUILD
+        Class<? extends Board> boardClass = board.getClass();
+        if (! boardClass.equals(BoardAivsAi.class))
+            throw new RuntimeException("To implement");
+
+        BoardAivsAi board = (BoardAivsAi) this.board;
         if(! board.moveUnitSafe(action.unit(), action.move())) {
             throw new RuntimeException("Invalid move " + action.move() + " for unit " + action.unit().unitCode());
 
@@ -83,34 +83,10 @@ public class GameModel {
             System.out.println("\nPLAYER "+ action.unit().player().getPlayerCode() + " WINS!");
             return;
         }
-
-        //--REFRESH GRID STATE
-        refreshGridState();
     }
 
     
 
-//--EMBASP--------------------------------------------------------------------------------------------------------------
-    private final ASPInputProgram gridState;
-
-    private synchronized void refreshGridState() throws Exception {
-        ArrayList<cell> cells = new ArrayList<>();
-        int [][] grid = board.getGrid();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                cells.add((new cell(i, j, grid[i][j], board.playerCodeAt(i, j))));
-            }
-        }
-
-        gridState.clearAll();
-        for (cell c : cells) {
-            gridState.addObjectInput(c);
-         }
-    }
-
-    public ASPInputProgram getGridState() throws Exception {
-        return new ASPInputProgram(gridState);
-    }
 
 
 }
