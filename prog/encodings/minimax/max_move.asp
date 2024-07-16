@@ -9,7 +9,7 @@
 % moveCell(X,Y,H). --> cell where I can move unit 
 % enemyMoveCell(X,Y,H,U).
 
-offset(-1..1).
+% offset(-1..1).
 
 
 %%AUXILIARY

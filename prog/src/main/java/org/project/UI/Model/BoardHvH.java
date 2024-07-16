@@ -18,7 +18,7 @@ public class BoardHvH extends Board {
     }
 
     @Override
-    public Board copy() {
+    public BoardHvH copy() {
         BoardHvH newBoard = new BoardHvH();
         newBoard.copyGrid(grid);
         newBoard.copyPlayers(players);

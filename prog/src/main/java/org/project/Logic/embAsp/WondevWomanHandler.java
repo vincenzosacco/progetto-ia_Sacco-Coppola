@@ -8,7 +8,7 @@ public class WondevWomanHandler extends MyHandler{
     public WondevWomanHandler(){
         super();
         try {
-            mapToEmb(cell.class);
+            mapToEmb(cell.class);;
             mapToEmb(buildIn.class);
             mapToEmb(moveIn.class);
         } catch (ObjectNotValidException | IllegalAnnotationException e) {

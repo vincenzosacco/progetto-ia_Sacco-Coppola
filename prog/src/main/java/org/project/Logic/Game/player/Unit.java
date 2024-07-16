@@ -20,7 +20,7 @@ public class Unit {
      * @param player {@link Player} of the unit.
      * @param coord {@link Point} of the unit.
      */
-    public Unit(int unitCode, Player player, Point coord) {
+     Unit(int unitCode, Player player, Point coord) {
         this.unitCode = unitCode;
         this.player = player.copy();
         this.coord = new Point(coord);
@@ -30,10 +30,14 @@ public class Unit {
      * Constructor by copy.<p></p> Makes a copy of the unit.
       * @param unit {@link Unit} to be copied.
      */
-    public Unit(Unit unit) {
+    Unit(Unit unit) {
         this(unit.unitCode, unit.player, unit.coord);
     }
 
+    public Unit copy() {
+        return new Unit(this);
+    }
+//---------------------------------------------------------------------------------------------------------------------
 
     public int unitCode() {
         return unitCode;

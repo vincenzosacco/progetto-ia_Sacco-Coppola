@@ -1,4 +1,4 @@
-#show buildIn/2.
+#show buildIn/3.
 
 % --BUILD----------------------------------------------------------------------------
 
@@ -16,11 +16,11 @@ enemyUnit(X,Y,H,U):- unit(X,Y,H,U,Penemy), player(P), Penemy<>P.
 
 
 % GUESS
-buildIn(X,Y) | buildOut(X,Y) :- buildCell(X,Y,_).
+buildIn(X,Y,H) | buildOut(X,Y) :- buildCell(X,Y,H1), H=H1+1.
 
 % CHECK
 % can build on only one cell
-:- #count{X,Y : buildIn(X,Y)} <> 1.
+:- #count{X,Y : buildIn(X,Y,_)} <> 1.
 
 % WEAK -10 
 
@@ -28,34 +28,34 @@ buildIn(X,Y) | buildOut(X,Y) :- buildCell(X,Y,_).
 %0
 %
 % need this to always get an optimal answerset
-:~ buildIn(X,Y). [0@10]
+:~ buildIn(X,Y,H). [0@10]
 
 %
 %1
 %
 % prefer build (height 4) on a buildable height 3 cell near the enemy
-:~ not buildIn(X,Y), buildCell(X,Y,3), enemyMoveCell(X,Y,3,_). [1@9, X,Y] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
+:~ not buildIn(X,Y,3), enemyMoveCell(X,Y,3,_). [1@9, X,Y] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
 
 %
 %2
 %
 % avoid enemy climbing
-:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=1. [3@7] 
-:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=0. [2@7] 
-:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=2. [1@7] 
+:~ buildIn(X,Y,H),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=1. [3@7] 
+:~ buildIn(X,Y,H),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=0. [2@7] 
+:~ buildIn(X,Y,H),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=2. [1@7] 
 
 %
 %3
 %
 % avoid build height 4 near myUnit 
-:~ buildIn(X,Y), buildCell(X,Y,3). [1@8] 
+:~ buildIn(X,Y,H), H=3. [1@8] 
 
 %
 %4
 %
 % prefer myUnit climbing
-:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z=0. [1@6]
-:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z>1. [Z@6]
+:~ buildIn(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z=0. [1@6]
+:~ buildIn(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z>1. [Z@6]
 
 
 

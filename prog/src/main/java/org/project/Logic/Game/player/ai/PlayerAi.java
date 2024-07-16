@@ -12,10 +12,6 @@ import java.util.Objects;
 public class PlayerAi extends Player {
     private final Group myGroup;
 
-
-
-
-
     public PlayerAi(Color color, String strategy) {
         super(color);
         myGroup = FilesFromEncodings.getGroupFromStrategy(strategy);

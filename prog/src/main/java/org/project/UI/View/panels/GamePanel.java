@@ -38,6 +38,9 @@ public class GamePanel extends MyPanel {
     }
 
     private boolean added = false;
+
+
+
     @Override
     public void addNotify() {
         super.addNotify();

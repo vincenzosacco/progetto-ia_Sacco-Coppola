@@ -1,7 +1,6 @@
 package org.project.Logic.embAsp.gruppo_1;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
-import org.project.Logic.Game.Board;
 import org.project.Logic.Game.player.Player;
 import org.project.Logic.Game.player.Unit;
 import org.project.Logic.Game.player.ai.NullAction;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 //TODO: IMPLEMENTA CAMBIO STRATEGIA SE GIOCO PER PRIMO O SECONDO. CHI GIOCA PER PRIMA CONVIENE MUOVERSI LONTANO DALL'AVVERSARIO
 
 public class Group1 implements Group {
-    private BoardAivsAi myBoard;
+    private BoardAivsAi.BoardCopy myBoard;
     private PlayerAi myPlayer;
     private PlayerAi enemyPlayer;
     private WondevWomanHandler myHandler;
@@ -34,7 +33,7 @@ public class Group1 implements Group {
      * @throws Exception
      */
     public actionSet callEmbAsp(PlayerAi player) throws Exception {
-        myBoard = (BoardAivsAi) GameModel.getInstance().getBoard().copy();
+        myBoard = ((BoardAivsAi) GameModel.getInstance().getBoard()).copy();
 
     //--SET PLAYERS
         for (Player p : myBoard.getPlayers() ){
@@ -61,7 +60,7 @@ public class Group1 implements Group {
             return new NullAction(myUnit);
         //MOVE IN BOARD
         if (! myBoard.moveUnitSafe(myUnit, move))
-            throw new RuntimeException("SOMETHING WRONG, CANNOT MOVE unit "+myUnit.unitCode()+" IN GROUP. "+
+            throw new RuntimeException("SOMETHING WRONG, CANNOT MOVE unit "+ myUnit.unitCode()+" IN GROUP. "+
                     "("+myUnit.coord().x+","+myUnit.coord().y+")"+
                     "-->"+ "("+move.x +","+ move.y+")");
 

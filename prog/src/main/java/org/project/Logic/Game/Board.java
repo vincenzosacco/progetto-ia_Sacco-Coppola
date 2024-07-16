@@ -3,13 +3,14 @@ package org.project.Logic.Game;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.player.Player;
 import org.project.Logic.Game.player.Unit;
-import org.project.Logic.embAsp.cell;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import static org.project.Logic.embAsp.cell.PLAYERCODE_NO_PLAYER;
+import static org.project.Logic.embAsp.minimax.cell.UNITCODE_NO_UNIT;
 import static org.project.UI.Settings.BOARD_COLS;
 import static org.project.UI.Settings.BOARD_ROWS;
 
@@ -79,7 +80,7 @@ public abstract class Board {
         win=false;
     }
 
-    public abstract Board copy();
+    protected abstract Board copy();
 
     protected void copyGrid(int[][] grid){
         for (int i = 0; i < BOARD_ROWS; i++) {
@@ -155,8 +156,23 @@ public abstract class Board {
         return null;
     }
 
+    /**
+     * Check if the cell is occupied by a unit.
+     * @param coord
+     * @return {@code Unit} if the cell is occupied, {@code null} otherwise
+     */
     public Unit unitAt(Point coord){
         return unitAt(coord.x,coord.y);
+    }
+
+    public int unitCodeAt(int x, int y){
+        for (Player p : players){
+             Unit u = p.unitAt(x,y);
+            if ( u != null)
+                return u.unitCode();
+        }
+
+        return UNITCODE_NO_UNIT;
     }
 
     /**
@@ -171,7 +187,7 @@ public abstract class Board {
                 return p.getPlayerCode();
 
         }
-        return cell.PLAYERCODE_NO_PLAYER;
+        return PLAYERCODE_NO_PLAYER;
     }
 
     /**
@@ -197,7 +213,10 @@ public abstract class Board {
     public int heightAt(int x, int y){
         return grid[x][y];
     }
-
+//--EMBASP--------------------------------------------------------------------------------------------------------------
+    public ASPInputProgram getGridState(){
+         throw new RuntimeException("To implement");
+    }
 
 //--GAME----------------------------------------------------------------------------------------------------------------
 
@@ -222,17 +241,32 @@ public abstract class Board {
 
 
 //--ACTIONS-------------------------------------------------------------------------------------------------------------
+protected boolean _moveUnitSafe(int unitCode, Point coord){
+        Unit toMove = null;
+        for (Player p : players) {
+            toMove = p.getUnit(unitCode);
+            if (toMove != null) break;
+        }
+
+        if (toMove == null) throw new IllegalArgumentException("Unit not found");
+        return _moveUnitSafe(toMove,coord);
+
+    }
+
     /**
      * Move a unit to a new position. <p>
      * @param unit
      * @param coord
      * @return
      */
-     protected boolean moveUnitSafe(Unit unit, Point coord){
-        if (canMove(unit,coord)){
+    protected boolean _moveUnitSafe(Unit unit, Point coord){
+         if (unit == null || !isOccupied(unit.coord())) throw new IllegalArgumentException("Unit not found");
+
+         if (canMove(unit,coord)){
             Player p = playerAt(unit.x(), unit.y());
-//            if (p == null) return false;
-            if (! playerAt(unit.x(), unit.y()).moveUnitSafe(unit,coord))
+            if (p == null) return false;
+
+            if (! p.moveUnitSafe(unit,coord))
                 throw new RuntimeException("Qualcosa non va ");
 
             //--WIN
@@ -252,8 +286,26 @@ public abstract class Board {
      * @param y
      * @return
      */
-    protected boolean moveUnitSafe(Unit unit, int x, int y){
-        return moveUnitSafe(unit, new Point(x,y));
+     boolean _moveUnitSafe(Unit unit, int x, int y){
+        return _moveUnitSafe(unit, new Point(x,y));
+    }
+
+    /**
+     * Build a floor on a cell. <p>
+     * Cells at height 4 are considered removed from game.
+     * @param unitCode
+     * @param coord
+     * @return
+     */
+    protected boolean _buildFloorSafe(int unitCode, Point coord){
+        Unit unit = null;
+        for (Player p : players) {
+            unit = p.getUnit(unitCode);
+            if (unit != null) break;
+        }
+
+        if (unit == null) throw new IllegalArgumentException("Unit not found");
+        return _buildFloorSafe(unit,coord);
     }
 
     /**
@@ -263,7 +315,9 @@ public abstract class Board {
      * @param coord
      * @return
      */
-    protected boolean buildFloor(Unit unit, Point coord) {
+    protected boolean _buildFloorSafe(Unit unit, Point coord) {
+        if (unit == null || !isOccupied(unit.coord())) throw new IllegalArgumentException("Unit not found");
+
         if (canBuild(unit, coord)){
             grid[coord.x][coord.y]++;
             return true;
@@ -279,11 +333,11 @@ public abstract class Board {
      * @param y
      * @return
      */
-    protected boolean buildFloor(Unit unit, int x, int y) {
-        return buildFloor(unit, new Point(x,y));
+    boolean _buildFloorSafe(Unit unit, int x, int y) {
+        return _buildFloorSafe(unit, new Point(x,y));
     }
 
-     public boolean canMove(Point unitCoord, Point toMove){
+    public boolean canMove(Point unitCoord, Point toMove){
 //    The unit may only move on the same level, step up one level or step down any number of levels.
 //    After every movement, the unit must be able to build onto an adjacent cell of its new position.
 //    This causes the cell in question to gain 1 unit of height.
@@ -354,8 +408,19 @@ public abstract class Board {
 
 
 
-//--EMBASP
+//--EMBASP--------------------------------------------------------------------------------------------------------------
 
+    public ArrayList<Point> moveableArea(int unitCode){
+        Unit unit = null;
+        for (Player p : players) {
+            unit = p.getUnit(unitCode);
+            if (unit != null) break;
+        }
+
+        if (unit == null) throw new IllegalArgumentException("Unit not found");
+        return moveableArea(unit);
+
+    }
     /**
      * Get the area around a cell where a unit can legally move. <p>
      * @param unitCoord the cell where the unit is
@@ -365,7 +430,6 @@ public abstract class Board {
         ArrayList<Point> area = new ArrayList<>(8);
         initArea(area,unitCoord);
         area.removeIf(toMove -> ! canMove(unitCoord,toMove));
-
 
         return area;
     }

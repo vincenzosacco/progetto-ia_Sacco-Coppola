@@ -3,20 +3,24 @@ package org.project.Logic.embAsp;
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
 
+import java.awt.*;
 import java.util.Objects;
 
-@Id("moveIn") //moveIn(x,y)
+@Id("moveIn") //moveIn(X,Y,H)
 public class moveIn {
     @Param(0)
     private int x;
     @Param(1)
     private int y;
+    @Param(2)
+    private int height;
 
     public moveIn() {
     }
-    public moveIn(int x, int y) {
+    public moveIn(int x, int y, int height) {
         this.x = x;
         this.y = y;
+        this.height = height;
     }
 
     public int getX() {
@@ -33,6 +37,17 @@ public class moveIn {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public Point getCoord() {
+        return new Point(x, y);
     }
 
     @Override
@@ -53,6 +68,11 @@ public class moveIn {
         return " moveIn(" +
                 x +
                 "," + y +
+                "," + height +
                 ") ";
+    }
+
+    public boolean isInvalid() {
+        return x == -1 && y == -1 && height == -1;
     }
 }

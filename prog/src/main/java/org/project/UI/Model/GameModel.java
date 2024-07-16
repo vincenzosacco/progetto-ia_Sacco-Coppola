@@ -74,7 +74,7 @@ public class GameModel {
             throw new RuntimeException("Invalid move " + action.move() + " for unit " + action.unit().unitCode());
 
         }
-        if (! board.buildFloor(action.unit(),action.build()))
+        if (! board.buildFloorSafe(action.unit(),action.build()))
             throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unit().unitCode());
 
 

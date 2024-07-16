@@ -51,6 +51,7 @@ public class actionSet {
         this.build = build;
     }
 
+
 //
 //    public static actionSet newNullAction(actionSet a){
 ////        return new actionSet()
@@ -75,6 +76,7 @@ public class actionSet {
 
 
 //--UTILITY-------------------------------------------------------------------------------------------------------------
+
     public String display() {
         return "\nPlayer " + unit.player().getPlayerCode() + " moves unit "+ unit.unitCode()+  " to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
     }

@@ -16,7 +16,7 @@ public abstract class Player implements Callable<actionSet> {
     protected final Color color;
     private static int NEXT_UNIT_CODE = 0;
     private static int NEXT_PLAYER_CODE = 0;
-    
+
 
 //    public record unit(int unitCode, int playerCode, Point coord){ };
     protected final ArrayList<Unit> Units;
@@ -124,17 +124,37 @@ public abstract class Player implements Callable<actionSet> {
         return isUnit(new Point(x, y));
     }
 
-    public boolean containsUnit(Unit unit) {
-        checkUnitCode(unit.unitCode);
+    public Unit getUnit(int unitCode) {
+        checkUnitCode(unitCode);
 
         for (Unit u : Units) {
-            if (u.unitCode == unit.unitCode) {
+            if (u.unitCode == unitCode) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public boolean containsUnit(Unit unit) {
+        return Units.contains(unit);
+    }
+
+    public boolean containsUnit(int unitCode) {
+        checkUnitCode(unitCode);
+
+        for (Unit u : Units) {
+            if (u.unitCode == unitCode) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * Get the unit at the given coordinates.
+     * @param coord
+     * @return the unit at the given coordinates, or {@code null} if there is no unit at the given coordinates
+     */
     public Unit unitAt(Point coord) {
         checkCoord(coord);
         for (Unit unit : Units) {
