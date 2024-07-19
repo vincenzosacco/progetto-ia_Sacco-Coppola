@@ -1,6 +1,6 @@
 package org.project.Logic.Game.player.human;
 
-import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.Player;
 import org.project.Logic.Game.player.ai.actionSet;
 
 import java.awt.*;

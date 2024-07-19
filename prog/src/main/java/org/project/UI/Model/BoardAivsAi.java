@@ -2,13 +2,12 @@ package org.project.UI.Model;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.Board;
-import org.project.Logic.Game.player.Unit;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.MyHandler;
-import org.project.Logic.embAsp.minimax.cell;
+import org.project.Logic.embAsp.cell;
 
-import java.awt.*;
+import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.project.UI.Settings.BOARD_COLS;
@@ -23,6 +22,15 @@ public class BoardAivsAi extends Board {
     private final ASPInputProgram gridState;
 
 //--CONSTRUCTORS---------------------------------------------------------------------------------------------------------
+    private void initGridState() throws Exception {
+        gridState.clearAll();
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_COLS; j++) {
+                gridState.addObjectInput(grid[i][j]);
+            }
+        }
+    }
+
     /**
      * Constructor for the class BoardAivsAi.
      * Makes a copy of the players and initializes the grid.
@@ -31,7 +39,7 @@ public class BoardAivsAi extends Board {
     BoardAivsAi(PlayerAi[] players) throws Exception {
         super(players[0], players[1]);
         gridState= new ASPInputProgram();
-        refreshGridState();
+        initGridState();
     }
 
     /**
@@ -43,133 +51,53 @@ public class BoardAivsAi extends Board {
     BoardAivsAi(PlayerAi player1, PlayerAi player2) throws Exception {
         super(player1, player2);
         gridState= new ASPInputProgram();
-        refreshGridState();
+        initGridState();
     }
 
-    private BoardAivsAi() {
-        super();
+    protected BoardAivsAi(BoardAivsAi board) throws Exception {
+        super(board);
         gridState= new ASPInputProgram();
+        initGridState();
     }
 
     @Override
     public BoardCopy copy() {
-        BoardCopy newBoard = new BoardCopy();
-        newBoard.copyGrid(grid);
-        newBoard.copyPlayers(players);
-        newBoard.win = win;
-
+        BoardCopy newBoard = null;
         try {
-            newBoard.refreshGridState();
+            newBoard = new BoardCopy(this);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return newBoard;
     }
 
-//--GETTERS-------------------------------------------------------------------------------------------------------------
+//--EMBASP--------------------------------------------------------------------------------------------------------------
     /**
      * Get the current state of the board.<p>
      * Each cell is represented by a {@link cell }object.
      * @return the gridState.
      */
-    public ASPInputProgram getGridState() {
-        return gridState;
-    }
-
-//--EMBASP--------------------------------------------------------------------------------------------------------------
-    void refreshGridState() throws Exception {
+    public ASPInputProgram getGridState() throws Exception {
+        //REFRESH
         gridState.clearAll();
         for (int i = 0; i < BOARD_ROWS; i++) {
             for (int j = 0; j < BOARD_COLS; j++) {
-                gridState.addObjectInput((new cell(i, j, grid[i][j], unitCodeAt(i, j))));
+                gridState.addObjectInput(grid[i][j]); //TODO: riferimento o copia??
             }
         }
+
+        return gridState;
     }
 
 //--GAME METHODS--------------------------------------------------------------------------------------------------------
     boolean moveUnitSafe(int unitCode, Point coord) {
-        boolean toReturn = super._moveUnitSafe(unitCode, coord);
-        if (toReturn) {
-            try {
-                refreshGridState();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return toReturn;
+        return super._moveUnitSafe(unitCode, coord);
     }
 
-    /**
-     * Move a unit to a new cell. If the move is not possible, the unit will not move.
-     * After the move, the {@code ASPInputProgram gridState } is refreshed.
-     * @param unit {@link Unit} to move.
-     * @param coord {@link Point} where to move the unit.
-     * @return true if the unit is moved, false otherwise.
-     */
-    boolean moveUnitSafe(Unit unit, Point coord) {
-        boolean toReturn = super._moveUnitSafe(unit, coord);
-        if (toReturn) {
-            try {
-                refreshGridState();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return toReturn;
-    }
-
-    /**
-     * Move a unit to a new cell. If the move is not possible, the unit will not move.
-     * @param unit {@link Unit} to move.
-     * @param x coordinate where to move the unit.
-     * @param y coordinate where to move the unit.
-     * @return true if the unit is moved, false otherwise.
-     */
-     boolean moveUnitSafe(Unit unit, int x, int y) {
-        return moveUnitSafe(unit, new Point(x,y));
-    }
-
-    /**
-     * Build a floor in a cell. If the build is not possible, the floor will not be built.
-     * After the build, the {@code ASPInputProgram gridState } is refreshed.
-     * @param unit {@link Unit} that builds the floor.
-     * @param coord {@link Point} where to build the floor.
-     * @return true if the floor is built, false otherwise.
-     */
-    boolean buildFloorSafe(Unit unit, Point coord) {
-        boolean toReturn = super._buildFloorSafe(unit, coord);
-        if (toReturn) {
-            try {
-                refreshGridState();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return toReturn;
-    }
-
-    /**
-     * Build a floor in a cell. If the build is not possible, the floor will not be built.
-     * @param unit {@link Unit} that builds the floor.
-     * @param x coordinate where to build the floor.
-     * @param y coordinate where to build the floor.
-     * @return true if the floor is built, false otherwise.
-     */
-    boolean buildFloorSafe(Unit unit, int x, int y) {
-        return buildFloorSafe(unit, new Point(x,y));
-    }
 
     boolean buildFloorSafe(int unitCode, Point coord) {
-        boolean toReturn =  super._buildFloorSafe(unitCode, coord);
-        if (toReturn) {
-            try {
-                refreshGridState();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return toReturn;
+        return super._buildFloorSafe(unitCode, coord);
     }
 
 
@@ -181,11 +109,12 @@ public class BoardAivsAi extends Board {
     public static class BoardCopy extends BoardAivsAi{
         private final MyHandler parser;
 
-        BoardCopy() {
-            super();
+        BoardCopy(BoardAivsAi board) throws Exception {
+            super(board);
             parser = new MyHandler();
             parser.addEncodingPath(LogicSettings.PATH_ENCOD_PARSER);
         }
+
 
         public void setBoardFromGridState(ASPInputProgram gridState) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
 //            parser.setFactProgram(gridState);
@@ -210,25 +139,6 @@ public class BoardAivsAi extends Board {
             return super.moveUnitSafe(unitCode, coord);
         }
 
-        @Override
-        public boolean moveUnitSafe(Unit unit, Point coord) {
-            return super.moveUnitSafe(unit, coord);
-        }
-
-        @Override
-        public boolean moveUnitSafe(Unit unit, int x, int y) {
-            return super.moveUnitSafe(unit, x, y);
-        }
-
-        @Override
-        public boolean buildFloorSafe(Unit unit, Point coord) {
-            return super.buildFloorSafe(unit, coord);
-        }
-
-        @Override
-        public boolean buildFloorSafe(Unit unit, int x, int y) {
-            return super.buildFloorSafe(unit, x, y);
-        }
 
         @Override
         public boolean buildFloorSafe(int unitCode, Point coord) {

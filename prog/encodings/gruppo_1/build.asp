@@ -3,16 +3,14 @@
 % --BUILD----------------------------------------------------------------------------
 
 %%FACTS
-% cell(X,Y,H,P). --> a cell of the grid --> X,Y are the coordinates of the cell, H is the height of the cell, P is the player code that is in the cell (-1 if no player)
-% unit(X,Y,H,U,P). --> represent a unit. X,Y coordinates |H height |U unitCode | P playerCode
+% cell(X,Y,H,U). --> a cell of the grid --> X,Y are the coordinates of the cell, H is the height of the cell, U is the unitCode of the unit on the cell (-1 if no unit)
 % choosedUnit(U). --> in case of 2 units per player.
 % buildCell(X,Y,H). --> cell where I can build
 % enemyMoveCell(X,Y,H,U).
 
 % AUXILIARY
-myUnit(X,Y,H,U):- unit(X,Y,H,U,_), choosedUnit(U). 
-friendUnit(X,Y,H,U):- unit(X,Y,H,U,P), player(P).
-enemyUnit(X,Y,H,U):- unit(X,Y,H,U,Penemy), player(P), Penemy<>P.
+myUnit(X,Y,H,U):- cell(X,Y,H,U), choosedUnit(U). 
+enemyUnit(X,Y,H,U):- cell(X,Y,H,U), myUnit(_,_,_,Umy), U<>Umy.
 
 
 % GUESS

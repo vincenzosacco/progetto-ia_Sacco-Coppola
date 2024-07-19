@@ -1,6 +1,6 @@
 package org.project.UI.View.panels.home;
 
-import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.Player;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.human.PlayerManual;
 import org.project.UI.View.panels.MyPanel;

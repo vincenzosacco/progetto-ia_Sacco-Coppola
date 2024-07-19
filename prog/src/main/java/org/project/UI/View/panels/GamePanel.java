@@ -1,6 +1,7 @@
 package org.project.UI.View.panels;
 import org.project.Logic.Game.Board;
-import org.project.Logic.Game.player.Unit;
+import org.project.Logic.Game.Player;
+import org.project.Logic.Game.Unit;
 import org.project.UI.Controller.InputButtonAction;
 import org.project.UI.Controller.home.PlayButtonController;
 import org.project.UI.Model.GameModel;
@@ -68,15 +69,21 @@ public class GamePanel extends MyPanel {
 
     // Ogni chiamata disegna da capo ogni cella, non è efficiente ma per ora va bene
     private void drawBoard(Graphics g) {
-        int startX = (getWidth() - BOARD_WIDTH) / 2;
-        int startY = (getHeight() - BOARD_HEIGHT) / 2;
+        int startX = (getWidth() - BOARD_WIDTH) / 2; // the x coordinate of the top left corner of the board
+        int startY = (getHeight() - BOARD_HEIGHT) / 2; // the y coordinate of the top left corner of the board
         Board board = GameModel.getInstance().getBoard();
 
         int x, y;
         for (int i = 0; i < BOARD_ROWS; i++) {
             for (int j = 0; j < BOARD_COLS; j++) {
-                x = startX + j * BOARD_CELL_SIZE;
-                y = startY + i * BOARD_CELL_SIZE;
+                // need to invert the coordinates to map the grid coordinates(i,j) to the screen coordinates(x,y).
+                // For a good explanation you can ask ChatGPT :
+                // "Can you explain why logical grid coordinates are represented as (row, column)
+                // while graphical coordinates are represented as (x, y), and how to correctly map these logical coordinates
+                // to graphical coordinates?"
+                x = startX + (j * BOARD_CELL_SIZE); // the x coordinate of the top left corner of the cell
+                y = startY + (i * BOARD_CELL_SIZE); // the y coordinate of the top left corner of the cell
+
 
             //--CELL
                 drawCell(g, x, y, i, j);
@@ -88,12 +95,16 @@ public class GamePanel extends MyPanel {
         }
 
     //--UNIT
-        for (Unit unit : board.getUnits()) {
-            g.setColor(unit.player().getColor());
-            x = (startX + unit.coord().y * BOARD_CELL_SIZE ) + UNIT_OFFSET/2;
-            y = (startY + unit.coord().x * BOARD_CELL_SIZE) + UNIT_OFFSET/2;
-            g.fillOval(x, y, BOARD_CELL_SIZE - UNIT_OFFSET , BOARD_CELL_SIZE - UNIT_OFFSET );
+        for (Player p : board.getPlayers()) {
+            g.setColor(p.getColor());
+            for (Unit u : p.getUnits()) {
+                x = (startX + u.j() * BOARD_CELL_SIZE ) + UNIT_OFFSET/2; // the x coordinate of the top left corner of the unit; UNIT_OFFSET/2 is the offset to center the unit
+                y = (startY + u.i() * BOARD_CELL_SIZE ) + UNIT_OFFSET/2; // the y coordinate of the top left corner of the unit; UNIT_OFFSET/2 is the offset to center the unit
+                g.fillOval(x, y, BOARD_CELL_SIZE - UNIT_OFFSET , BOARD_CELL_SIZE - UNIT_OFFSET );
+            }
+
         }
+
 
     }
     private void drawCell(Graphics g, int x, int y, int i, int j) {
@@ -110,7 +121,6 @@ public class GamePanel extends MyPanel {
     private void drawFloor(Graphics g, int x, int y, int i, int j,  Board board) {
         int floor = board.heightAt(i, j);
         if (floor > 0) {
-            int offset;
             switch (floor) {
                 case 1 -> {
                     drawFloorHeight(g, x, y, 0, Color.GRAY);

@@ -13,17 +13,10 @@ public class BoardHvH extends Board {
         super(players[0], players[1]);
     }
 
-    private BoardHvH(){
-        super();
-    }
 
     @Override
-    public BoardHvH copy() {
-        BoardHvH newBoard = new BoardHvH();
-        newBoard.copyGrid(grid);
-        newBoard.copyPlayers(players);
-        newBoard.win = win;
-        return newBoard;
+    protected Board copy() {
+        throw new RuntimeException("Not implemented");
     }
 }
 

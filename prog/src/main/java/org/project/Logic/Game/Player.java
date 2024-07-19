@@ -1,7 +1,6 @@
-package org.project.Logic.Game.player;
+package org.project.Logic.Game;
 
 
-import org.project.Logic.Game.Board;
 import org.project.Logic.Game.player.ai.actionSet;
 
 import java.awt.*;
@@ -14,15 +13,12 @@ import static org.project.UI.Settings.BOARD_ROWS;
 public abstract class Player implements Callable<actionSet> {
     protected final int playerCode;
     protected final Color color;
-    private static int NEXT_UNIT_CODE = 0;
-    private static int NEXT_PLAYER_CODE = 0;
-
-
-//    public record unit(int unitCode, int playerCode, Point coord){ };
+    private static int NEXT_UNIT_CODE = -1;
+    private static int NEXT_PLAYER_CODE = -1;
     protected final ArrayList<Unit> Units;
 
     protected Player(Color color) {
-        this.playerCode = NEXT_PLAYER_CODE++;
+        this.playerCode = ++NEXT_PLAYER_CODE;
         this.color = new Color(color.getRGB());
         this.Units = new ArrayList<>();
     }
@@ -45,7 +41,7 @@ public abstract class Player implements Callable<actionSet> {
      * @return
      */
     public static int LAST_UNIT_CODE() {
-        return NEXT_UNIT_CODE-1;
+        return NEXT_UNIT_CODE;
     }
     /**
      * Get the minimum value of unit code that can be assigned to a unit.
@@ -59,7 +55,7 @@ public abstract class Player implements Callable<actionSet> {
      * @return
      */
     public static int LAST_PLAYER_CODE() {
-        return NEXT_PLAYER_CODE-1;
+        return NEXT_PLAYER_CODE;
     }
     /**
      * Get the minimum value of player code that can be assigned to a player.
@@ -82,23 +78,28 @@ public abstract class Player implements Callable<actionSet> {
      * Is equivalent to call method {@code getUnits().get(0)}
      * @return
      */
-    public Unit getFirstUnit() {
-        return Units.getFirst();
+    public int getFirstUnitCode() {
+        return Units.getFirst().unitCode;
+    }
+
+    public ArrayList<Integer> getUnitCodes() {
+        ArrayList<Integer> unitCodes = new ArrayList<>();
+        for (Unit u : Units) {
+            unitCodes.add(u.unitCode);
+        }
+        return unitCodes;
     }
 
     public ArrayList<Unit> getUnits() {
-        return Units;
+        return new ArrayList<>(Units);
     }
 
-//--UTITILY-------------------------------------------------------------------------------------------------------------
-    public int addUnit(Point coord){
-        checkCoord(coord);
-
-        if (Units.size() > Board.UNIT_PER_PLAYER) {
+//--UNIT METHOD-------------------------------------------------------------------------------------------------------------
+     int addUnit(Point coord){
+        if (Units.size() == Board.UNIT_PER_PLAYER) {
             throw new IllegalStateException("Player already has the maximum number of units");
         }
-        Units.add(new Unit(NEXT_UNIT_CODE++, this, coord));
-
+        Units.add(new Unit(++NEXT_UNIT_CODE, this, coord));
 
         return NEXT_UNIT_CODE;
     }
@@ -124,6 +125,11 @@ public abstract class Player implements Callable<actionSet> {
         return isUnit(new Point(x, y));
     }
 
+    /**
+     * Get the unit with the given {@code unitCode}.
+     * @param unitCode the code of the unit to get
+     * @return the unit with the given code, or {@code null} if there is no unit with the given code
+     */
     public Unit getUnit(int unitCode) {
         checkUnitCode(unitCode);
 
@@ -150,24 +156,7 @@ public abstract class Player implements Callable<actionSet> {
         return false;
     }
 
-    /**
-     * Get the unit at the given coordinates.
-     * @param coord
-     * @return the unit at the given coordinates, or {@code null} if there is no unit at the given coordinates
-     */
-    public Unit unitAt(Point coord) {
-        checkCoord(coord);
-        for (Unit unit : Units) {
-            if (unit.coord.equals(coord)) {
-                return unit;
-            }
-        }
-        return null;
-    }
-
-    public Unit unitAt(int x, int y) {
-        return unitAt(new Point(x, y));
-    }
+//--MOVE UNIT-----------------------------------------------------------------------------------------------------------
 
     /**
      * Move a unit to the given coordinates. <p>
@@ -176,7 +165,7 @@ public abstract class Player implements Callable<actionSet> {
      * @param coord
      * @return {@code true} if the unit is present and has been moved, {@code false} otherwise
      */
-    public boolean moveUnitSafe(Unit unit, Point coord) {
+     boolean moveUnitSafe(Unit unit, Point coord) {
         if (containsUnit(unit)){
             for (Unit u : Units) {
                 if (u.unitCode == unit.unitCode) {
@@ -187,8 +176,17 @@ public abstract class Player implements Callable<actionSet> {
             return true;
         }
         return false;
+    }
 
-
+    /**
+     * Move a unit to the given coordinates. <p>
+     * Before moving, it checks if the unit is present in the player's units.
+     * @param unitCode
+     * @param coord
+     * @return {@code true} if the unit is present and has been moved, {@code false} otherwise
+     */
+    boolean moveUnitSafe(int unitCode, Point coord) {
+        return moveUnitSafe(getUnit(unitCode), coord);
     }
 
     /**
@@ -196,6 +194,9 @@ public abstract class Player implements Callable<actionSet> {
      * @param o
      * @return
      */
+
+//--UTILITY-------------------------------------------------------------------------------------------------------------
+
     @Override
     public boolean equals(Object o){
         if (this == o) return true;

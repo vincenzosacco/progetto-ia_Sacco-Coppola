@@ -1,9 +1,8 @@
 package org.project.UI.Controller;
 
 import org.project.Logic.Game.Board;
-import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.UI.Model.GameModel;
-import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.Player;
 import org.project.Logic.Game.player.ai.actionSet;
 import org.project.UI.View.ProjectView;
 

@@ -2,7 +2,7 @@ package org.project.Logic.Game.player.ai;
 
 
 import org.project.Logic.FilesFromEncodings;
-import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.Player;
 import org.project.Logic.embAsp.Group;
 
 import java.awt.*;

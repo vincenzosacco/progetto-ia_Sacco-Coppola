@@ -2,7 +2,7 @@ package org.project.UI.Model;
 
 
 import org.project.Logic.Game.Board;
-import org.project.Logic.Game.player.Player;
+import org.project.Logic.Game.Player;
 import org.project.Logic.Game.player.ai.NullAction;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.ai.actionSet;
@@ -58,7 +58,7 @@ public class GameModel {
     //--WIN CONDITION -> can not make action
         if (action instanceof NullAction){
             board.setWin();
-            System.out.println("\nPLAYER "+ action.unit().player().getPlayerCode() + "LOSE. CAN'T MAKE ANY ACTION!");
+            System.out.println("\nPLAYER "+ action.player().getPlayerCode() + "LOSE. CAN'T MAKE ANY ACTION!");
             return;
         }
 
@@ -70,17 +70,17 @@ public class GameModel {
             throw new RuntimeException("To implement");
 
         BoardAivsAi board = (BoardAivsAi) this.board;
-        if(! board.moveUnitSafe(action.unit(), action.move())) {
-            throw new RuntimeException("Invalid move " + action.move() + " for unit " + action.unit().unitCode());
+        if(! board.moveUnitSafe(action.unitCode(), action.move())) {
+            throw new RuntimeException("Invalid move " + action.move() + " for unit " + action.unitCode());
 
         }
-        if (! board.buildFloorSafe(action.unit(),action.build()))
-            throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unit().unitCode());
+        if (! board.buildFloorSafe(action.unitCode(),action.build()))
+            throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unitCode());
 
 
     //--WIN CONDITION -> unit on height 3
         if (board.win()){
-            System.out.println("\nPLAYER "+ action.unit().player().getPlayerCode() + " WINS!");
+            System.out.println("\nPLAYER "+ action.player().getPlayerCode() + " WINS!");
             return;
         }
     }

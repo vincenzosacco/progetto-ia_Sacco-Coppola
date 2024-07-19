@@ -3,8 +3,7 @@
 %--MOVE------------------------------------------------------------------------------
 
 %%FACTS - added from Group.java
-% cell(X,Y,H,P). --> a cell of the grid --> X,Y are the coordinates of the cell, H is the height of the cell, P is the player code that is in the cellgrid (-1 if no player)
-% unit(X,Y,H,U,P). --> represent a unit. X,Y coordinates |H height |U unitCode | P playerCode
+% cell(X,Y,H,U). --> a cell of the grid --> X,Y are the coordinates of the cell, H is the height of the cell, U is the unitCode of the unit on the cell (-1 if no unit)
 % choosedUnit(U). --> in case of 2 units per player.
 % moveCell(X,Y,H). --> cell where I can move unit 
 % enemyMoveCell(X,Y,H,U).
@@ -15,10 +14,8 @@ maxCol(4).
 
 %%AUXILIARY
 offset(X,Y) :- os(X), os(Y), &abs(X;Xabs), &abs(Y;Yabs), &sum(Xabs,Yabs;Z), Z<>0. % offset can't be 0,0
-myUnit(X,Y,H,U):- unit(X,Y,H,U,_), choosedUnit(U). 
-friendUnit(X,Y,H,U):- unit(X,Y,H,U,P), player(P).
-enemyUnit(X,Y,H,U):- unit(X,Y,H,U,Penemy), player(P), Penemy<>P.
-validCell(X,Y,H,P) :-cell(X,Y,H,P), H>=0, H<4, X>=0, Y>=0, X<=Xmax, Y<= Ymax, maxRow(Xmax), maxCol(Ymax).
+myUnit(X,Y,H,U):- cell(X,Y,H,U), choosedUnit(U). 
+validCell(X,Y,H,U) :-cell(X,Y,H,U), X>=0, Y>=0, X<=Xmax, Y<=Ymax, maxRow(Xmax), maxCol(Ymax).
 
 %%GUESS
 moveIn(X,Y,H) | moveOut(X,Y) :- moveCell(X,Y,H).
