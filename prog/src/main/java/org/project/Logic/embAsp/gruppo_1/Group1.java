@@ -93,6 +93,7 @@ public class Group1 implements Group {
 
     //--OUTPUT
         myHandler.startSync();
+        System.out.println("\nMOVE"+ myPlayer.getPlayerCode()+"\n"+ myHandler.getOptimalAnswerSets().getFirst().toString() + "\n"+ myHandler.getFactsString()); //TODO: DELETE
         for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {
             if (atom instanceof moveIn){
                 return new Point( ((moveIn) atom).getX(), ((moveIn) atom).getY() );
@@ -123,8 +124,8 @@ public class Group1 implements Group {
             myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell) + ")");
         }
 
-
         myHandler.startSync();
+        System.out.println("\nBUILD"+ myPlayer.getPlayerCode() +"\n" +myHandler.getOptimalAnswerSets().getFirst().toString() + "\n" + myHandler.getFactsString()); //TODO DELETE
 
         //ADDING FACTS
         for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {

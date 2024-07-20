@@ -10,11 +10,11 @@
 
 % AUXILIARY
 myUnit(X,Y,H,U):- cell(X,Y,H,U), choosedUnit(U). 
-enemyUnit(X,Y,H,U):- cell(X,Y,H,U), myUnit(_,_,_,Umy), U<>Umy.
+enemyUnit(X,Y,H,U):- cell(X,Y,H,U), myUnit(_,_,_,Umy), U<>Umy , U<>-1. %non funziona con piu' unita' per giocatore
 
 
 % GUESS
-buildIn(X,Y,H) | buildOut(X,Y) :- buildCell(X,Y,H1), H=H1+1.
+buildIn(X,Y,H) | buildOut(X,Y) :- buildCell(X,Y,H).
 
 % CHECK
 % can build on only one cell
@@ -38,15 +38,16 @@ buildIn(X,Y,H) | buildOut(X,Y) :- buildCell(X,Y,H1), H=H1+1.
 %2
 %
 % avoid enemy climbing
-:~ buildIn(X,Y,H),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=1. [3@7] 
-:~ buildIn(X,Y,H),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=0. [2@7] 
-:~ buildIn(X,Y,H),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=2. [1@7] 
+:~ buildIn(X,Y,H), enemyMoveCell(X,Y,H,U), enemyUnit(_,_,Henemy,U), &sum(H+1,-Henemy;Z), Z=1. [3@8] 
+:~ buildIn(X,Y,H), enemyMoveCell(X,Y,H,U), enemyUnit(_,_,Henemy,U), &sum(H+1,-Henemy;Z), Z=0. [2@8] 
+:~ buildIn(X,Y,H), enemyMoveCell(X,Y,H,U), enemyUnit(_,_,Henemy,U), &sum(H+1,-Henemy;Z), Z=2. [1@8] 
 
+#show enemyMoveCell/4.
 %
 %3
 %
 % avoid build height 4 near myUnit 
-:~ buildIn(X,Y,H), H=3. [1@8] 
+:~ buildIn(X,Y,3). [1@7] 
 
 %
 %4

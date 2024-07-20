@@ -43,9 +43,11 @@ moveIn(X,Y,H) | moveOut(X,Y) :- moveCell(X,Y,H).
 % 2
 %
 % prefer moving to a cell from where myUnit can block enemyUnit to win 
-nearEnemyMoveCell3(Xnear,Ynear) :- enemyMoveCell(X,Y,3,U), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,_,_).
+nearEnemyMoveCell(Xnear,Ynear,H) :- enemyMoveCell(X,Y,H,U), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,H,U).
+blockEnemyCell(X,Y) :- nearEnemyMoveCell(X,Y,3), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear),  moveCell(Xnear,Ynear,_) .
 
-:~ not moveIn(X,Y,H), moveCell(X,Y,H), nearEnemyMoveCell3(X,Y).  [1@9, X,Y]   % penalty if move to a cell where myUnit can't build on enemyMoveCell(X,Y,3,_)  
+:~ moveOut(X,Y), blockEnemyCell(X,Y).  [1@9, X,Y]   % penalty if exist a cell from where myUnit can block enemyUnit to win and don't move to it
+% :~ moveOut(X,Y), nearEnemyMoveCell(X,Y,2).  [1@9, X,Y]   
 
 
 %
@@ -59,13 +61,9 @@ h2_nearMoveCell3(Xnear,Ynear,X,Y):- validCell(X,Y,3,_), offset(OffX,OffY), &sum(
 %
 %4
 %
-% prefer moving on higher cell
-:~ moveIn(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy  . [1@7]
+% prefer moving on higher cell -> this weak can be useful for the enemy to win in certain situations (limitation for this strategy)
+:~ moveIn(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy  . [1@7] 
 :~ moveIn(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-1. [2@7]
 :~ moveIn(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-2. [3@7]
 
-%
-%5
-%
-% prefer moving near the enemy
-% :~ moveIn(X,Y), moveCell(X,Y,H), enemyMoveCell(X,Y,Henemy,_), &sum(H,-Henemy;Z), Z>0. [Z@6, X,Y]
+
