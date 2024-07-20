@@ -2,7 +2,8 @@ package org.project.Logic.embAsp;
 
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
-import java.awt.Point;
+
+import java.awt.*;
 import java.util.Objects;
 
 @Id("buildIn") //buildIn(X,Y,H)
@@ -16,6 +17,7 @@ public class buildIn {
 
     public buildIn() {
     }
+
     public buildIn(int x, int y, int height) {
         this.x = x;
         this.y = y;
@@ -41,6 +43,7 @@ public class buildIn {
     public int getHeight() {
         return height;
     }
+
     public void setHeight(int height) {
         this.height = height;
     }
@@ -51,9 +54,10 @@ public class buildIn {
 
     /**
      * Check if the buildIn is invalid.(x=-1, y=-1, height=-1)
+     *
      * @return true if the buildIn is invalid, false otherwise.
      */
-    public boolean isInvalid(){
+    public boolean isInvalid() {
         return x == -1 && y == -1 && height == -1;
     }
 

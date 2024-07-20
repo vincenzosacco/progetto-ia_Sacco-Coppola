@@ -10,16 +10,16 @@ class side extends JPanel {
     final JTabbedPane tabbedPane;
     final TabPanel ai, human;
 
-     side(String title) {
+    side(String title) {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-    //--HEADER
+        //--HEADER
         JLabel header = new JLabel(title);
         header.setBackground(Color.GRAY);
         add(header);
 
-    //--TAB
+        //--TAB
         tabbedPane = new JTabbedPane();
         ai = new AiTabPanel(title + "_AI");
         human = new TabPanel(title);
@@ -30,10 +30,8 @@ class side extends JPanel {
     }
 
 
-
-
-//--INNER CLASSES-----------------------------------------------------------------------------------------------
-     static class TabPanel extends MyPanel {
+    //--INNER CLASSES-----------------------------------------------------------------------------------------------
+    static class TabPanel extends MyPanel {
         protected final SpringLayout layout;
         protected final JPanel name, color;
         private final JTextField nameField;
@@ -47,7 +45,7 @@ class side extends JPanel {
             layout = new SpringLayout();
             setLayout(layout);
 
-        //--NAME
+            //--NAME
             JLabel nameLabel = new JLabel("Nome");
             nameField = new JTextField(title.replace(" ", "").toLowerCase());
 
@@ -57,7 +55,7 @@ class side extends JPanel {
 
             add(name);
 
-        //--COLOR
+            //--COLOR
             JLabel colorLabel = new JLabel("Colore");
             colorButton = new JButton();
             colorButton.setBackground(COLORS[NEXT_COLOR++]);
@@ -72,7 +70,7 @@ class side extends JPanel {
 
             add(color);
 
-        //--LAYOUT CONSTRAINTS
+            //--LAYOUT CONSTRAINTS
             // NAME
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, name, 0, SpringLayout.HORIZONTAL_CENTER, this);
 
@@ -81,12 +79,12 @@ class side extends JPanel {
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, color, 0, SpringLayout.HORIZONTAL_CENTER, this);
         }
 
-        Color choosedColor(){
+        Color choosedColor() {
             return colorButton.getBackground();
         }
     }
 
-      static class AiTabPanel extends TabPanel{
+    static class AiTabPanel extends TabPanel {
         private final JComboBox<String> strategyBox;
         private final JLabel strategyLabel;
 
@@ -96,7 +94,7 @@ class side extends JPanel {
             strategyLabel = new JLabel("Strategia");
             strategyBox = new JComboBox<String>(FilesFromEncodings.getStrategies());
 
-            JPanel strategy= new JPanel();
+            JPanel strategy = new JPanel();
             strategy.add(strategyLabel);
             strategy.add(strategyBox);
 
@@ -107,7 +105,7 @@ class side extends JPanel {
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, strategy, 0, SpringLayout.HORIZONTAL_CENTER, this);
         }
 
-        String choosedStrategy(){
+        String choosedStrategy() {
             return (String) strategyBox.getSelectedItem();
         }
 

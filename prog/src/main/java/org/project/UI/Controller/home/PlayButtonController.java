@@ -35,18 +35,16 @@ public class PlayButtonController implements ActionListener {
 
         int gameMode;
 
-    //--GAME MODE
+        //--GAME MODE
         if (players[0] instanceof PlayerAi && players[1] instanceof PlayerAi) {
-            gameMode= GameModel.AI_VS_AI;
-        }
-        else if (players[0] instanceof PlayerManual && players[1] instanceof PlayerManual) {
+            gameMode = GameModel.AI_VS_AI;
+        } else if (players[0] instanceof PlayerManual && players[1] instanceof PlayerManual) {
             gameMode = GameModel.HUMAN_VS_HUMAN;
-        }
-        else {
+        } else {
             gameMode = GameModel.AI_VS_HUMAN;
         }
 
-    //--START GAME
+        //--START GAME
         try {
             GameModel.getInstance().startGame(players);
         } catch (Exception ex) {

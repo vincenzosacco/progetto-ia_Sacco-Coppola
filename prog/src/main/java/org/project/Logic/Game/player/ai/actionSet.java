@@ -19,6 +19,7 @@ public class actionSet {
 
     /**
      * Construct a non {@code nullAction} actionSet.
+     *
      * @param player
      * @param move
      * @param build
@@ -30,7 +31,7 @@ public class actionSet {
             if (move == null) nullArgs += " move ";
             if (build == null) nullArgs += " build ";
 
-            throw new NullPointerException("null values are not allowed, Null arguments: "+ nullArgs );
+            throw new NullPointerException("null values are not allowed, Null arguments: " + nullArgs);
         }
         if (unitCode < Player.MIN_UNIT_CODE() || unitCode > Player.LAST_UNIT_CODE()) {
             throw new IllegalArgumentException("unitCode must be" + Player.MIN_UNIT_CODE() + "and" + Player.LAST_UNIT_CODE());
@@ -38,11 +39,11 @@ public class actionSet {
         if (player.getPlayerCode() < PlayerAi.MIN_PLAYER_CODE() || player.getPlayerCode() > Player.LAST_PLAYER_CODE()) {
             throw new IllegalArgumentException("playerCode must be" + PlayerAi.MIN_PLAYER_CODE() + "and" + Player.LAST_PLAYER_CODE());
         }
-        if (move.x < 0 || move.x > BOARD_ROWS-1 || move.y < 0 || move.y > BOARD_COLS-1 ) {
-            throw new IllegalArgumentException("move coordinates must be between 0" + (BOARD_ROWS-1)+"and" + (BOARD_COLS-1));
+        if (move.x < 0 || move.x > BOARD_ROWS - 1 || move.y < 0 || move.y > BOARD_COLS - 1) {
+            throw new IllegalArgumentException("move coordinates must be between 0" + (BOARD_ROWS - 1) + "and" + (BOARD_COLS - 1));
         }
-        if (build.x < 0 || build.x > BOARD_ROWS-1 || build.y < 0 || build.y > BOARD_COLS-1 ) {
-            throw new IllegalArgumentException("build coordinates must be between 0" + (BOARD_ROWS-1)+"and" + (BOARD_COLS-1));
+        if (build.x < 0 || build.x > BOARD_ROWS - 1 || build.y < 0 || build.y > BOARD_COLS - 1) {
+            throw new IllegalArgumentException("build coordinates must be between 0" + (BOARD_ROWS - 1) + "and" + (BOARD_COLS - 1));
         }
 
         this.unitCode = unitCode;
@@ -52,12 +53,12 @@ public class actionSet {
     }
 
 
-
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
 
     public int unitCode() {
         return unitCode;
     }
+
     public Player player() {
         return player;
     }
@@ -71,11 +72,10 @@ public class actionSet {
     }
 
 
-
 //--UTILITY-------------------------------------------------------------------------------------------------------------
 
     public String display() {
-        return "\nPlayer " + player.getPlayerCode() + " moves unit "+ unitCode +  " to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
+        return "\nPlayer " + player.getPlayerCode() + " moves unit " + unitCode + " to (" + move.x + "," + move.y + ") and builds at (" + build.x + "," + build.y + ")";
     }
 
     @Override
@@ -85,7 +85,7 @@ public class actionSet {
                 ", " +
                 "(" + move.x + "," + move.y + ")" +
                 "," +
-                "("+build.x  + "," + build.y + ")"+
+                "(" + build.x + "," + build.y + ")" +
                 ") ";
     }
 

@@ -15,7 +15,7 @@ public class ProjectView extends JFrame {
 
     private CardLayout cardLayout;
     private HomePanel homePanel;
-    private GamePanel gamePanel ;
+    private GamePanel gamePanel;
 
     private ProjectView() {
         super();
@@ -27,7 +27,7 @@ public class ProjectView extends JFrame {
         setSize(Settings.GAME_SIZE_DEFAULT);
         getContentPane().setSize(Settings.GAME_SIZE_DEFAULT);
 
-    //--LAYOUT
+        //--LAYOUT
         setLayout(cardLayout = new CardLayout());
         setup();
 
@@ -45,7 +45,8 @@ public class ProjectView extends JFrame {
         }
         return instance;
     }
-//--GAME
+
+    //--GAME
     public void startGame(int gameMode) {
         gamePanel = new GamePanel(gameMode);
 
@@ -58,22 +59,21 @@ public class ProjectView extends JFrame {
     }
 
 
-
 //--UTILITY
 
     /**
      * Method used to move the window to the center of the screen.
      */
-    public void moveToScreenCenter(){
+    public void moveToScreenCenter() {
         setLocationRelativeTo(null);
     }
 
-    public void setFullScreen(){
+    public void setFullScreen() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
     }
 
-//--PRIVATE
+    //--PRIVATE
     private void setup() {
         homePanel = new HomePanel();
         getContentPane().add(homePanel, "home");

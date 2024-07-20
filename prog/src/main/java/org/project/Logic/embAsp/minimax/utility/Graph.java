@@ -24,18 +24,20 @@ public class Graph<T> {
     }
 
     public void addEdge(T source, T destination) {
-        if (!adjacencyList.containsKey(source)) throw new IllegalArgumentException("Vertex " + source + " does not exist.");
+        if (!adjacencyList.containsKey(source))
+            throw new IllegalArgumentException("Vertex " + source + " does not exist.");
 
         List<T> edges = adjacencyList.get(source);
         if (edges.contains(destination)) return;
         edges.add(destination);
         // Add the following line if the graph is undirected
-         adjacencyList.get(destination).add(source);
+        adjacencyList.get(destination).add(source);
     }
 
     public T getRoot() {
         return root;
     }
+
     public List<T> getAdjacent(T vertex) {
         return adjacencyList.get(vertex);
     }

@@ -38,27 +38,34 @@ public abstract class Player implements Callable<actionSet> {
 
     /**
      * Get the unit code assigned to the last unit created.
+     *
      * @return
      */
     public static int LAST_UNIT_CODE() {
         return NEXT_UNIT_CODE;
     }
+
     /**
      * Get the minimum value of unit code that can be assigned to a unit.
+     *
      * @return
      */
     public static int MIN_UNIT_CODE() {
         return 0;
     }
+
     /**
      * Get the player code assigned to the last player created.
+     *
      * @return
      */
     public static int LAST_PLAYER_CODE() {
         return NEXT_PLAYER_CODE;
     }
+
     /**
      * Get the minimum value of player code that can be assigned to a player.
+     *
      * @return
      */
     public static int MIN_PLAYER_CODE() {
@@ -76,6 +83,7 @@ public abstract class Player implements Callable<actionSet> {
     /**
      * Get the first unit of the player.<p>
      * Is equivalent to call method {@code getUnits().get(0)}
+     *
      * @return
      */
     public int getFirstUnitCode() {
@@ -94,8 +102,8 @@ public abstract class Player implements Callable<actionSet> {
         return new ArrayList<>(Units);
     }
 
-//--UNIT METHOD-------------------------------------------------------------------------------------------------------------
-     int addUnit(Point coord){
+    //--UNIT METHOD-------------------------------------------------------------------------------------------------------------
+    int addUnit(Point coord) {
         if (Units.size() == Board.UNIT_PER_PLAYER) {
             throw new IllegalStateException("Player already has the maximum number of units");
         }
@@ -127,6 +135,7 @@ public abstract class Player implements Callable<actionSet> {
 
     /**
      * Get the unit with the given {@code unitCode}.
+     *
      * @param unitCode the code of the unit to get
      * @return the unit with the given code, or {@code null} if there is no unit with the given code
      */
@@ -161,12 +170,13 @@ public abstract class Player implements Callable<actionSet> {
     /**
      * Move a unit to the given coordinates. <p>
      * Before moving, it checks if the unit is present in the player's units.
+     *
      * @param unit
      * @param coord
      * @return {@code true} if the unit is present and has been moved, {@code false} otherwise
      */
-     boolean moveUnitSafe(Unit unit, Point coord) {
-        if (containsUnit(unit)){
+    boolean moveUnitSafe(Unit unit, Point coord) {
+        if (containsUnit(unit)) {
             for (Unit u : Units) {
                 if (u.unitCode == unit.unitCode) {
                     u.coord.setLocation(coord);
@@ -181,6 +191,7 @@ public abstract class Player implements Callable<actionSet> {
     /**
      * Move a unit to the given coordinates. <p>
      * Before moving, it checks if the unit is present in the player's units.
+     *
      * @param unitCode
      * @param coord
      * @return {@code true} if the unit is present and has been moved, {@code false} otherwise
@@ -191,14 +202,14 @@ public abstract class Player implements Callable<actionSet> {
 
     /**
      * Two players are equal if they have the same playerCode.
+     *
      * @param o
      * @return
      */
 
 //--UTILITY-------------------------------------------------------------------------------------------------------------
-
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
@@ -214,9 +225,10 @@ public abstract class Player implements Callable<actionSet> {
             throw new IllegalArgumentException("unitCode must be between 1 and " + LAST_UNIT_CODE() + " included");
         }
     }
+
     protected void checkCoord(Point coord) {
         if (coord == null) throw new IllegalArgumentException("coord cannot be null");
-        if (coord.x < 0 || coord.x >= BOARD_ROWS  || coord.y < 0 || coord.y >= BOARD_COLS) {
+        if (coord.x < 0 || coord.x >= BOARD_ROWS || coord.y < 0 || coord.y >= BOARD_COLS) {
             throw new IllegalArgumentException("coordinate must be inside the grid");
         }
     }

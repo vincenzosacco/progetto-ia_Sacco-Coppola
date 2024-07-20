@@ -45,6 +45,7 @@ public class cell {
     public int getX() {
         return x;
     }
+
     public void setX(int x) {
         this.x = x;
     }
@@ -52,6 +53,7 @@ public class cell {
     public int getY() {
         return y;
     }
+
     public void setY(int y) {
         this.y = y;
     }
@@ -59,6 +61,7 @@ public class cell {
     public int getHeight() {
         return height;
     }
+
     public void setHeight(int height) {
         if (height < Board.FLOOR_START || height > Board.FLOOR_REMOVED)
             throw new IllegalArgumentException("Invalid height, must be between 0 and 4");
@@ -66,7 +69,7 @@ public class cell {
     }
 
     public boolean increaseHeight() {
-        if (height < Board.FLOOR_REMOVED){
+        if (height < Board.FLOOR_REMOVED) {
             height++;
             return true;
         }
@@ -79,10 +82,11 @@ public class cell {
 
     /**
      * Set the player code of the cell.
+     *
      * @param unitCode the player code of the cell, must be -1 if there is no player
      */
     public void setUnitCode(int unitCode) throws IllegalArgumentException {
-        if(unitCode < UNITCODE_NO_UNIT || unitCode > Player.LAST_UNIT_CODE())
+        if (unitCode < UNITCODE_NO_UNIT || unitCode > Player.LAST_UNIT_CODE())
             throw new IllegalArgumentException("Invalid unit code: " + unitCode);
         this.unitCode = unitCode;
     }
@@ -109,7 +113,6 @@ public class cell {
                 "," + unitCode +
                 ") ";
     }
-
 
 
 }

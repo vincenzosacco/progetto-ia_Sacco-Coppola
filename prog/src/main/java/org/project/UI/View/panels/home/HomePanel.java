@@ -18,7 +18,7 @@ public class HomePanel extends MyPanel {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         left = new side("PLAYER 1");
-        add(left );
+        add(left);
 
         center = new centerPanel();
         add(center);
@@ -29,11 +29,11 @@ public class HomePanel extends MyPanel {
     }
 
 
-
 //--PUBLIC METHODS---------------------------------------------------------------------------------------------------
 
     /**
      * Method used to set the center panel of the HomePanel.
+     *
      * @param panel the panel to set as center.
      */
     public void setCenterPanel(JPanel panel) {
@@ -49,8 +49,8 @@ public class HomePanel extends MyPanel {
         Color colorLeft, colorRight;
         Component selectedLeft = left.tabbedPane.getSelectedComponent();
         Component selectedRight = right.tabbedPane.getSelectedComponent();
-        
-    //--GET COLORS
+
+        //--GET COLORS
         if (selectedLeft instanceof side.TabPanel && selectedRight instanceof side.TabPanel) {
             colorLeft = ((side.TabPanel) selectedLeft).choosedColor();
             colorRight = ((side.TabPanel) selectedRight).choosedColor();
@@ -59,13 +59,13 @@ public class HomePanel extends MyPanel {
         }
 
 
-    //--CHECK COLORS
+        //--CHECK COLORS
         if (colorLeft.equals(colorRight)) {
             showColorError();
             return null;
         }
 
-    //--CREATE PLAYERS
+        //--CREATE PLAYERS
         if (selectedLeft == left.ai && selectedRight == right.ai) {
             player1 = new PlayerAi(colorLeft, ((side.AiTabPanel) selectedLeft).choosedStrategy());
             player2 = new PlayerAi(colorRight, ((side.AiTabPanel) selectedRight).choosedStrategy());
@@ -78,7 +78,6 @@ public class HomePanel extends MyPanel {
 
         return new Player[]{player1, player2};
     }
-
 
 
     public void showColorError() {

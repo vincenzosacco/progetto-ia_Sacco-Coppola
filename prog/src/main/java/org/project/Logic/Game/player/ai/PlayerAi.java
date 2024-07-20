@@ -17,7 +17,7 @@ public class PlayerAi extends Player {
         myGroup = FilesFromEncodings.getGroupFromStrategy(strategy);
     }
 
-    public PlayerAi(PlayerAi player){
+    public PlayerAi(PlayerAi player) {
         //MAKING A COPY OF THE PLAYER
         super(player);
         myGroup = player.myGroup;
@@ -30,7 +30,7 @@ public class PlayerAi extends Player {
     }
 
 
-//--GAME METHODS--------------------------------------------------------------------------------------------------------
+    //--GAME METHODS--------------------------------------------------------------------------------------------------------
     //TODO:trovare un modo per non inizializzare ogni volta handler in Group.java
     //TODO: implementare per  più di una pedina per giocatore
     @Override
@@ -39,7 +39,7 @@ public class PlayerAi extends Player {
     }
 
 
-        //--JAVA OBJECT--------------------------------------------------------------------------------------------------------
+    //--JAVA OBJECT--------------------------------------------------------------------------------------------------------
 
     @Override
     public int hashCode() {

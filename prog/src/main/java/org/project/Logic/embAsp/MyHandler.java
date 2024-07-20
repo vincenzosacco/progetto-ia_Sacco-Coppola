@@ -20,113 +20,114 @@ import java.util.regex.Pattern;
 /**
  * Creata da me velocemente per gestire EmbASP
  * Settare il path a DLV2 in Settings
- * */
+ */
 public class MyHandler {
-    private static String REL_PATH_TO_DLV2 ="";
+    private static String REL_PATH_TO_DLV2 = "";
 
     private DesktopService service;
     private Handler handler;
 
-    private final ASPInputProgram facts =  new ASPInputProgram();
+    private final ASPInputProgram facts = new ASPInputProgram();
     private int factKey = 0;
     private final ASPInputProgram enconding = new ASPInputProgram();
 
 
     private Output output;
     private OptionDescriptor option;
-    private Integer OPTION_ID_n0 ;
+    private Integer OPTION_ID_n0;
 
 //-----------------CONSTRUCTOR----------------------------------------
 
-    public MyHandler(){
+    public MyHandler() {
         initEmbAsp();
     }
 
-    public MyHandler(MyHandler handler){
+    public MyHandler(MyHandler handler) {
         //MAKE A COPY OF THE HANDLER
         setFactProgram(handler.facts);
         setEncoding(handler.enconding);
-        if (! handler.option.getOptions().isEmpty())
+        if (!handler.option.getOptions().isEmpty())
             option = new OptionDescriptor(handler.option.getOptions());
 
         initEmbAsp();
 
     }
 
-    public MyHandler(String encodingPath){
+    public MyHandler(String encodingPath) {
         initEmbAsp();
         addEncodingPath(encodingPath);
     }
 
 
     private void initEmbAsp() {
-        if (REL_PATH_TO_DLV2.isEmpty()){
+        if (REL_PATH_TO_DLV2.isEmpty()) {
             throw new RuntimeException("Path to DLV2 not set, please set it calling setRelPathToDLV2 method");
         }
         service = new DLV2DesktopService(REL_PATH_TO_DLV2);
         handler = new DesktopHandler(service);
-        factKey= handler.addProgram(facts);
+        factKey = handler.addProgram(facts);
         handler.addProgram(enconding);
 
-        option=new OptionDescriptor("-n0");
-        output=null;
+        option = new OptionDescriptor("-n0");
+        output = null;
     }
 
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
 
     /**
      * Set the relative path to DLV2. <p>
+     *
      * @param path
      */
-    public static void setRelPathToDLV2(String path){
+    public static void setRelPathToDLV2(String path) {
         REL_PATH_TO_DLV2 = path;
     }
 
-    public void setFactProgram(ASPInputProgram program){
+    public void setFactProgram(ASPInputProgram program) {
         facts.clearAll();
-        for (String path: program.getFilesPaths())
+        for (String path : program.getFilesPaths())
             facts.addFilesPath(path);
         facts.setPrograms(program.getPrograms());
     }
 
-    public void setEncoding(ASPInputProgram program){
+    public void setEncoding(ASPInputProgram program) {
         enconding.clearAll();
-        for (String path: program.getFilesPaths())
+        for (String path : program.getFilesPaths())
             enconding.addFilesPath(path);
         enconding.setPrograms(program.getPrograms());
     }
 
-    public String getFactsString(){
+    public String getFactsString() {
         return facts.getPrograms();
     }
 
 //-----------------METHODS----------------------------------------
 
-    public void clearFacts(){
+    public void clearFacts() {
         facts.clearAll();
     }
 
-    public void showAllAnswerSet(boolean flag){
+    public void showAllAnswerSet(boolean flag) {
         if (flag)
             OPTION_ID_n0 = (Integer) handler.addOption(option);
         else if (OPTION_ID_n0 != null)
             handler.removeOption(OPTION_ID_n0);
     }
 
-    public void setNumberOfAnswerSet(int n){
-        assert (n>=0);
-        String optString= " -n"+n;
+    public void setNumberOfAnswerSet(int n) {
+        assert (n >= 0);
+        String optString = " -n" + n;
         OptionDescriptor opt = new OptionDescriptor(optString);
         handler.addOption(opt);
     }
 
 
-    public void mapToEmb(Class<?> c  ) throws ObjectNotValidException, IllegalAnnotationException {
+    public void mapToEmb(Class<?> c) throws ObjectNotValidException, IllegalAnnotationException {
         ASPMapper.getInstance().registerClass(c);
     }
 //-----------------ADDs-------------------------------------------
 
-    public void addOption(String option){
+    public void addOption(String option) {
         OptionDescriptor opt = new OptionDescriptor(option);
         handler.addOption(opt);
     }
@@ -134,20 +135,20 @@ public class MyHandler {
     /**
      * Check if a string is a valid fact using regular expression.
      */
-    private boolean checkFactString(String s){
+    private boolean checkFactString(String s) {
         // fact
         String symConst = "[a-zA-Z]+";
         Pattern predicate = Pattern.compile(symConst);
         // fact(1)
         String intOrSymConst = "(-?\\d+|[a-zA-Z]+)";
-        Pattern atom1 = Pattern.compile(predicate.pattern() + "\\("+ intOrSymConst + "\\)" );
+        Pattern atom1 = Pattern.compile(predicate.pattern() + "\\(" + intOrSymConst + "\\)");
         // fact(1,...)
         String intOrSymConst_comma = "((-?\\d+|[a-zA-Z]+),)+";
         Pattern atomN = Pattern.compile(predicate.pattern() +
-                        "\\(" + intOrSymConst_comma + intOrSymConst + "\\)" );
+                "\\(" + intOrSymConst_comma + intOrSymConst + "\\)");
 
 
-        if( s.matches(atomN.pattern()) || s.matches(atom1.pattern()) || s.matches(predicate.pattern()) )
+        if (s.matches(atomN.pattern()) || s.matches(atom1.pattern()) || s.matches(predicate.pattern()))
             return true;
 
         return false;
@@ -164,16 +165,17 @@ public class MyHandler {
      * @throws Exception if string is not valid
      */
     public void addFactAsString(String s) throws Exception {
-        if (! checkFactString(s))
+        if (!checkFactString(s))
             throw new Exception("String is not valid");
 
-        facts.addProgram(s+".");
+        facts.addProgram(s + ".");
 
     }
 
     /**
      * Add a fact accepting as parameter an {@code Object}.<p>
      * Call method {@code mapToEmb} before adding an {@code Object}.
+     *
      * @param o
      * @throws Exception
      */
@@ -195,6 +197,7 @@ public class MyHandler {
 
     /**
      * Add an encoding path to {@code ASPInputProgram encoding} . <p>
+     *
      * @param encodingPath path relative to the project root
      */
     public void addEncodingPath(String encodingPath) {
@@ -223,9 +226,9 @@ public class MyHandler {
         output = handler.startSync();
         System.out.println("\n");
 
-        if (! output.getErrors().isEmpty())
-            throw new RuntimeException("Errors in output: "+ output.getErrors());
-        if (isIncoherent()){
+        if (!output.getErrors().isEmpty())
+            throw new RuntimeException("Errors in output: " + output.getErrors());
+        if (isIncoherent()) {
             throw new RuntimeException("Incoherent output ");
         }
         if (isSafetyError())
@@ -239,16 +242,17 @@ public class MyHandler {
      * Get the output of the solving process. <p>
      * Always call this method after {@code startSync} method. <p>
      * To manage the output as answersets cast to {@code Answersets} type -> {@code (Answersets) output} .
+     *
      * @return Output
      */
-    public Output getOutput(){
-        if(output == null)
+    public Output getOutput() {
+        if (output == null)
             throw new RuntimeException("Output is null, maybe startSync methods was never launched");
 
         return output;
     }
 
-    public AnswerSets getAnswerSets(){
+    public AnswerSets getAnswerSets() {
         if (output == null)
             throw new RuntimeException("Output is null, maybe startSync methods was never launched");
         if (isEmpty())
@@ -257,20 +261,20 @@ public class MyHandler {
         return (AnswerSets) output;
     }
 
-    public List<AnswerSet> getAnswerSetsList(){
-        if(getAnswerSets().getAnswersets().isEmpty())
-            throw new RuntimeException("AnswerSets list is empty: " );
+    public List<AnswerSet> getAnswerSetsList() {
+        if (getAnswerSets().getAnswersets().isEmpty())
+            throw new RuntimeException("AnswerSets list is empty: ");
 
         return ((AnswerSets) output).getAnswersets();
     }
 
-    public List<AnswerSet> getOptimalAnswerSets(){
+    public List<AnswerSet> getOptimalAnswerSets() {
         outputNullExep();
 
         return ((AnswerSets) output).getOptimalAnswerSets();
     }
 
-    private boolean isIncoherent(){
+    private boolean isIncoherent() {
         outputNullExep();
 
         return output.getOutput().matches("DLV 2.1.2\n" +
@@ -278,20 +282,20 @@ public class MyHandler {
                 "INCOHERENT\n");
     }
 
-    private boolean isSafetyError(){
+    private boolean isSafetyError() {
         outputNullExep();
 
         return output.getOutput().contains("--> Safety Error");
     }
 
-    private boolean isEmpty(){
+    private boolean isEmpty() {
         outputNullExep();
 
-        return ((AnswerSets)output).getAnswersets().isEmpty();
+        return ((AnswerSets) output).getAnswersets().isEmpty();
     }
 
-//--EXEPTIONS-----------------------------------------------------------------------------------------------------------
-    private void outputNullExep(){
+    //--EXEPTIONS-----------------------------------------------------------------------------------------------------------
+    private void outputNullExep() {
         if (output == null)
             throw new RuntimeException("Output is null, maybe startSync methods was never launched");
     }

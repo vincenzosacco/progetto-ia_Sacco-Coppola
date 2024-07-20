@@ -21,28 +21,28 @@ public class PlayerManual extends Player {
     }
 
 
-
     @Override
     public int hashCode() {
         return Objects.hash(color, playerCode);
     }
 
     private Thread caller = null;
+
     @Override
     public actionSet call() throws Exception {
-    //--WAIT FOR USER INPUT
+        //--WAIT FOR USER INPUT
         caller = Thread.currentThread();
-        synchronized (caller){
+        synchronized (caller) {
             caller.wait();
         }
-
 
 
         return null;
     }
 
     /**
-    * Returns the thread that called {@code call()} method.
+     * Returns the thread that called {@code call()} method.
+     *
      * @return
      */
     public Thread getCaller() {

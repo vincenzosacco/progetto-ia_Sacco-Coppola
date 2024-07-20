@@ -14,12 +14,12 @@ public class NullAction extends actionSet {
     }
 
     @Override
-    public Point move(){
+    public Point move() {
         return null;
     }
 
     @Override
-    public Point build(){
+    public Point build() {
         return null;
     }
 

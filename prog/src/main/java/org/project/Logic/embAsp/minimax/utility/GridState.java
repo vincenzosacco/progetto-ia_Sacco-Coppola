@@ -3,7 +3,6 @@ package org.project.Logic.embAsp.minimax.utility;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.embAsp.buildIn;
 import org.project.Logic.embAsp.moveIn;
-import org.project.UI.Model.BoardAivsAi;
 
 import java.util.Objects;
 
@@ -30,8 +29,7 @@ public class GridState extends ASPInputProgram {
         if (move.getHeight() == 3 || build.isInvalid() || move.isInvalid()) {
             name = "Tstate_" + counter++;
             isTerminal = true;
-        }
-        else {
+        } else {
             name = "state_" + counter++;
             isTerminal = false;
         }
@@ -52,7 +50,7 @@ public class GridState extends ASPInputProgram {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GridState that = (GridState) o;
-        return isTerminal == that.isTerminal && move.equals(that.move)& build.equals(that.build);
+        return isTerminal == that.isTerminal && move.equals(that.move) & build.equals(that.build);
     }
 
     @Override
@@ -66,6 +64,7 @@ public class GridState extends ASPInputProgram {
             super(initial_program, false);
         }
     }
+
     public static class TerminalState extends GridState {
         public TerminalState(String initial_program) {
             super(initial_program, true);

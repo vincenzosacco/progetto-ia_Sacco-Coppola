@@ -40,12 +40,10 @@ public class GameModel {
         if (players[0] instanceof PlayerAi && players[1] instanceof PlayerAi) {
             PlayerAi[] playersAi = {(PlayerAi) players[0], (PlayerAi) players[1]};
             board = new BoardAivsAi(playersAi);
-        }
-        else if (players[0] instanceof PlayerManual && players[1] instanceof PlayerManual) {
+        } else if (players[0] instanceof PlayerManual && players[1] instanceof PlayerManual) {
             PlayerManual[] playersManual = {(PlayerManual) players[0], (PlayerManual) players[1]};
             board = new BoardHvH(playersManual);
-        }
-        else {
+        } else {
 //            board = new BoardMista
             throw new RuntimeException("To implement");
         }
@@ -55,38 +53,35 @@ public class GameModel {
 //--GAME METHODS--------------------------------------------------------------------------------------------------------
 
     public synchronized void playTurn(actionSet action) throws Exception {
-    //--WIN CONDITION -> can not make action
-        if (action instanceof NullAction){
+        //--WIN CONDITION -> can not make action
+        if (action instanceof NullAction) {
             board.setWin();
-            System.out.println("\nPLAYER "+ action.player().getPlayerCode() + "LOSE. CAN'T MAKE ANY ACTION!");
+            System.out.println("\nPLAYER " + action.player().getPlayerCode() + "LOSE. CAN'T MAKE ANY ACTION!");
             return;
         }
 
-        System.out.print( action.display());
+        System.out.print(action.display());
 
-    //--MOVE AND BUILD
+        //--MOVE AND BUILD
         Class<? extends Board> boardClass = board.getClass();
-        if (! boardClass.equals(BoardAivsAi.class))
+        if (!boardClass.equals(BoardAivsAi.class))
             throw new RuntimeException("To implement");
 
         BoardAivsAi board = (BoardAivsAi) this.board;
-        if(! board.moveUnitSafe(action.unitCode(), action.move())) {
+        if (!board.moveUnitSafe(action.unitCode(), action.move())) {
             throw new RuntimeException("Invalid move " + action.move() + " for unit " + action.unitCode());
 
         }
-        if (! board.buildFloorSafe(action.unitCode(),action.build()))
-            throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unitCode());
+        if (!board.buildFloorSafe(action.unitCode(), action.build()))
+            throw new RuntimeException("Invalid build " + action.build() + " for unit " + action.unitCode());
 
 
-    //--WIN CONDITION -> unit on height 3
-        if (board.win()){
-            System.out.println("\nPLAYER "+ action.player().getPlayerCode() + " WINS!");
+        //--WIN CONDITION -> unit on height 3
+        if (board.win()) {
+            System.out.println("\nPLAYER " + action.player().getPlayerCode() + " WINS!");
             return;
         }
     }
-
-    
-
 
 
 }

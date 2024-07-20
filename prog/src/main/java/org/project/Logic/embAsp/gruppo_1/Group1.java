@@ -6,7 +6,10 @@ import org.project.Logic.Game.player.ai.NullAction;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.LogicSettings;
-import org.project.Logic.embAsp.*;
+import org.project.Logic.embAsp.Group;
+import org.project.Logic.embAsp.WondevWomanHandler;
+import org.project.Logic.embAsp.buildIn;
+import org.project.Logic.embAsp.moveIn;
 import org.project.UI.Model.BoardAivsAi;
 import org.project.UI.Model.GameModel;
 
@@ -21,82 +24,82 @@ public class Group1 implements Group {
     private PlayerAi enemyPlayer;
     private WondevWomanHandler myHandler;
     private int myUnitCode;
-    private ArrayList<Integer> enemyUnits ;
+    private ArrayList<Integer> enemyUnits;
 
     /**
      * Call the EmbAsp for the player.
      * Use a copy of the board and the player to avoid any modification.<p>
      * After the computation, the method will return the actionSet to be executed.
+     *
      * @param player
-     * @returns
      * @throws Exception
+     * @returns
      */
     public actionSet callEmbAsp(PlayerAi player) throws Exception {
         myBoard = ((BoardAivsAi) GameModel.getInstance().getBoard()).copy();
 
-    //--SET PLAYERS
+        //--SET PLAYERS
         myPlayer = player;
-        for (Player p : myBoard.getPlayers() ){
-            if (! p.equals(player))
+        for (Player p : myBoard.getPlayers()) {
+            if (!p.equals(player))
                 enemyPlayer = (PlayerAi) p;
         }
 
-    //--SET HANDLER
+        //--SET HANDLER
         myHandler = new WondevWomanHandler();
 
-    //--CHOSE UNIT
+        //--CHOSE UNIT
         myUnitCode = myPlayer.getFirstUnitCode();
         enemyUnits = new ArrayList<>();
         enemyUnits.addAll(enemyPlayer.getUnitCodes());
 
-    //--MOVE
+        //--MOVE
         Point move = makeMove();
 
 
-        if(move == null)
-            return new NullAction(myPlayer,myUnitCode);
+        if (move == null)
+            return new NullAction(myPlayer, myUnitCode);
 
         //MOVE IN BOARD
-        if (! myBoard.moveUnitSafe(myUnitCode, move))
-            throw new RuntimeException("SOMETHING WRONG, CANNOT MOVE TO" +"("+move.x +","+ move.y+")" + "IN GROUP. " );
+        if (!myBoard.moveUnitSafe(myUnitCode, move))
+            throw new RuntimeException("SOMETHING WRONG, CANNOT MOVE TO" + "(" + move.x + "," + move.y + ")" + "IN GROUP. ");
 
-    //--BUILD
+        //--BUILD
         Point build = makeBuild();
 
-        if(build == null)
+        if (build == null)
             return new NullAction(myPlayer, myUnitCode);
 
         return new actionSet(myPlayer, myUnitCode, move, build);
     }
 
 
-
     private Point makeMove() throws Exception {
         ASPInputProgram moveProgram = new ASPInputProgram();
-        moveProgram.addFilesPath(LogicSettings.PATH_ENCOD_GROUP1+ "/move.asp");
+        moveProgram.addFilesPath(LogicSettings.PATH_ENCOD_GROUP1 + "/move.asp");
         myHandler.setEncoding(moveProgram);
 
-    //--CAN'T MOVE --> WIN CONDITION --> NULL ACTION
+        //--CAN'T MOVE --> WIN CONDITION --> NULL ACTION
         //moveCell(X,Y,H). --> cell where I can move unit
         ArrayList<Point> moveableArea = myBoard.moveableArea(myUnitCode);
         if (moveableArea.isEmpty()) {
             return null;
         }
 
-    //--REFRESH FACTS
+        //--REFRESH FACTS
         refreshFacts();
 
 
-    //--CAN MOVE
+        //--CAN MOVE
         for (Point cell : moveableArea)
-            myHandler.addFactAsString("moveCell(" + cell.x + "," + cell.y +","+ myBoard.heightAt(cell) +")");
+            myHandler.addFactAsString("moveCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell) + ")");
 
-    //--OUTPUT
+        //--OUTPUT
         myHandler.startSync();
-        System.out.println("\nMOVE"+ myPlayer.getPlayerCode()+"\n"+ myHandler.getOptimalAnswerSets().getFirst().toString() + "\n"+ myHandler.getFactsString()); //TODO: DELETE
+        System.out.println("\nMOVE" + myPlayer.getPlayerCode() + "\n" + myHandler.getOptimalAnswerSets().getFirst().toString() + "\n" + myHandler.getFactsString()); //TODO: DELETE
         for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {
-            if (atom instanceof moveIn){
-                return new Point( ((moveIn) atom).getX(), ((moveIn) atom).getY() );
+            if (atom instanceof moveIn) {
+                return new Point(((moveIn) atom).getX(), ((moveIn) atom).getY());
             }
         }
 
@@ -105,31 +108,31 @@ public class Group1 implements Group {
 
     private Point makeBuild() throws Exception {
         ASPInputProgram buildProgram = new ASPInputProgram();
-        buildProgram.addFilesPath(LogicSettings.PATH_ENCOD_GROUP1+ "/build.asp");
+        buildProgram.addFilesPath(LogicSettings.PATH_ENCOD_GROUP1 + "/build.asp");
         myHandler.setEncoding(buildProgram);
 
-    //--CAN'T BUILD
+        //--CAN'T BUILD
         //buildCell(X,Y,H). --> cell where my unit can build
         ArrayList<Point> buildableArea = myBoard.buildableArea(myUnitCode);
         if (buildableArea.isEmpty()) {
             return null;
         }
 
-    //--REFRESH FACTS
+        //--REFRESH FACTS
         refreshFacts();
 
 
-    //--CAN BUILD
+        //--CAN BUILD
         for (Point cell : buildableArea) {
             myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell) + ")");
         }
 
         myHandler.startSync();
-        System.out.println("\nBUILD"+ myPlayer.getPlayerCode() +"\n" +myHandler.getOptimalAnswerSets().getFirst().toString() + "\n" + myHandler.getFactsString()); //TODO DELETE
+        System.out.println("\nBUILD" + myPlayer.getPlayerCode() + "\n" + myHandler.getOptimalAnswerSets().getFirst().toString() + "\n" + myHandler.getFactsString()); //TODO DELETE
 
         //ADDING FACTS
         for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {
-            if (atom instanceof buildIn){
+            if (atom instanceof buildIn) {
                 return new Point(((buildIn) atom).getX(), ((buildIn) atom).getY());
             }
         }

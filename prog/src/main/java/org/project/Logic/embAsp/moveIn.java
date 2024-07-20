@@ -17,6 +17,7 @@ public class moveIn {
 
     public moveIn() {
     }
+
     public moveIn(int x, int y, int height) {
         this.x = x;
         this.y = y;
@@ -42,6 +43,7 @@ public class moveIn {
     public int getHeight() {
         return height;
     }
+
     public void setHeight(int height) {
         this.height = height;
     }

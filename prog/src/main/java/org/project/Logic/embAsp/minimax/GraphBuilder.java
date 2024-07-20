@@ -33,13 +33,13 @@ class GraphBuilder {
     private static int myUnitCode;
 
     static Graph<GridState> buildGraph(WondevWomanHandler handler, BoardAivsAi board, int unitCode) throws Exception {
-    //--INIT
+        //--INIT
         myHandler = handler;
         myHandler.showAllAnswerSet(true);
         myBoard = board.copy();
         myUnitCode = unitCode;
 
-    //--BUILD GRAPH
+        //--BUILD GRAPH
 
 
         //1)ADD CURRENT STATE AS FATHER
@@ -53,12 +53,12 @@ class GraphBuilder {
 
     private static void addChildren(GridState father) throws Exception {
 
-    //--SET FACTS
+        //--SET FACTS
         myHandler.setFactProgram(father);
         ArrayList<Point> moveableArea = myBoard.moveableArea(myUnitCode);
         for (Point p : moveableArea) {
             myHandler.addFactAsString("moveCell(" + p.x + "," + p.y + "," + myBoard.heightAt(p) + ")");
-    //--FOR EACH LEGAL ACTION
+            //--FOR EACH LEGAL ACTION
             myHandler.startSync();
 
             for (AnswerSet as : myHandler.getAnswerSets().getAnswersets()) {
@@ -71,19 +71,19 @@ class GraphBuilder {
                 }
                 if (move == null || build == null) throw new RuntimeException("Missing move or build");
 
-            //1)MAKE THE ACTION
+                //1)MAKE THE ACTION
                 myBoard.moveUnitSafe(myUnitCode, move.getCoord());
                 myBoard.buildFloorSafe(myUnitCode, build.getCoord());
 
-            //2)ADD VERTEX & EDGE
+                //2)ADD VERTEX & EDGE
                 GridState child = new GridState(myBoard.getGridState().getPrograms(), move, build);
                 graph.addVertex(child);
                 graph.addEdge(father, child);
 
-            //3)IF NOT TERMINAL -> RECURSION
+                //3)IF NOT TERMINAL -> RECURSION
                 if (!graph.containsVertex(child) && !child.isTerminal()) addChildren(child);
 
-            //4)IF TERMINAL -> RESET BOARD
+                //4)IF TERMINAL -> RESET BOARD
                 myBoard.setBoardFromGridState(father);
 
 

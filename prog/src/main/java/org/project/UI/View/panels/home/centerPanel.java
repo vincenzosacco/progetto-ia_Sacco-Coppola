@@ -17,27 +17,27 @@ public class centerPanel extends MyPanel {
         setLayout(layout);
 
 
-    //--BUTTONS
+        //--BUTTONS
         play = new JButton("GIOCA");
 
         add(play);
 
-    //--LAYOUT CONSTRAINTS
+        //--LAYOUT CONSTRAINTS
         setupConstraints();
 
     }
 
     private boolean added = false;
+
     @Override
     public void addNotify() {
         super.addNotify();
-        if (! added) {
+        if (!added) {
 
             HomePanel parent;
             try {
                 parent = (HomePanel) getParent();
-            }
-            catch (ClassCastException e) {
+            } catch (ClassCastException e) {
                 throw new RuntimeException("centerPanel must be added to a HomePanel");
             }
 

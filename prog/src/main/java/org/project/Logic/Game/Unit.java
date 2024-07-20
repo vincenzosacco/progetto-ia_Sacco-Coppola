@@ -1,6 +1,6 @@
 package org.project.Logic.Game;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.Objects;
 
 /**
@@ -14,11 +14,12 @@ public class Unit {
 
     /**
      * Constructor by parameters.
+     *
      * @param unitCode the code of the unit.
-     * @param player {@link Player} of the unit.
-     * @param coord {@link Point} of the unit.
+     * @param player   {@link Player} of the unit.
+     * @param coord    {@link Point} of the unit.
      */
-     Unit(int unitCode, Player player, Point coord) {
+    Unit(int unitCode, Player player, Point coord) {
         this.unitCode = unitCode;
         this.player = player;
         this.coord = new Point(coord);
@@ -26,13 +27,14 @@ public class Unit {
 
     /**
      * Constructor by copy.
-      * @param unit {@link Unit} to be copied.
+     *
+     * @param unit {@link Unit} to be copied.
      */
     Unit(Unit unit) {
         this(unit.unitCode, unit.player, unit.coord);
     }
 
-//--GETTERS-------------------------------------------------------------------------------------------------------------
+    //--GETTERS-------------------------------------------------------------------------------------------------------------
     public int i() {
         return coord.x;
     }
