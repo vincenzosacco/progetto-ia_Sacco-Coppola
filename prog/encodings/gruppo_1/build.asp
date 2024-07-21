@@ -42,7 +42,6 @@ buildIn(X,Y,H) | buildOut(X,Y) :- buildCell(X,Y,H).
 :~ buildIn(X,Y,H), enemyMoveCell(X,Y,H,U), enemyUnit(_,_,Henemy,U), &sum(H+1,-Henemy;Z), Z=0. [2@8] 
 :~ buildIn(X,Y,H), enemyMoveCell(X,Y,H,U), enemyUnit(_,_,Henemy,U), &sum(H+1,-Henemy;Z), Z=2. [1@8] 
 
-#show enemyMoveCell/4.
 %
 %3
 %

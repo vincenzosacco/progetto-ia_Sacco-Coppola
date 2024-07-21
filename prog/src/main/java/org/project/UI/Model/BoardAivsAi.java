@@ -2,9 +2,12 @@ package org.project.UI.Model;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.Board;
+import org.project.Logic.Game.Player;
+import org.project.Logic.Game.Unit;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.MyHandler;
+import org.project.Logic.embAsp.WondevWomanHandler;
 import org.project.Logic.embAsp.cell;
 
 import java.awt.*;
@@ -116,28 +119,10 @@ public class BoardAivsAi extends Board {
 
         BoardCopy(BoardAivsAi board) throws Exception {
             super(board);
-            parser = new MyHandler();
+            parser = new WondevWomanHandler();
             parser.addEncodingPath(LogicSettings.PATH_ENCOD_PARSER);
         }
 
-
-        public void setBoardFromGridState(ASPInputProgram gridState) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-//            parser.setFactProgram(gridState);
-//            parser.startSync();
-//
-//            for (Object atom : parser.getAnswerSets().getAnswersets().getFirst().getAtoms()) {
-//                if (atom instanceof cell) {
-//                    cell c = (cell) atom;
-//                    grid[c.getX()][c.getY()] = c.getHeight();
-//                    if (c.getUnitCode() != 0) {
-//                        Unit unit = players[0].getUnit(c.getUnitCode());
-//                        if (unit == null) unit = players[1].getUnit(c.getUnitCode());
-//                        if (unit == null) throw new RuntimeException("Unit not found");
-//                        unit.coord = new Point(c.getX(), c.getY());
-//                    }
-//                }
-//            }
-        }
 
         @Override
         public boolean moveUnitSafe(int unitCode, Point coord) {

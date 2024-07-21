@@ -6,6 +6,7 @@ import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.Group;
 import org.project.Logic.embAsp.WondevWomanHandler;
+import org.project.Logic.embAsp.minimax.utility.GraphBuilder;
 import org.project.UI.Model.BoardAivsAi;
 import org.project.UI.Model.GameModel;
 
@@ -16,7 +17,7 @@ public class MiniMax implements Group {
     public MiniMax() {
         myHandler = new WondevWomanHandler();
         encoding = new ASPInputProgram();
-        encoding.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/possible_actions.asp");
+        encoding.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/possible_state.asp");
         myHandler.setEncoding(encoding);
 
     }
