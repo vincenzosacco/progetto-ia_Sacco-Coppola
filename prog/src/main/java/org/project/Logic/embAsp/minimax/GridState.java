@@ -9,6 +9,7 @@ import java.util.Objects;
 import  static org.project.UI.Model.BoardAivsAi.BoardCopy;
 
 public class GridState extends ASPInputProgram {
+    final int id;
     final String name;
     final moveIn moved;
     final buildIn builded;
@@ -20,6 +21,7 @@ public class GridState extends ASPInputProgram {
 
     private GridState(int id, String initial_program, boolean isTerminal, BoardCopy board) {
         super(initial_program);
+        this.id = id;
         name = "state_" + id  ;
         this.isTerminal = isTerminal;
         moved = null;
@@ -29,6 +31,7 @@ public class GridState extends ASPInputProgram {
 
     public GridState(int id, String initial_program, moveIn moved, buildIn builded, BoardCopy board) {
         super(initial_program);
+        this.id = id;
         this.moved = moved;
         this.builded = builded;
         this.board = board;
@@ -43,6 +46,7 @@ public class GridState extends ASPInputProgram {
         }
 
     }
+
 
 
     public boolean isTerminal() {
@@ -64,8 +68,8 @@ public class GridState extends ASPInputProgram {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GridState that = (GridState) o;
-        return moved.equals(that.moved) && builded.equals(that.builded);
-    }
+            return moved.equals(that.moved) && builded.equals(that.builded) && isTerminal == that.isTerminal && board.equals(that.board);
+        }
 
     @Override
     public int hashCode() {

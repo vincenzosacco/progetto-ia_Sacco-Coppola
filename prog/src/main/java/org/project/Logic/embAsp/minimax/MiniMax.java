@@ -6,14 +6,12 @@ import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.Group;
 import org.project.Logic.embAsp.WondevWomanHandler;
-import org.project.Logic.embAsp.minimax.utility.MyGraphOriented;
 import org.project.Logic.embAsp.moveIn;
 import org.project.Logic.embAsp.buildIn;
 import org.project.UI.Model.BoardAivsAi;
 import org.project.UI.Model.GameModel;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class MiniMax implements Group {
@@ -40,14 +38,18 @@ public class MiniMax implements Group {
         myUnitCode = player.getFirstUnitCode();
 
     //--BUILD GRAPH
-        MyGraphOriented<GridState> graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
+        MyGraph graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
 
     //--SEARCH PATH FROM ROOT TO BEST
-        List<GridState> a = graph.reverseDFS(graph.getBest(), graph.getRoot(), new ArrayList<>());
+        Iterator<GridState> it = graph.getVertices().iterator();
+        for (int i = 0; i < 500; i++) it.next();
+        GridState search = it.next();
 
-        //print a
-        for (GridState gridState : a) {
-            System.out.println(gridState);
+        Collection<GridState> path = graph.find(graph.getRoot(), graph.getBest());
+
+        // print path
+        for (GridState state : path) {
+            System.out.println(state);
         }
 
 

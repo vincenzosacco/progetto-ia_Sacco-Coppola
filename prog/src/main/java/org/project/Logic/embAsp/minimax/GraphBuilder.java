@@ -6,7 +6,6 @@ import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import it.unical.mat.embasp.languages.asp.AnswerSet;
 import org.project.Logic.embAsp.WondevWomanHandler;
 import org.project.Logic.embAsp.buildIn;
-import org.project.Logic.embAsp.minimax.utility.MyGraphOriented;
 import org.project.Logic.embAsp.moveIn;
 import org.project.UI.Model.BoardAivsAi;
 
@@ -21,17 +20,17 @@ import static org.project.UI.Model.BoardAivsAi.BoardCopy;
  */
 
 public class GraphBuilder {
-    private static MyGraphOriented<GridState> graph ;
+    private static MyGraph graph ;
     static int NEXT_ID = 0;
     private static WondevWomanHandler myHandler;
     private static int myUnitCode;
 
-    static MyGraphOriented<GridState> buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
+    static MyGraph buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
     //--INIT
         myHandler = handler;
         myHandler.showAllAnswerSet(true);
         myUnitCode = unitCode;
-        graph = new MyGraphOriented<>();
+        graph = new MyGraph();
 
         BoardCopy myBoard = origBoard.copy(); // Copy the board to avoid changes in the original board
 
