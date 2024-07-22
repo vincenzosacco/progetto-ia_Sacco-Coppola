@@ -1,4 +1,4 @@
-package org.project.Logic.embAsp.minimax.utility;
+package org.project.Logic.embAsp.minimax;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.embAsp.buildIn;
@@ -44,9 +44,6 @@ public class GridState extends ASPInputProgram {
 
     }
 
-    public BoardCopy getBoard() {
-        return board;
-    }
 
     public boolean isTerminal() {
         return isTerminal;

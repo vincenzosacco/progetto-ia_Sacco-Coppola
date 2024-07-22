@@ -1,20 +1,12 @@
-package org.project.Logic.embAsp.minimax.utility;
-//•S 0 : lo stato iniziale, che specifica come viene impostato il gioco
-//•Deve_muovere( s): Il giocatore il cui turno è quello di muoversi nello stato s
-//•Azioni(s)s): le mosse legali in s
-//•Risultato(s, a): Il modello di transizione che definisce lo stato risultante
-//dall'azione a nello stato s
-//•È Terminale ( s): Un test di terminazione, che è vero in uno stato s quando il
-//gioco è finito e falso altrimenti
-//•Utilità(s, p): Una funzione di utilità funzione obiettivo o payoff
-//che definisce il valore numerico finale per il giocatore p quando il gioco
-//termina nello stato terminale s.
+package org.project.Logic.embAsp.minimax;
+
 
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import it.unical.mat.embasp.languages.asp.AnswerSet;
 import org.project.Logic.embAsp.WondevWomanHandler;
 import org.project.Logic.embAsp.buildIn;
+import org.project.Logic.embAsp.minimax.utility.MyGraphOriented;
 import org.project.Logic.embAsp.moveIn;
 import org.project.UI.Model.BoardAivsAi;
 
@@ -23,54 +15,58 @@ import java.util.*;
 
 import static org.project.UI.Model.BoardAivsAi.BoardCopy;
 
+
 /**
- * Class used to build a graph of {@link org.project.Logic.embAsp.minimax.utility.GridState GridState} starting by a state.
+ * Class used to build a graph of {@link GridState GridState} starting by a state.
  */
 
 public class GraphBuilder {
-    static final GraphOriented<GridState> graph = new GraphOriented<>();
+    private static MyGraphOriented<GridState> graph ;
     static int NEXT_ID = 0;
-
     private static WondevWomanHandler myHandler;
     private static int myUnitCode;
 
-    public static GraphOriented<GridState> buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
+    static MyGraphOriented<GridState> buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
     //--INIT
         myHandler = handler;
         myHandler.showAllAnswerSet(true);
         myUnitCode = unitCode;
+        graph = new MyGraphOriented<>();
 
         BoardCopy myBoard = origBoard.copy(); // Copy the board to avoid changes in the original board
 
 
-    //--1) ADD FATHER TO GRAPH
+    //--ADD FATHER TO GRAPH
         GridState father = new GridState.RootState(NEXT_ID++, myBoard.getGridState().getPrograms(), myBoard);
         graph.addVertex(father);
 
-    //--2) ADD ALL CHILDREN
+    //--ADD ALL CHILDREN
         Queue<GridState> queue = new PriorityQueue<>(GridState.heightComparator); // LIFO queue, Comparing by height
         queue.add(father);
 
         while (! queue.isEmpty()) // add children to the graph until the queue is empty
         {
         //1) CREATE CHILDREN
-            GridState toExpand = queue.poll();
-            ArrayList<GridState> children =  createChildren(toExpand, toExpand.board);
+            GridState currentBest = queue.poll();
+            ArrayList<GridState> children =  createChildren(currentBest, currentBest.board);
 
         //2) IF THERE ARE CHILDREN -> ADD CHILDREN
             if (! children.isEmpty()){
-                addChildrenToGraph(toExpand, children);
+                addChildrenToGraph(currentBest, children);
                 queue.addAll(children); // if all vertices are expanded, the queue will be empty
-//                for (GridState child : children) {
-//                    if (! child.isTerminal) queue.add(child);
-//                }
-            if (queue.peek().moved.getHeight() == 3 )
-                break; // optimization
             }
 
+        //4) STOP CONDITION
+            GridState newBest = queue.peek();
+            if (newBest.moved.getHeight() == 3 ) {
+                graph.setBest(newBest);
+                break;
+            }
         }
 
         return graph;
+
+//        throw new RuntimeException("No terminal state found, TO IMPLEMENT");
     }
 
 
