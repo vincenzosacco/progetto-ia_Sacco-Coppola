@@ -7,10 +7,10 @@ import java.util.*;
  * @param  the type of the vertex. Must implement {@link Object#equals(Object)} and {@link Object#hashCode()}.
  */
 
-public class MyGraph {
-    private LinkedHashMap<GridState, List<GridState>> adjacencyList;
-    private GridState root;
-    private GridState best;
+public class MyGraph<T> {
+    private LinkedHashMap<T, List<T>> adjacencyList;
+    private T root;
+    private T best;
 
 
     public MyGraph() {
@@ -26,7 +26,7 @@ public class MyGraph {
      * @param vertex the vertex to add.
      * @throws IllegalArgumentException if the vertex is null.
      */
-    public void addVertex(GridState vertex) {
+    public void addVertex(T vertex) {
         if (root == null) {
             root = vertex;
             best = root;
@@ -43,14 +43,14 @@ public class MyGraph {
      * @param destination the destination vertex.
      * @throws IllegalArgumentException <p>if the source vertex does not exist. .
      */
-    public void addEdge(GridState source, GridState destination) {
+    public void addEdge(T source, T destination) {
         // check if source exist
         if (!adjacencyList.containsKey(source))
             throw new IllegalArgumentException("Vertex " + source + " does not exist.");
         if (!adjacencyList.containsKey(destination))
             throw new IllegalArgumentException("Desination " + destination + " does not exist.");
 
-        List<GridState> edges = adjacencyList.get(source);
+        List<T> edges = adjacencyList.get(source);
 
         if (edges.contains(destination)) return;
         edges.add(destination);
@@ -63,7 +63,7 @@ public class MyGraph {
      * @param destination the destination vertex.
      * @return true if the edge exists, false otherwise.
      */
-    public boolean edge(GridState source, GridState destination) {
+    public boolean edge(T source, T destination) {
         if (!adjacencyList.containsKey(source))
             throw new IllegalArgumentException("source does not exist: " + source );
         if (!adjacencyList.containsKey(destination))
@@ -80,14 +80,14 @@ public class MyGraph {
      * @param end the end vertex.
      */
 
-    public Collection<GridState> find(GridState start, GridState end) {
+    public Collection<T> find(T start, T end) {
         if (start == null) throw new IllegalArgumentException("start cannot be null.");
         if (end == null) throw new IllegalArgumentException("end cannot be null.");
 
 //        ArrayDeque<GridState> path = new ArrayDeque<>(); // LIFO
 //        path.add(start);
 
-        LinkedList<GridState> path = new LinkedList<>();
+        LinkedList<T> path = new LinkedList<>();
     //--OPTIMIZATION
         if (start.equals(end)) {
             path.add(start);
@@ -100,8 +100,8 @@ public class MyGraph {
 
     //--SEARCH
         else {
-            List<GridState> visited ;
-            for (GridState adj : adjacencyList.get(start)) {
+            List<T> visited ;
+            for (T adj : adjacencyList.get(start)) {
                 visited = DFSBranch(adj, end); // If end is reached, visited contains the path from start to end
                 if (visited.getLast().equals(end)) {
                     continue;
@@ -119,9 +119,9 @@ public class MyGraph {
     }
 
 
-    public List<GridState> DFSBranch(GridState start, GridState end) {
-        List<GridState> visited = new LinkedList<>();
-        ArrayDeque<GridState> path = new ArrayDeque<>();
+    public List<T> DFSBranch(T start, T end) {
+        List<T> visited = new LinkedList<>();
+        ArrayDeque<T> path = new ArrayDeque<>();
         DFSBranch(start, end, visited, path);
         stopDFSBranch = false;
 
@@ -129,12 +129,12 @@ public class MyGraph {
     }
     private boolean stopDFSBranch = false;
     /**
-     * This method performs the same search of {@link MyGraph#DFS(GridState, GridState, List)} but stops as soon as it finds a terminal vertex.
+     * This method performs the same search of {@link MyGraph#DFS(T, T, List)} but stops as soon as it finds a terminal vertex.
      * @param start
      * @param end
      * @param visited
      */
-    private void DFSBranch(GridState start, GridState end, List<GridState> visited, ArrayDeque<GridState> path) {
+    private void DFSBranch(T start, T end, List<T> visited, ArrayDeque<T> path) {
 
     }
 
@@ -147,14 +147,14 @@ public class MyGraph {
      * @param end the end vertex.
      * @param visited the list of visited vertices, must be {@code empty}.
      */
-    private void DFS(GridState start, GridState end, List<GridState> visited) {
+    private void DFS(T start, T end, List<T> visited) {
         if (!stopDFS) {
             if (start == null || end == null)
                 throw new IllegalArgumentException("Start and end vertices cannot be null.");
 
             visited.add(start);
 
-            for (GridState adjacent : adjacencyList.get(start)) {
+            for (T adjacent : adjacencyList.get(start)) {
                 // EXIT CONDITION
                 if (adjacent.equals(end)) {
                     visited.add(end);
@@ -175,8 +175,8 @@ public class MyGraph {
      * @param end the end vertex.
      * @return the list of visited vertices.
      */
-    public List<GridState> DFS(GridState start, GridState end){
-        List<GridState> visited = new LinkedList<>();
+    public List<T> DFS(T start, T end){
+        List<T> visited = new LinkedList<>();
         DFS(start, end, visited);
         stopDFS = false;
 
@@ -184,15 +184,15 @@ public class MyGraph {
     }
 
 
-    public GridState getRoot() {
+    public T getRoot() {
         return root;
     }
 
-    public Set<GridState> getVertices() {
+    public Set<T> getVertices() {
         return adjacencyList.keySet();
     }
 
-    public boolean containsVertex(GridState vertex) {
+    public boolean containsVertex(T vertex) {
         return adjacencyList.containsKey(vertex);
     }
 
@@ -201,7 +201,7 @@ public class MyGraph {
      * Set the best vertex of the graph. <p>
      * @param best the best vertex.
      */
-    public void setBest(GridState best) {
+    public void setBest(T best) {
         this.best = best;
     }
 
@@ -210,7 +210,7 @@ public class MyGraph {
      * If the best vertex has not been set, the method returns the root vertex.
      * @return the best vertex.
      */
-    public GridState getBest() {
+    public T getBest() {
         return best;
     }
 
@@ -219,11 +219,11 @@ public class MyGraph {
         StringBuilder builder = new StringBuilder();
 
 
-        for (GridState vertex : adjacencyList.keySet()) {
+        for (T vertex : adjacencyList.keySet()) {
             builder.append(vertex.toString()).append(":{ ");
 
-            List<GridState> value = adjacencyList.get(vertex);
-            for (GridState adjacent : value) {
+            List<T> value = adjacencyList.get(vertex);
+            for (T adjacent : value) {
                 if (value.indexOf(adjacent) == 0)
                     builder.append(adjacent.toString());
                 else

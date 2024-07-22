@@ -4,6 +4,7 @@ package org.project.Logic.embAsp.minimax;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import it.unical.mat.embasp.languages.asp.AnswerSet;
+import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.WondevWomanHandler;
 import org.project.Logic.embAsp.buildIn;
 import org.project.Logic.embAsp.moveIn;
@@ -16,74 +17,99 @@ import static org.project.UI.Model.BoardAivsAi.BoardCopy;
 
 
 /**
- * Class used to build a graph of {@link GridState GridState} starting by a state.
+ * Class used to build a graph of {@link T GridState} starting by a state.
  */
 
 public class GraphBuilder {
-    private static MyGraph graph ;
+    private static MyGraph<Integer> graph ;
     static int NEXT_ID = 0;
-    private static WondevWomanHandler myHandler;
+    private static WondevWomanHandler possStateHandler, stateValueHandler;
     private static int myUnitCode;
 
-    static MyGraph buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
-    //--INIT
-        myHandler = handler;
-        myHandler.showAllAnswerSet(true);
-        myUnitCode = unitCode;
-        graph = new MyGraph();
+    static {
+        stateValueHandler = new WondevWomanHandler();
+        ASPInputProgram stateValue = new ASPInputProgram();
+        stateValue.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/state_value.asp");
+        stateValueHandler.setEncoding(stateValue);
+    }
 
+    private static void init(WondevWomanHandler handler, int unitCode)  {
+        possStateHandler = handler;
+        possStateHandler.showAllAnswerSet(true);
+        myUnitCode = unitCode;
+
+        graph = new MyGraph<>();
+
+
+    }
+
+    static MyGraph<Integer> buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
+    //--INIT
+        init(handler, unitCode);
         BoardCopy myBoard = origBoard.copy(); // Copy the board to avoid changes in the original board
 
+    //--BUILD GRAPH
+        T root = new T.RootState(NEXT_ID++, myBoard.getGridState().getPrograms(), myBoard);
 
-    //--ADD FATHER TO GRAPH
-        GridState father = new GridState.RootState(NEXT_ID++, myBoard.getGridState().getPrograms(), myBoard);
-        graph.addVertex(father);
+        //1) CREATE CHILDREN
+            T currentBest = queue.poll();
+            ArrayList<T> children =  createChildren(currentBest, currentBest.board);
+
+
+
 
     //--ADD ALL CHILDREN
-        Queue<GridState> queue = new PriorityQueue<>(GridState.heightComparator); // LIFO queue, Comparing by height
-        queue.add(father);
+//        Queue<T> queue = new PriorityQueue<>(T.heightComparator); // LIFO queue, Comparing by height
+//        queue.add(father);
 
-        while (! queue.isEmpty()) // add children to the graph until the queue is empty
-        {
-        //1) CREATE CHILDREN
-            GridState currentBest = queue.poll();
-            ArrayList<GridState> children =  createChildren(currentBest, currentBest.board);
 
-        //2) IF THERE ARE CHILDREN -> ADD CHILDREN
-            if (! children.isEmpty()){
-                addChildrenToGraph(currentBest, children);
-                queue.addAll(children); // if all vertices are expanded, the queue will be empty
-            }
 
-        //4) STOP CONDITION
-            GridState newBest = queue.peek();
-            if (newBest.moved.getHeight() == 3 ) {
-                graph.setBest(newBest);
-                break;
-            }
-        }
+
+
+
+
+
+//        while (! queue.isEmpty()) // add children to the graph until the queue is empty
+//        {
+//        //1) CREATE CHILDREN
+//            T currentBest = queue.poll();
+//            ArrayList<T> children =  createChildren(currentBest, currentBest.board);
+//
+//        //2) IF THERE ARE CHILDREN -> ADD CHILDREN
+//            if (! children.isEmpty()){
+//                addChildrenToGraph(currentBest, children);
+//                queue.addAll(children); // if all vertices are expanded, the queue will be empty
+//            }
+//
+//        //4) STOP CONDITION
+//            T newBest = queue.peek();
+//            if (newBest.moved.getHeight() == 3 ) {
+//                graph.setBest(newBest);
+//                break;
+//            }
+//        }
 
         return graph;
 
-//        throw new RuntimeException("No terminal state found, TO IMPLEMENT");
     }
 
 
 
-    private static ArrayList<GridState> createChildren(ASPInputProgram program , BoardAivsAi board) throws Exception {
+
+    private static ArrayList<T> createChildren(ASPInputProgram program , BoardAivsAi board) throws Exception {
     //--SET FACTS
-        myHandler.setFactProgram(program);
+        possStateHandler.setFactProgram(program);
         ArrayList<Point> moveableArea = board.moveableArea(myUnitCode);
         if (moveableArea.isEmpty()) return new ArrayList<>(); // optimization
 
         for (Point p : moveableArea)
-            myHandler.addFactAsString("moveCell(" + p.x + "," + p.y + "," + board.heightAt(p) + ")");
+            possStateHandler.addFactAsString("moveCell(" + p.x + "," + p.y + "," + board.heightAt(p) + ")");
 
     //--FOR EACH LEGAL ACTION, CREATE A CHILD
-        ArrayList<GridState> children = new ArrayList<>();
-        myHandler.startSync();
+        ArrayList<T> children = new ArrayList<>();
+        possStateHandler.startSync();
 
-        for (AnswerSet as : myHandler.getAnswerSets().getAnswersets()) {
+        for (AnswerSet as : possStateHandler.getAnswerSets().getAnswersets()) {
             moveIn move = null;
             buildIn build = null;
             for (Object atom : as.getAtoms()) {
@@ -102,7 +128,7 @@ public class GraphBuilder {
                 childBoard.buildFloorSafe(myUnitCode, build.getCoord());
             }
 
-            GridState child = new GridState(NEXT_ID++, board.getGridState().getPrograms(), move, build, childBoard);
+            T child = new T(NEXT_ID++, board.getGridState().getPrograms(), move, build, childBoard);
             children.add(child);
         }
 
@@ -110,15 +136,29 @@ public class GraphBuilder {
         return children;
     }
 
-    private static void addChildrenToGraph(GridState father, ArrayList<GridState> children) {
+
+    private static void addChildrenToGraph(T father, ArrayList<T> children) throws Exception {
         if (! graph.containsVertex(father)) throw new RuntimeException("Father not present in the graph");
 
-        for (GridState child : children) {
-            graph.addVertex(child); // Add the child to the graph if it is not already present
-            graph.addEdge(father, child); // Add the edge between father and child in the graph if it is not already present
+        ASPInputProgram facts = new ASPInputProgram();
+        for (T child : children) {
+        //--SET FACTS
+            facts.addObjectInput(child.moved); facts.addObjectInput(child.builded);
+            stateValueHandler.setFactProgram(facts);
+
+        //--GET VALUE
+            stateValueHandler.startSync();
+
+            // only 1 answer set
+            System.out.println(stateValueHandler.getAnswerSets().getAnswerSetsString());
+
+//            graph.addVertex(child); // Add the child to the graph if it is not already present
+//            graph.addEdge(father, child); // Add the edge between father and child in the graph if it is not already present
         }
 
     }
+
+
 
 }
 

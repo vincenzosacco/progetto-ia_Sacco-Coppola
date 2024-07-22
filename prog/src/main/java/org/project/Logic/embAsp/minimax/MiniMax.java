@@ -41,16 +41,16 @@ public class MiniMax implements Group {
         MyGraph graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
 
     //--SEARCH PATH FROM ROOT TO BEST
-        Iterator<GridState> it = graph.getVertices().iterator();
-        for (int i = 0; i < 500; i++) it.next();
-        GridState search = it.next();
-
-        Collection<GridState> path = graph.find(graph.getRoot(), graph.getBest());
-
-        // print path
-        for (GridState state : path) {
-            System.out.println(state);
-        }
+//        Iterator<GridState> it = graph.getVertices().iterator();
+//        for (int i = 0; i < 500; i++) it.next();
+//        GridState search = it.next();
+//
+//        Collection<GridState> path = graph.find(graph.getRoot(), graph.getBest());
+//
+//        // print path
+//        for (GridState state : path) {
+//            System.out.println(state);
+//        }
 
 
         return null;
