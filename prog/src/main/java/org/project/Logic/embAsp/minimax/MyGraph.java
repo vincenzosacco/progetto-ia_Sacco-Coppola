@@ -189,6 +189,36 @@ public class MyGraph<T> {
         return visited;
     }
 
+    public List<T> DFSTerminal(T start) {
+        List<T> visited = new LinkedList<>();
+        DFSTerminal(start, visited);
+        stopDFS = false;
+
+        return visited;
+    }
+
+    private void DFSTerminal(T start, List<T> visited) {
+        if (!stopDFS) {
+            if (start == null )
+                throw new IllegalArgumentException("Start cannot be null.");
+
+            visited.add(start);
+
+            for (T adjacent : adjacencyList.get(start)) {
+                // EXIT CONDITION: adjacent have no children
+                if (adjacencyList.get(adjacent).isEmpty()) {
+                    visited.add(adjacent);
+                    stopDFS = true;
+                }
+
+                if (!stopDFS && !visited.contains(adjacent) ) {
+                    DFSTerminal(adjacent, visited);
+                }
+            }
+
+        }
+    }
+
 
     public T getRoot() {
         return root;

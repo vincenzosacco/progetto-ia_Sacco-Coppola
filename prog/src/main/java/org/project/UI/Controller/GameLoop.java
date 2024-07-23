@@ -22,12 +22,16 @@ public class GameLoop {
             while (!board.win() && isAlive) {
                 for (Player p : board.getPlayers()) {
                     currentPlayer = p;
-                    actionSet action = p.call();
+
+                    long startTime= System.currentTimeMillis();
+                    actionSet action = p.call(); //TODO: IMPLEMENTARE UN TIMEOUT PER LE AZIONI
+                    long endTime= System.currentTimeMillis();
+                    long actionTime = endTime - startTime;
 
                     // refresh model
                     GameModel.getInstance().playTurn(action);
 
-                    Thread.sleep(700);
+                    if (actionTime < 700) Thread.sleep(700 - actionTime); // wait for the player to see the move
 
                     // refresh view
                     ProjectView.getInstance().refreshGamePanel();

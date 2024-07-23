@@ -41,26 +41,28 @@ public class MiniMax implements Group {
     //--BUILD GRAPH
         MyGraph<GridState> graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
 
-    //--MAKE ACTION
-        GridState action = graph.getAdjacents(graph.getRoot()).getFirst(); // get the first adjacent of the root
-        moveIn move = action.moved;
-        buildIn build = action.builded;
+    //--SEARCH SHORTEST PATH FROM ROOT TO BEST
+        // The shortest path will be the first
+        PriorityQueue<List<GridState>> paths = new PriorityQueue<>(Comparator.comparingInt(List::size));
+        for (GridState adj : graph.getAdjacents(graph.getRoot())) {
+            paths.add(graph.DFSTerminal(adj));
+        }
 
-        return new actionSet(player, myUnitCode, move.getCoord(), build.getCoord());
+        if (paths.isEmpty()) {
+            throw new Exception("No path found, IMPLEMENT"); //TODO: IMPLEMENT
+//            return new actionSet(player, myUnitCode, null, null);
+        }
+
+
+    //--MAKE ACTION
+        GridState action = paths.peek().getFirst(); // The first state of the shortest path
+
+        return new actionSet(player, myUnitCode, action.moved.getCoord(), action.builded.getCoord());
     }
 
 
-    //--SEARCH PATH FROM ROOT TO BEST
-//        Iterator<GridState> it = graph.getVertices().iterator();
-//        for (int i = 0; i < 500; i++) it.next();
-//        GridState search = it.next();
-//
-//        Collection<GridState> path = graph.find(graph.getRoot(), graph.getBest());
-//
-//        // print path
-//        for (GridState state : path) {
-//            System.out.println(state);
-//        }
+
+
 
  }
 

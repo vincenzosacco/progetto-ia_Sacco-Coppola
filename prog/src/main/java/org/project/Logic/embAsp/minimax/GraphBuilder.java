@@ -62,15 +62,14 @@ public class GraphBuilder {
         {
             //1) CREATE CHILDREN
             GridState currentBest = queue.poll();
-            LinkedList<GridState> children = createChildren(currentBest, currentBest.board);
+            LinkedList<GridState> bestChildren = addBestChildren(currentBest, currentBest.board);
 
             //2) IF THERE ARE CHILDREN -> ADD CHILDREN
-            if (!children.isEmpty()) {
-                List<GridState> bestChildren = addBestChildrenToGraph(currentBest , children);
+            if (!bestChildren.isEmpty()) {
 
                 // If children aren't worse than father, add them to the queue
                 if (bestChildren.getFirst().value >= currentBest.value) {
-                    queue.addAll(bestChildren); // if all vertices are expanded, the queue will be emptyù
+                    queue.addAll(bestChildren); // if all vertices are expanded, the queue will be empty
                     //DEBUG: print best children
 //                    System.out.println("Best children in iteration  " + ++iteration);
 //                    for (GridState b : bestChildren) {
@@ -85,7 +84,6 @@ public class GraphBuilder {
             if (newBest == null) throw new RuntimeException("Queue is empty");
 
             if (newBest.moved.getHeight() == 3 ) {
-                graph.setBest(newBest);
                 break;
             }
 
@@ -100,9 +98,9 @@ public class GraphBuilder {
 
 
 
-    private static LinkedList<GridState> createChildren(ASPInputProgram program , BoardAivsAi board) throws Exception {
+    private static LinkedList<GridState> addBestChildren(GridState father, BoardAivsAi board) throws Exception {
     //--SET FACTS
-        possStateHandler.setFactProgram(program);
+        possStateHandler.setFactProgram(father);
         ArrayList<Point> moveableArea = board.moveableArea(myUnitCode);
         if (moveableArea.isEmpty()) return new LinkedList<>(); // optimization
 
@@ -132,8 +130,25 @@ public class GraphBuilder {
                 childBoard.buildFloorSafe(myUnitCode, build.getCoord());
             }
 
-            GridState child = new GridState(NEXT_ID++, board.getGridState().getPrograms(), move, build, value, childBoard);
-            children.add(child);
+    //--CREATE ONLY BEST CHILDREN
+            if (children.isEmpty()) {
+                GridState child = new GridState(NEXT_ID++, board.getGridState().getPrograms(), move, build, value, childBoard);
+                children.add(child);
+            }
+            else if (value > children.getFirst().value) {
+                children.clear();
+                GridState child = new GridState(NEXT_ID++, board.getGridState().getPrograms(), move, build, value, childBoard);
+                children.add(child);
+            }
+            else if (value == children.getFirst().value) {
+                GridState child = new GridState(NEXT_ID++, board.getGridState().getPrograms(), move, build, value, childBoard);
+                children.add(child);
+            }
+        }
+    //--ADD THE BEST CHILDREN TO GRAPH
+        for (GridState best: children){
+            graph.addVertex(best); // Add the child to the graph if it is not already present
+            graph.addEdge(father, best); // Add the edge between father and child in the graph if it is not already present
         }
 
     //--RETURN CHILDREN
@@ -147,37 +162,13 @@ public class GraphBuilder {
      * @param children
      * @throws Exception
      */
-    private static LinkedList<GridState> addBestChildrenToGraph(GridState father, List<GridState> children) throws Exception {
-        LinkedList<GridState> bestChildren = new LinkedList<>();
-
-    //--SEARCH BEST CHILDREN
-        for (GridState child : children) {
-            int val =  child.value;
-
-            if (bestChildren.isEmpty()) {
-                bestChildren.add(child);
-            }
-            else {
-                // if the value is better than the best value -> replace
-                if (val > bestChildren.getFirst().value) {
-                    bestChildren.clear();
-                    bestChildren.add(child);
-                }
-                // if the value is equal to the best value -> add
-                else if (val == bestChildren.getFirst().value) {
-                    bestChildren.add(child);
-                }
-            }
-        }
-
+    private static void addBestChildrenToGraph(GridState father, List<GridState> children) {
 
     //--ADD ALL BEST CHILDREN TO GRAPH
-        for (GridState best: bestChildren){
+        for (GridState best: children){
             graph.addVertex(best); // Add the child to the graph if it is not already present
             graph.addEdge(father, best); // Add the edge between father and child in the graph if it is not already present
         }
-
-        return bestChildren;
 
     }
 
