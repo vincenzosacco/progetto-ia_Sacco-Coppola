@@ -21,6 +21,7 @@ public class MiniMax implements Group {
 
     public MiniMax() {
         myHandler = new WondevWomanHandler();
+
         encoding = new ASPInputProgram();
         encoding.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/possible_state.asp");
         myHandler.setEncoding(encoding);
@@ -38,7 +39,16 @@ public class MiniMax implements Group {
         myUnitCode = player.getFirstUnitCode();
 
     //--BUILD GRAPH
-        MyGraph graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
+        MyGraph<GridState> graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
+
+    //--MAKE ACTION
+        GridState action = graph.getAdjacents(graph.getRoot()).getFirst(); // get the first adjacent of the root
+        moveIn move = action.moved;
+        buildIn build = action.builded;
+
+        return new actionSet(player, myUnitCode, move.getCoord(), build.getCoord());
+    }
+
 
     //--SEARCH PATH FROM ROOT TO BEST
 //        Iterator<GridState> it = graph.getVertices().iterator();
@@ -52,9 +62,6 @@ public class MiniMax implements Group {
 //            System.out.println(state);
 //        }
 
-
-        return null;
-    }
+ }
 
 
-}

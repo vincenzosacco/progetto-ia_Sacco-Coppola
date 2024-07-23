@@ -2,6 +2,7 @@ package org.project.Logic.embAsp;
 
 import it.unical.mat.embasp.languages.IllegalAnnotationException;
 import it.unical.mat.embasp.languages.ObjectNotValidException;
+import org.project.Logic.embAsp.minimax.atoms.value;
 
 public class WondevWomanHandler extends MyHandler {
 
@@ -9,9 +10,9 @@ public class WondevWomanHandler extends MyHandler {
         super();
         try {
             mapToEmb(cell.class);
-            ;
             mapToEmb(buildIn.class);
             mapToEmb(moveIn.class);
+            mapToEmb(value.class);
         } catch (ObjectNotValidException | IllegalAnnotationException e) {
             throw new RuntimeException(e);
         }

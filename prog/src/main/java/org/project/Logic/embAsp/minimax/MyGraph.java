@@ -14,11 +14,17 @@ public class MyGraph<T> {
 
 
     public MyGraph() {
-        this.adjacencyList = new LinkedHashMap<>(500);
+        this.adjacencyList = new LinkedHashMap<>(100);
         root = null;
         best = null;
     }
 
+
+    public void addAll(Collection<T> vertices) {
+        for (T vertex : vertices) {
+            addVertex(vertex);
+        }
+    }
 
     /**
      * Add a vertex to the graph. <p>
@@ -190,6 +196,10 @@ public class MyGraph<T> {
 
     public Set<T> getVertices() {
         return adjacencyList.keySet();
+    }
+
+    public List<T> getAdjacents(T vertex) {
+        return adjacencyList.get(vertex);
     }
 
     public boolean containsVertex(T vertex) {

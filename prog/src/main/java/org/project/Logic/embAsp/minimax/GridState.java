@@ -8,32 +8,37 @@ import java.util.Comparator;
 import java.util.Objects;
 import  static org.project.UI.Model.BoardAivsAi.BoardCopy;
 
-public class T extends ASPInputProgram {
+public class GridState extends ASPInputProgram {
     final int id;
     final String name;
     final moveIn moved;
     final buildIn builded;
+    final int value;
     final boolean isTerminal;
     final BoardCopy board ; // reference to the board
 
 
-    public static Comparator<T> heightComparator = (s1, s2) -> Integer.compare(s2.moved.getHeight(), s1.moved.getHeight());
+    public static Comparator<GridState> ValueComp = (s1, s2) -> Integer.compare(s2.value, s1.value);
 
-    private T(int id, String initial_program, boolean isTerminal, BoardCopy board) {
+    private GridState(int id, String initial_program, boolean isTerminal, BoardCopy board) {
         super(initial_program);
         this.id = id;
         name = "state_" + id  ;
         this.isTerminal = isTerminal;
         moved = null;
         builded = null;
+        value = 0; // TODO: verificare che vada bene come default
         this.board = board;
     }
 
-    public T(int id, String initial_program, moveIn moved, buildIn builded, BoardCopy board) {
+    public GridState(int id, String initial_program, moveIn moved, buildIn builded, int value, BoardCopy board) {
         super(initial_program);
         this.id = id;
+
         this.moved = moved;
         this.builded = builded;
+        this.value = value;
+
         this.board = board;
 
 
@@ -67,7 +72,7 @@ public class T extends ASPInputProgram {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        T that = (T) o;
+        GridState that = (GridState) o;
             return moved.equals(that.moved) && builded.equals(that.builded) && isTerminal == that.isTerminal && board.equals(that.board);
         }
 
@@ -77,9 +82,9 @@ public class T extends ASPInputProgram {
     }
 
     //--INNER CLASSES-------------------------------------------------------------------------------------------------------
-    public static class RootState extends T {
+    public static class RootState extends GridState {
         public RootState(int id, String initial_program, BoardCopy board) {
-            super(id, initial_program, false, board);
+            super(id, initial_program, false,  board);
         }
     }
 

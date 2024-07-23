@@ -38,3 +38,9 @@ buildIn(-1,-1,-1) :- #count{X,Y : buildCell(X,Y,_)} = 0 . % if there are no buil
 % can choose only one cell
 :- #count{X,Y : buildIn(X,Y,H)} <> 1.
 
+
+%%%%VALUE%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%4
+% Questo encoding da un valore intero ad una mossa del gioco, un valore più alto vuol dire mossa migliore. 
+
+#show value/1.
+value(N):- moveIn(_,_,N).

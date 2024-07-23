@@ -27,7 +27,7 @@ public class GameLoop {
                     // refresh model
                     GameModel.getInstance().playTurn(action);
 
-                    Thread.sleep(800);
+                    Thread.sleep(700);
 
                     // refresh view
                     ProjectView.getInstance().refreshGamePanel();

@@ -49,20 +49,22 @@ public class FilesFromEncodings {
 
         try (Stream<Path> paths = Files.list(dir)) {
             paths.forEach(path -> {
+            //  IF THE FILE IS A JAVA FILE
+                if (path.toString().endsWith(".java")) {
+                    try {
+                        URL[] urls = {path.toUri().toURL()};
+                        URLClassLoader loader = new URLClassLoader(urls);
+                        String className = path.getFileName().toString().replace(".java", "");
+                        Class<?> clazz = Class.forName(embAspPackage + "." + className, true, loader);
+                        if (Group.class.isAssignableFrom(clazz)) {
+                            paths.close();
+                            toReturn = (Group) clazz.getDeclaredConstructor().newInstance();
+                        }
 
-                try {
-                    URL[] urls = {path.toUri().toURL()};
-                    URLClassLoader loader = new URLClassLoader(urls);
-                    String className = path.getFileName().toString().replace(".java", "");
-                    Class<?> clazz = Class.forName(embAspPackage + "." + className, true, loader);
-                    if (Group.class.isAssignableFrom(clazz)) {
-                        paths.close();
-                        toReturn = (Group) clazz.getDeclaredConstructor().newInstance();
+                    } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                             InstantiationException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
                     }
-
-                } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                         InstantiationException | IllegalAccessException e) {
-                    throw new RuntimeException(e);
                 }
             });
 
