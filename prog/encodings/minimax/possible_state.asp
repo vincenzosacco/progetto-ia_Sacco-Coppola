@@ -44,3 +44,4 @@ buildIn(-1,-1,-1) :- #count{X,Y : buildCell(X,Y,_)} = 0 . % if there are no buil
 
 #show value/1.
 value(N):- moveIn(_,_,N).
+

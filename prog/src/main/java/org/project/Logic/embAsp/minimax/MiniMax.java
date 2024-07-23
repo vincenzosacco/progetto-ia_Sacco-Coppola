@@ -11,8 +11,6 @@ import org.project.Logic.embAsp.buildIn;
 import org.project.UI.Model.BoardAivsAi;
 import org.project.UI.Model.GameModel;
 
-import java.util.*;
-
 
 public class MiniMax implements Group {
     private final WondevWomanHandler myHandler;
@@ -29,36 +27,44 @@ public class MiniMax implements Group {
     }
 
     private BoardAivsAi myBoard;
-    private int myUnitCode;
 
     @Override
     public actionSet callEmbAsp(PlayerAi player) throws Exception {
         myBoard = (BoardAivsAi) GameModel.getInstance().getBoard();
 
     //--CHOSE UNIT
-        myUnitCode = player.getFirstUnitCode();
+        int maxUnitCode = player.getFirstUnitCode();
+        int minUnitCode = myBoard.getUnitCodes().stream().filter(c -> c != maxUnitCode).findFirst().orElseThrow();
 
-    //--BUILD GRAPH
-        MyGraph graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
+    //--MINMAX GRAPH
+        MyGraph maxGraph = GraphBuilder.MaxGraph(myHandler, myBoard, maxUnitCode, minUnitCode);
 
-    //--SEARCH SHORTEST PATH FROM ROOT TO BEST
-        // The shortest path will be the first
-        PriorityQueue<List<GridState>> paths = new PriorityQueue<>(Comparator.comparingInt(List::size));
-        List<GridState> path;
-        for (GridState adj : graph.getAdjacents(graph.getRoot())) {
-            path= graph.DFSWin(adj);
-            if (path != null) paths.add(path);
-        }
+    //--CHOOSE BEST ACTION
 
-        if (paths.isEmpty()) {
-            throw new Exception("No path found, IMPLEMENT"); //TODO: IMPLEMENT
-//            return new actionSet(player, myUnitCode, null, null);
-        }
 
-    //--MAKE ACTION
-        GridState action = paths.peek().getFirst(); // The first state of the shortest path
+        return null;
 
-        return new actionSet(player, myUnitCode, action.moved.getCoord(), action.builded.getCoord());
+//    //--BUILD GRAPH
+//        MyGraph graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
+//
+//    //--SEARCH SHORTEST PATH FROM ROOT TO BEST
+//        // The shortest path will be the first
+//        PriorityQueue<List<GridState>> paths = new PriorityQueue<>(Comparator.comparingInt(List::size));
+//        List<GridState> path;
+//        for (GridState adj : graph.getAdjacents(graph.getRoot())) {
+//            path= graph.DFSWin(adj);
+//            if (path != null) paths.add(path);
+//        }
+//
+//        if (paths.isEmpty()) {
+//            throw new Exception("No path found, IMPLEMENT"); //TODO: IMPLEMENT
+////            return new actionSet(player, myUnitCode, null, null);
+//        }
+//
+//    //--MAKE ACTION
+//        GridState action = paths.peek().getFirst(); // The first state of the shortest path
+//
+//        return new actionSet(player, myUnitCode, action.moved.getCoord(), action.builded.getCoord());
     }
 
 

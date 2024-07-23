@@ -85,26 +85,39 @@ public class BoardAivsAi extends Board {
      *
      * @return the gridState.
      */
-    public ASPInputProgram getGridState() throws Exception {
-        //REFRESH
-        gridState.clearAll();
-        for (int i = 0; i < BOARD_ROWS; i++) {
-            for (int j = 0; j < BOARD_COLS; j++) {
-                gridState.addObjectInput(grid[i][j]); //TODO: riferimento o copia??
-            }
-        }
-
+    public ASPInputProgram getGridState() {
         return gridState;
     }
 
+    private void refreshGridState() throws Exception {
+        gridState.clearAll();
+        for (int i = 0; i < BOARD_ROWS; i++) {
+            for (int j = 0; j < BOARD_COLS; j++) {
+                gridState.addObjectInput(grid[i][j]);
+            }
+        }
+    }
     //--GAME METHODS--------------------------------------------------------------------------------------------------------
     boolean moveUnitSafe(int unitCode, Point coord) {
-        return super._moveUnitSafe(unitCode, coord);
+         super._moveUnitSafe(unitCode, coord);
+        try {
+            refreshGridState();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 
 
     boolean buildFloorSafe(int unitCode, Point coord) {
-        return super._buildFloorSafe(unitCode, coord);
+        super._buildFloorSafe(unitCode, coord);
+        try {
+            refreshGridState();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+
     }
 
 

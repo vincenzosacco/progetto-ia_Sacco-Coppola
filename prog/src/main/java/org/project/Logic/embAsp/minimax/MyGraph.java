@@ -250,27 +250,41 @@ public class MyGraph {
         return adjacencyList.get(vertex);
     }
 
+    /**
+     * Get the leaves of the graph. <p>
+     * A leaf is a vertex with no children.
+     * @return the list of leaves.
+     */
+    public List<GridState> getLeaves() {
+        List<GridState> leaves = new LinkedList<>();
+        for (GridState vertex : adjacencyList.keySet()) {
+            if (adjacencyList.get(vertex).isEmpty())
+                leaves.add(vertex);
+        }
+        return leaves;
+    }
+
     public boolean containsVertex(GridState vertex) {
         return adjacencyList.containsKey(vertex);
     }
 
-
-    /**
-     * Set the best vertex of the graph. <p>
-     * @param best the best vertex.
-     */
-    public void setBest(GridState best) {
-        this.best = best;
-    }
-
-    /**
-     * Get the best vertex of the graph. <p>
-     * If the best vertex has not been set, the method returns the root vertex.
-     * @return the best vertex.
-     */
-    public GridState getBest() {
-        return best;
-    }
+//
+//    /**
+//     * Set the best vertex of the graph. <p>
+//     * @param best the best vertex.
+//     */
+//    public void setBest(GridState best) {
+//        this.best = best;
+//    }
+//
+//    /**
+//     * Get the best vertex of the graph. <p>
+//     * If the best vertex has not been set, the method returns the root vertex.
+//     * @return the best vertex.
+//     */
+//    public GridState getBest() {
+//        return best;
+//    }
 
     @Override
     public String toString() {

@@ -107,6 +107,14 @@ public abstract class Board {
         return players;
     }
 
+    public ArrayList<Integer> getUnitCodes() {
+        ArrayList<Integer> unitCodes = new ArrayList<>();
+        for (Player p : players) {
+            unitCodes.addAll(p.getUnitCodes());
+        }
+        return unitCodes;
+    }
+
     public boolean win() {
         return win;
     }
