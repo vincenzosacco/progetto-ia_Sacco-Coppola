@@ -23,7 +23,7 @@ import static org.project.UI.Model.BoardAivsAi.BoardCopy;
  */
 
 public class GraphBuilder {
-    private static MyGraph<GridState> graph ;
+    private static MyGraph graph ;
     static int NEXT_ID = 0;
     private static WondevWomanHandler possStateHandler, stateValueHandler;
     private static int myUnitCode;
@@ -40,34 +40,34 @@ public class GraphBuilder {
         possStateHandler.showAllAnswerSet(true);
         myUnitCode = unitCode;
 
-        graph = new MyGraph<>();
+        graph = new MyGraph();
 
 
     }
 
-    static MyGraph<GridState> buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
+    static MyGraph buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
     //--INIT
         init(handler, unitCode);
         BoardCopy myBoard = origBoard.copy(); // Copy the board to avoid changes in the original board
 
-    //--BUILD GRAPH
         Queue<GridState> queue = new PriorityQueue<>(GridState.ValueComp); // LIFO queue, Comparing by height
 
         GridState root = new GridState.RootState(NEXT_ID++, myBoard.getGridState().getPrograms(), myBoard);
         queue.add(root);
         graph.addVertex(root);
 
-        int iteration = 0;
+//        int iteration = 0;
+
+    //--BUILD GRAPH
         while (! queue.isEmpty()) // add children to the graph until the queue is empty
         {
-            //1) CREATE CHILDREN
+            //1) CREATE AND ADD CHILDREN
             GridState currentBest = queue.poll();
             LinkedList<GridState> bestChildren = addBestChildren(currentBest, currentBest.board);
 
-            //2) IF THERE ARE CHILDREN -> ADD CHILDREN
             if (!bestChildren.isEmpty()) {
 
-                // If children aren't worse than father, add them to the queue
+            //2) If children aren't worse than father, add them to the queue
                 if (bestChildren.getFirst().value >= currentBest.value) {
                     queue.addAll(bestChildren); // if all vertices are expanded, the queue will be empty
                     //DEBUG: print best children
@@ -80,12 +80,13 @@ public class GraphBuilder {
             }
 
             //4) STOP CONDITION
-            GridState newBest = queue.peek();
-            if (newBest == null) throw new RuntimeException("Queue is empty");
-
-            if (newBest.moved.getHeight() == 3 ) {
-                break;
-            }
+//            GridState newBest = queue.peek();
+//            if (newBest == null)
+//                throw new RuntimeException("Queue is empty");
+//
+//            if (newBest.moved.getHeight() == 3 ) {
+//                continue;
+//            }
 
         }
 
@@ -99,12 +100,17 @@ public class GraphBuilder {
 
 
     private static LinkedList<GridState> addBestChildren(GridState father, BoardAivsAi board) throws Exception {
+        if (father == null || board == null) throw new IllegalArgumentException("Father or board cannot be null");
+        if (! graph.containsVertex(father)) throw new IllegalArgumentException("Father is not in the graph");
+
+        //--STOP CONDITION
+        if (father.isTerminal())
+            return new LinkedList<>();
+
     //--SET FACTS
         possStateHandler.setFactProgram(father);
-        ArrayList<Point> moveableArea = board.moveableArea(myUnitCode);
-        if (moveableArea.isEmpty()) return new LinkedList<>(); // optimization
 
-        for (Point p : moveableArea)
+        for (Point p : board.moveableArea(myUnitCode))
             possStateHandler.addFactAsString("moveCell(" + p.x + "," + p.y + "," + board.heightAt(p) + ")");
 
     //--FOR EACH LEGAL ACTION, CREATE A CHILD
@@ -119,18 +125,22 @@ public class GraphBuilder {
                 else if (atom instanceof value v) value = v.getN();
             }
 
-            if (move == null || build == null || value == null) throw new RuntimeException("Missing move or build or value");
+            if (move == null || build == null || value == null) throw new RuntimeException("Missing move or build or value"); //TODO: REMOVE
 
-            //MAKE THE ACTION
+            if(move.isInvalid() || build.isInvalid()) //TODO : REMOVE
+                throw new RuntimeException("Invalid move or build");
+
+
+        //--MAKE THE ACTION
             BoardCopy childBoard = board.copy(); // Copy the board to avoid changes in the original board
-            if (!move.isInvalid()) {
-                childBoard.moveUnitSafe(myUnitCode, move.getCoord());
-            }
-            if (!build.isInvalid()) {
-                childBoard.buildFloorSafe(myUnitCode, build.getCoord());
-            }
+
+            // here move and build are always valid because STOP CONDITION is checked before
+            childBoard.moveUnitSafe(myUnitCode, move.getCoord());
+            childBoard.buildFloorSafe(myUnitCode, build.getCoord());
+
 
     //--CREATE ONLY BEST CHILDREN
+
             if (children.isEmpty()) {
                 GridState child = new GridState(NEXT_ID++, board.getGridState().getPrograms(), move, build, value, childBoard);
                 children.add(child);
@@ -143,34 +153,27 @@ public class GraphBuilder {
             else if (value == children.getFirst().value) {
                 GridState child = new GridState(NEXT_ID++, board.getGridState().getPrograms(), move, build, value, childBoard);
                 children.add(child);
+
             }
+
         }
     //--ADD THE BEST CHILDREN TO GRAPH
+        LinkedList<GridState> toRemove = new LinkedList<>();
         for (GridState best: children){
-            graph.addVertex(best); // Add the child to the graph if it is not already present
+            if (! graph.addVertex(best)) // Add the child to the graph if it is not already present
+                toRemove.add(best);
             graph.addEdge(father, best); // Add the edge between father and child in the graph if it is not already present
         }
 
     //--RETURN CHILDREN
+        // Remove the child from the list if it is already present in the graph
+        children.removeAll(toRemove);
+
         return children;
     }
 
 
-    /**
-     * Add only the best children to the graph.
-     * @param father
-     * @param children
-     * @throws Exception
-     */
-    private static void addBestChildrenToGraph(GridState father, List<GridState> children) {
 
-    //--ADD ALL BEST CHILDREN TO GRAPH
-        for (GridState best: children){
-            graph.addVertex(best); // Add the child to the graph if it is not already present
-            graph.addEdge(father, best); // Add the edge between father and child in the graph if it is not already present
-        }
-
-    }
 
 
 

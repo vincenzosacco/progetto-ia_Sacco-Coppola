@@ -66,12 +66,12 @@ public class buildIn {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         buildIn buildIn = (buildIn) o;
-        return x == buildIn.x && y == buildIn.y;
+        return x == buildIn.x && y == buildIn.y && height == buildIn.height;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(x, y, height);
     }
 
     @Override

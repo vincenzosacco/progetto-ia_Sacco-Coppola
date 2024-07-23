@@ -57,12 +57,12 @@ public class moveIn {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         moveIn moveIn = (moveIn) o;
-        return x == moveIn.x && y == moveIn.y;
+        return x == moveIn.x && y == moveIn.y && height == moveIn.height;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(x, y, height);
     }
 
     @Override

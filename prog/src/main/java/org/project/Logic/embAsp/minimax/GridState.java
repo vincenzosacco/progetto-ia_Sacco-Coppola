@@ -57,6 +57,7 @@ public class GridState extends ASPInputProgram {
     public boolean isTerminal() {
         return isTerminal;
     }
+    public boolean isWinning() { return  moved.getHeight() == 3; }
 
     @Override
     public String toString() {
@@ -73,12 +74,14 @@ public class GridState extends ASPInputProgram {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GridState that = (GridState) o;
-            return moved.equals(that.moved) && builded.equals(that.builded) && isTerminal == that.isTerminal && board.equals(that.board);
+//            return moved.equals(that.moved) && builded.equals(that.builded) && isTerminal == that.isTerminal && board.equals(that.board);
+            return moved.equals(that.moved) && builded.equals(that.builded) ;
         }
 
     @Override
     public int hashCode() {
-        return Objects.hash(moved, builded, isTerminal, board);
+//        return Objects.hash(moved, builded, isTerminal, board);
+        return Objects.hash(moved, builded);
     }
 
     //--INNER CLASSES-------------------------------------------------------------------------------------------------------

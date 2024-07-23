@@ -16,7 +16,6 @@ maxRow(4).
 maxCol(4).
 
 offset(X,Y) :- os(X), os(Y), &abs(X;Xabs), &abs(Y;Yabs), &sum(Xabs,Yabs;Z), Z<>0. % offset can't be 0,0
-validBuild(X,Y,H) :-cell(X,Y,H,U), H<4, U=-1.
 
 %%%%MOVE%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -28,6 +27,7 @@ moveIn(-1,-1,-1) :- #count{X,Y : moveCell(X,Y,_)} = 0 . % if there are no moveab
 
 %%%%BUILD%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+validBuild(X,Y,H) :-cell(X,Y,H,U), H<4, U=-1.
 buildCell(Xnear,Ynear,Hnear):- moveIn(X,Y,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validBuild(Xnear,Ynear,Hnear).
 
 %%GUESS

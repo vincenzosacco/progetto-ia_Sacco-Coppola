@@ -39,20 +39,21 @@ public class MiniMax implements Group {
         myUnitCode = player.getFirstUnitCode();
 
     //--BUILD GRAPH
-        MyGraph<GridState> graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
+        MyGraph graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
 
     //--SEARCH SHORTEST PATH FROM ROOT TO BEST
         // The shortest path will be the first
         PriorityQueue<List<GridState>> paths = new PriorityQueue<>(Comparator.comparingInt(List::size));
+        List<GridState> path;
         for (GridState adj : graph.getAdjacents(graph.getRoot())) {
-            paths.add(graph.DFSTerminal(adj));
+            path= graph.DFSWin(adj);
+            if (path != null) paths.add(path);
         }
 
         if (paths.isEmpty()) {
             throw new Exception("No path found, IMPLEMENT"); //TODO: IMPLEMENT
 //            return new actionSet(player, myUnitCode, null, null);
         }
-
 
     //--MAKE ACTION
         GridState action = paths.peek().getFirst(); // The first state of the shortest path
