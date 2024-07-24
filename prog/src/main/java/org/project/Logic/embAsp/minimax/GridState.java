@@ -11,13 +11,17 @@ import  static org.project.UI.Model.BoardAivsAi.BoardCopy;
 
 public class GridState extends ASPInputProgram {
     private static int NEXT_ID = 0;
-    final String name;
+    final int id;
+    final Type type;
     final moveIn moved;
     final buildIn builded;
     final int value;
     final boolean isTerminal;
     final BoardAivsAi board ; // reference to the board
 
+    public enum Type {
+        MAX, MIN, LEAF, ROOT
+    }
 
     public static Comparator<GridState> ValueComp = (s1, s2) -> Integer.compare(s2.value, s1.value);
 
@@ -31,25 +35,23 @@ public class GridState extends ASPInputProgram {
 //        this.board = board;
 //    }
 
-    public GridState(String name, BoardCopy board, moveIn moved, buildIn builded, int value) throws Exception {
+    public GridState(Type type, BoardCopy board, moveIn moved, buildIn builded, int value) throws Exception {
         super(board.getGridState().getPrograms());
 
         if (moved.getHeight() == 3 || builded.isInvalid() || moved.isInvalid()) {
-            this.name = "LEAF_" + NEXT_ID++;
+            this.type = Type.LEAF;
             isTerminal = true;
         } else {
-            this.name = name + "_" + NEXT_ID++;
+            this.type = type;
             isTerminal = false;
         }
 
-
+        id = NEXT_ID++;
         this.moved = moved;
         this.builded = builded;
         this.value = value;
 
         this.board = board;
-
-
     }
 
 
@@ -61,7 +63,7 @@ public class GridState extends ASPInputProgram {
 
     @Override
     public String toString() {
-        return name;
+        return type.toString() + "_" + id;
     }
 
     /**

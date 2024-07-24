@@ -10,13 +10,11 @@ import java.util.*;
 public class MyGraph {
     private LinkedHashMap<GridState, List<GridState>> adjacencyList;
     private GridState root;
-    private GridState best;
 
 
     public MyGraph() {
         this.adjacencyList = new LinkedHashMap<>(100);
         root = null;
-        best = null;
     }
 
 
@@ -38,7 +36,6 @@ public class MyGraph {
 
         if (root == null) {
             root = vertex;
-            best = root;
         }
 
         return adjacencyList.putIfAbsent(vertex, new LinkedList<>()) == null;
@@ -241,15 +238,23 @@ public class MyGraph {
     public GridState getRoot() {
         return root;
     }
+    public GridState getBestLeaf() {
+        // Get the leaf with the max value
+        return getLeaves().stream().max(Comparator.comparingInt(l -> l.value)).get();
+    }
 
     public Set<GridState> getVertices() {
         return adjacencyList.keySet();
     }
 
-    public List<GridState> getAdjacents(GridState vertex) {
-        return adjacencyList.get(vertex);
+    public List<GridState> getFathers(GridState vertex) {
+        List<GridState> fathers = new LinkedList<>();
+        for (GridState father : adjacencyList.keySet()) {
+            if (adjacencyList.get(father).contains(vertex))
+                fathers.add(father);
+        }
+        return fathers;
     }
-
     /**
      * Get the leaves of the graph. <p>
      * A leaf is a vertex with no children.

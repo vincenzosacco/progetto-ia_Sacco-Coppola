@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.*;
 
 import static org.project.UI.Model.BoardAivsAi.BoardCopy;
-
+import static org.project.Logic.embAsp.minimax.GridState.Type;
 
 /**
  * Class used to build a graph of {@link GridState GridState} starting by a state.
@@ -24,32 +24,38 @@ import static org.project.UI.Model.BoardAivsAi.BoardCopy;
 public class GraphBuilder {
     private static MyGraph graph;
 
-    private static WondevWomanHandler possStateHandler, stateValueHandler;
+    private final static WondevWomanHandler possStateHandler, stateValueHandler;
 
     static {
         stateValueHandler = new WondevWomanHandler();
         ASPInputProgram stateValue = new ASPInputProgram();
-        stateValue.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/state_value.asp");
+        stateValue.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/search_MinMax.asp");
         stateValueHandler.setEncoding(stateValue);
+
+        possStateHandler = new WondevWomanHandler();
+        ASPInputProgram possState = new ASPInputProgram();
+        possState.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/possible_state.asp");
+        possStateHandler.setEncoding(possState);
+        possStateHandler.showAllAnswerSet(true);
+
     }
 
 
-    static MyGraph MaxGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int maxUnitCode, int minUnitCode) throws Exception {
+    static MyGraph MaxGraph(BoardAivsAi origBoard, int maxUnitCode, int minUnitCode) throws Exception {
     //--INIT
-        possStateHandler = handler;
-        possStateHandler.showAllAnswerSet(true);
         graph = new MyGraph();
         BoardCopy myBoard = origBoard.copy(); // Copy the board to avoid changes in the original board
 
         Point rootCoord = origBoard.unitCoord(maxUnitCode);
         moveIn rootMove = new moveIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
         buildIn rootBuild = new buildIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
-        GridState root = new GridState("ROOT", myBoard, rootMove, rootBuild, 0);
+        GridState root = new GridState(Type.ROOT, myBoard, rootMove, rootBuild, 0);
+
         graph.addVertex(root);
 
     //--BUILD GRAPH
         // MAX
-        addChildren(root, maxUnitCode,true, true);
+        addChildren(root, maxUnitCode, Type.MAX,true);
         // MIN
         addMin(graph, minUnitCode);
 
@@ -63,9 +69,9 @@ public class GraphBuilder {
      * @return
      * @throws Exception
      */
-    private static void addMin(MyGraph maxGraph, int minUnitCode ) throws Exception {
+    private static void addMin(MyGraph maxGraph, int minUnitCode) throws Exception {
         for (GridState leaf : maxGraph.getLeaves()) {
-            LinkedList<GridState> minChildren = addChildren(leaf, minUnitCode, false, false);
+            LinkedList<GridState> minChildren = addChildren(leaf, minUnitCode, Type.MIN, false);
             for (GridState minChild : minChildren) {
                 graph.addVertex(minChild);
                 graph.addEdge(leaf, minChild);
@@ -114,8 +120,8 @@ public class GraphBuilder {
 //    }
 
 
-    private static LinkedList<GridState> addChildren(GridState father, int unitCode, boolean isMax, boolean betterThanFather) throws Exception {
-        LinkedList<GridState> children = childrenFromAsp(father, unitCode, isMax);
+    private static LinkedList<GridState> addChildren(GridState father, int unitCode, Type type, boolean betterThanFather) throws Exception {
+        LinkedList<GridState> children = childrenFromAsp(father, unitCode, type);
 
         if (! children.isEmpty()) {
 
@@ -137,7 +143,7 @@ public class GraphBuilder {
         return children;
     }
 
-    private static LinkedList<GridState> childrenFromAsp(GridState father, int unitCode, boolean isMax) throws Exception {
+    private static LinkedList<GridState> childrenFromAsp(GridState father, int unitCode, Type type) throws Exception {
         if (father == null ) throw new IllegalArgumentException("father cannot be null");
         if (!graph.containsVertex(father)) throw new IllegalArgumentException("father is not in the graph");
 
@@ -184,11 +190,7 @@ public class GraphBuilder {
             childBoard.buildFloorSafe(unitCode, build.getCoord());
 
             // CREATE CHILD
-            String name ;
-            if (isMax) name = "MAX";
-            else name = "MIN";
-
-            GridState child = new GridState(name, childBoard, move, build, value);
+            GridState child = new GridState(type, childBoard, move, build, value);
             children.add(child);
         }
 

@@ -1,5 +1,6 @@
 package org.project.UI.View;
 
+import org.project.UI.Controller.GameLoop;
 import org.project.UI.Settings;
 import org.project.UI.View.panels.GamePanel;
 import org.project.UI.View.panels.home.HomePanel;
@@ -46,6 +47,10 @@ public class ProjectView extends JFrame {
         return instance;
     }
 
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
     //--GAME
     public void startGame(int gameMode) {
         gamePanel = new GamePanel(gameMode);
@@ -53,9 +58,15 @@ public class ProjectView extends JFrame {
         homePanel.setCenterPanel(gamePanel);
     }
 
-    public void refreshGamePanel() {
-        homePanel.revalidate();
-        homePanel.repaint();
+    public void refreshGamePanel(Thread caller) throws InterruptedException {
+        synchronized (caller) {
+//            caller.wait();
+            gamePanel.resetRefreshLatch();
+            gamePanel.repaint();
+            gamePanel.awaitRefresh();
+//            caller.notify();
+        }
+
     }
 
 

@@ -5,7 +5,9 @@ import org.project.Logic.Game.Player;
 import org.project.Logic.Game.player.ai.actionSet;
 import org.project.UI.Model.GameModel;
 import org.project.UI.View.ProjectView;
+import org.project.UI.View.panels.GamePanel;
 
+import javax.swing.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class GameLoop {
@@ -21,23 +23,26 @@ public class GameLoop {
             //--GAMELOOP
             while (!board.win() && isAlive) {
                 for (Player p : board.getPlayers()) {
-                    currentPlayer = p;
 
                     long startTime= System.currentTimeMillis();
                     actionSet action = p.call(); //TODO: IMPLEMENTARE UN TIMEOUT PER LE AZIONI
                     long endTime= System.currentTimeMillis();
                     long actionTime = endTime - startTime;
 
+
+                    long delay = Math.max(700 - actionTime, 200); // Minimum delay is 100ms
+                    try {
+                        Thread.sleep(delay); // Sleep for a while to make sure the player can see the result of his action
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); // Manage the interruption
+                    }
+
+
                     // refresh model
                     GameModel.getInstance().playTurn(action);
 
-                    if (actionTime < 700) Thread.sleep(700 - actionTime); // wait for the player to see the move
-
                     // refresh view
-                    ProjectView.getInstance().refreshGamePanel();
-
-                    if (board.win())
-                        break;
+                    ProjectView.getInstance().refreshGamePanel(Thread.currentThread());
                 }
             }
 

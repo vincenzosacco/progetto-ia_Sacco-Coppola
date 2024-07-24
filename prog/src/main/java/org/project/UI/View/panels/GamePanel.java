@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 import static org.project.UI.Model.GameModel.*;
 import static org.project.UI.Settings.*;
@@ -97,14 +98,32 @@ public class GamePanel extends MyPanel {
 
     }
 
+    private CountDownLatch refreshLatch = new CountDownLatch(1);
+
+    public void setRefreshLatch(CountDownLatch refreshLatch) {
+        this.refreshLatch = refreshLatch;
+    }
+
+    public void awaitRefresh() throws InterruptedException {
+        refreshLatch.await();
+    }
+
+    // Reset the latch for the next refresh
+    public void resetRefreshLatch() {
+        refreshLatch = new CountDownLatch(1);
+    }
+
+
     //--DRAW METHODS--------------------------------------------------------------------------------------------------------
     //TODO: implentare per input da mouse quando si gioca come Umano
 
     private final ArrayList<BufferedImage> graphics = new ArrayList<>();
     private int indexToDraw;
 
+
     @Override
     protected void paintComponent(Graphics g) {
+
         super.paintComponent(g);
 
         //--DRAW BOARD
@@ -124,6 +143,7 @@ public class GamePanel extends MyPanel {
 
         }
 
+        refreshLatch.countDown();
     }
 
     // Ogni chiamata disegna da capo ogni cella, non è efficiente ma per ora va bene
@@ -248,6 +268,8 @@ public class GamePanel extends MyPanel {
         else
             g.fillRoundRect(x, y, BOARD_CELL_SIZE - offset, BOARD_CELL_SIZE - offset, 10, 10);
     }
+
+
 
     public static class InputButton extends JButton {
         private final int i, j;

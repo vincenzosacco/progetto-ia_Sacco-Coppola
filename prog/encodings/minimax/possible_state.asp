@@ -43,5 +43,5 @@ buildIn(-1,-1,-1) :- #count{X,Y : buildCell(X,Y,_)} = 0 . % if there are no buil
 % Questo encoding da un valore intero ad una mossa del gioco, un valore più alto vuol dire mossa migliore. 
 
 #show value/1.
-value(N):- moveIn(_,_,N).
+value(V):- moveIn(_,_,V).
 

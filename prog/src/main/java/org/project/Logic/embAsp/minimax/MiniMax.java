@@ -6,24 +6,25 @@ import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.Group;
 import org.project.Logic.embAsp.WondevWomanHandler;
+import org.project.Logic.embAsp.minimax.atoms.vertex;
 import org.project.Logic.embAsp.moveIn;
 import org.project.Logic.embAsp.buildIn;
 import org.project.UI.Model.BoardAivsAi;
 import org.project.UI.Model.GameModel;
 
+import java.util.List;
+
 
 public class MiniMax implements Group {
-    private final WondevWomanHandler myHandler;
-    private final ASPInputProgram encoding;
+    private final WondevWomanHandler MinMaxHandler;
+    private final ASPInputProgram  encodingMinMax;
     record action(moveIn move, buildIn build) { }
 
     public MiniMax() {
-        myHandler = new WondevWomanHandler();
-
-        encoding = new ASPInputProgram();
-        encoding.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/possible_state.asp");
-        myHandler.setEncoding(encoding);
-
+        MinMaxHandler = new WondevWomanHandler();
+        encodingMinMax = new ASPInputProgram();
+        encodingMinMax.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/search_MinMax.asp");
+        MinMaxHandler.setEncoding(encodingMinMax);
     }
 
     private BoardAivsAi myBoard;
@@ -37,34 +38,19 @@ public class MiniMax implements Group {
         int minUnitCode = myBoard.getUnitCodes().stream().filter(c -> c != maxUnitCode).findFirst().orElseThrow();
 
     //--MINMAX GRAPH
-        MyGraph maxGraph = GraphBuilder.MaxGraph(myHandler, myBoard, maxUnitCode, minUnitCode);
+        MyGraph maxGraph = GraphBuilder.MaxGraph(myBoard, maxUnitCode, minUnitCode);
 
     //--CHOOSE BEST ACTION
+        List<GridState> fathers= maxGraph.getFathers(maxGraph.getBestLeaf());
+        if (fathers.size()>1) {
+            fathers.forEach(System.out::println);
+            //TODO: implementare scelta migliore
+        }
+        GridState bestState = fathers.getFirst();
 
+        return new actionSet(player, maxUnitCode, bestState.moved.getCoord(), bestState.builded.getCoord());
 
-        return null;
-
-//    //--BUILD GRAPH
-//        MyGraph graph = GraphBuilder.buildGraph(myHandler, myBoard, myUnitCode);
-//
-//    //--SEARCH SHORTEST PATH FROM ROOT TO BEST
-//        // The shortest path will be the first
-//        PriorityQueue<List<GridState>> paths = new PriorityQueue<>(Comparator.comparingInt(List::size));
-//        List<GridState> path;
-//        for (GridState adj : graph.getAdjacents(graph.getRoot())) {
-//            path= graph.DFSWin(adj);
-//            if (path != null) paths.add(path);
-//        }
-//
-//        if (paths.isEmpty()) {
-//            throw new Exception("No path found, IMPLEMENT"); //TODO: IMPLEMENT
-////            return new actionSet(player, myUnitCode, null, null);
-//        }
-//
-//    //--MAKE ACTION
-//        GridState action = paths.peek().getFirst(); // The first state of the shortest path
-//
-//        return new actionSet(player, myUnitCode, action.moved.getCoord(), action.builded.getCoord());
+//        return new actionSet(player, maxUnitCode, maxGraph.getBestLeaf().moved.getCoord(), maxGraph.getBestLeaf().builded.getCoord());
     }
 
 
