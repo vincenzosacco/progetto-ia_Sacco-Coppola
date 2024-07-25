@@ -48,7 +48,6 @@ blockEnemyCell(X,Y) :- nearEnemyMoveCell_h3(X,Y), offset(OffX,OffY), &sum(X,OffX
 
 :~ moveOut(X,Y), blockEnemyCell(X,Y).  [1@9, X,Y]   % penalty if exist a cell from where myUnit can block enemyUnit to win and don't move to it
 
-
 %
 % 3
 %

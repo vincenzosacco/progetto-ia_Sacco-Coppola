@@ -15,14 +15,13 @@ import java.awt.*;
 import java.util.*;
 
 import static org.project.UI.Model.BoardAivsAi.BoardCopy;
-import static org.project.Logic.embAsp.minimax.GridState.Type;
 
 /**
  * Class used to build a graph of {@link GridState GridState} starting by a state.
  */
 
 public class GraphBuilder {
-    private static MyGraph graph;
+    private static NewGraph graph;
 
     private final static WondevWomanHandler possStateHandler, stateValueHandler;
 
@@ -41,27 +40,27 @@ public class GraphBuilder {
     }
 
 
-    static MyGraph MaxGraph(BoardAivsAi origBoard, int maxUnitCode, int minUnitCode) throws Exception {
-    //--INIT
-        graph = new MyGraph();
-        BoardCopy myBoard = origBoard.copy(); // Copy the board to avoid changes in the original board
-
-        Point rootCoord = origBoard.unitCoord(maxUnitCode);
-        moveIn rootMove = new moveIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
-        buildIn rootBuild = new buildIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
-        GridState root = new GridState(Type.ROOT, myBoard, rootMove, rootBuild, 0);
-
-        graph.addVertex(root);
-
-    //--BUILD GRAPH
-        // MAX
-        addChildren(root, maxUnitCode, Type.MAX,true);
-        // MIN
-        addMin(graph, minUnitCode);
-
-        return graph;
-
-    }
+//    static NewGraph MaxGraph(BoardAivsAi origBoard, int maxUnitCode, int minUnitCode) throws Exception {
+//    //--INIT
+//        graph = new NewGraph();
+//        BoardCopy myBoard = origBoard.copy(); // Copy the board to avoid changes in the original board
+//
+//        Point rootCoord = origBoard.unitCoord(maxUnitCode);
+//        moveIn rootMove = new moveIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
+//        buildIn rootBuild = new buildIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
+//        GridState root = new GridState(Type.ROOT, myBoard, rootMove, rootBuild, 0);
+//
+//        graph.addVertex(root);
+//
+//    //--BUILD GRAPH
+//        // MAX
+//        addChildren(root, maxUnitCode, Type.MAX,true);
+//        // MIN
+//        addMin(graph, minUnitCode);
+//
+//        return graph;
+//
+//    }
 
     /**
      * For each leaf node in the graph, add all min children
@@ -69,16 +68,16 @@ public class GraphBuilder {
      * @return
      * @throws Exception
      */
-    private static void addMin(MyGraph maxGraph, int minUnitCode) throws Exception {
-        for (GridState leaf : maxGraph.getLeaves()) {
-            LinkedList<GridState> minChildren = addChildren(leaf, minUnitCode, Type.MIN, false);
-            for (GridState minChild : minChildren) {
-                graph.addVertex(minChild);
-                graph.addEdge(leaf, minChild);
-            }
-        }
-
-    }
+//    private static void addMin(NewGraph maxGraph, int minUnitCode) throws Exception {
+//        for (GridState leaf : maxGraph.getLeaves()) {
+//            LinkedList<GridState> minChildren = addChildren(leaf, minUnitCode, Type.MIN, false);
+//            for (GridState minChild : minChildren) {
+//                graph.addVertex(minChild);
+//                graph.addEdge(leaf, minChild);
+//            }
+//        }
+//
+//    }
 
 //    static MyGraph buildGraph(WondevWomanHandler handler, BoardAivsAi origBoard, int unitCode) throws Exception {
 //        //--INIT
@@ -120,32 +119,23 @@ public class GraphBuilder {
 //    }
 
 
-    private static LinkedList<GridState> addChildren(GridState father, int unitCode, Type type, boolean betterThanFather) throws Exception {
-        LinkedList<GridState> children = childrenFromAsp(father, unitCode, type);
+    static LinkedList<GridState> childrenOf(GridState father, int unitCode, boolean betterThanFather) throws Exception {
+        LinkedList<GridState> children = childrenFromAsp(father, unitCode);
 
-        if (! children.isEmpty()) {
-
+        if (!children.isEmpty() && betterThanFather) {
             //If betterThanFather -> ADD ONLY BEST CHILDREN
-            if (betterThanFather) {
-                // get max value in children collection
-                int max = children.stream().max(Comparator.comparingInt(c -> c.value)).get().value;
-                children.removeIf(c -> c.value < max || c.value < father.value);
-            }
-
-    //--ADD CHILDREN TO THE GRAPH
-            for (GridState child : children) {
-                graph.addVertex(child);
-                graph.addEdge(father, child);
-            }
+            // get max value in children collection
+            int max = children.stream().max(Comparator.comparingInt(c -> c.value)).get().value;
+            children.removeIf(c -> c.value < max || c.value < father.value);
         }
 
     //--RETURN CHILDREN
         return children;
+
     }
 
-    private static LinkedList<GridState> childrenFromAsp(GridState father, int unitCode, Type type) throws Exception {
+    private static LinkedList<GridState> childrenFromAsp(GridState father, int unitCode) throws Exception {
         if (father == null ) throw new IllegalArgumentException("father cannot be null");
-        if (!graph.containsVertex(father)) throw new IllegalArgumentException("father is not in the graph");
 
         BoardAivsAi board = father.board; // reference to the board, don't make actions on it
 
@@ -190,7 +180,7 @@ public class GraphBuilder {
             childBoard.buildFloorSafe(unitCode, build.getCoord());
 
             // CREATE CHILD
-            GridState child = new GridState(type, childBoard, move, build, value);
+            GridState child = new GridState(childBoard, move, build, value);
             children.add(child);
         }
 

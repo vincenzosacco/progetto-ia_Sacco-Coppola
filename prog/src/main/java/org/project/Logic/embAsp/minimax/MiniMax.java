@@ -6,13 +6,12 @@ import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.Group;
 import org.project.Logic.embAsp.WondevWomanHandler;
-import org.project.Logic.embAsp.minimax.atoms.vertex;
 import org.project.Logic.embAsp.moveIn;
 import org.project.Logic.embAsp.buildIn;
 import org.project.UI.Model.BoardAivsAi;
 import org.project.UI.Model.GameModel;
 
-import java.util.List;
+import java.awt.*;
 
 
 public class MiniMax implements Group {
@@ -38,19 +37,27 @@ public class MiniMax implements Group {
         int minUnitCode = myBoard.getUnitCodes().stream().filter(c -> c != maxUnitCode).findFirst().orElseThrow();
 
     //--MINMAX GRAPH
-        MyGraph maxGraph = GraphBuilder.MaxGraph(myBoard, maxUnitCode, minUnitCode);
+        NewGraph graph = new NewGraph();
+        Point rootCoord = myBoard.unitCoord(maxUnitCode);
+        moveIn rootMove = new moveIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
+        buildIn rootBuild = new buildIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
+        GridState rootState = new GridState(myBoard.copy(), rootMove, rootBuild, 0);
 
-    //--CHOOSE BEST ACTION
-        List<GridState> fathers= maxGraph.getFathers(maxGraph.getBestLeaf());
-        if (fathers.size()>1) {
-            fathers.forEach(System.out::println);
-            //TODO: implementare scelta migliore
+        NewGraph.Node root = graph.buildGraph(rootState, maxUnitCode, 2);
+
+    //--SEARCH CHILDREN NODE WITH MAX UTILITY
+        int maxUtility = Integer.MIN_VALUE;
+        NewGraph.Node bestChild = null;
+        for (NewGraph.Node child : root.children) {
+            maxUtility = Math.max(maxUtility, child.utility());
+            bestChild = child;
         }
-        GridState bestState = fathers.getFirst();
+
+    //--RETURN ACTION
+        GridState bestState =  graph.depth1Nodes.get(bestChild);
 
         return new actionSet(player, maxUnitCode, bestState.moved.getCoord(), bestState.builded.getCoord());
 
-//        return new actionSet(player, maxUnitCode, maxGraph.getBestLeaf().moved.getCoord(), maxGraph.getBestLeaf().builded.getCoord());
     }
 
 
