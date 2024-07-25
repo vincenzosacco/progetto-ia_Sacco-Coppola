@@ -53,9 +53,10 @@ public class MiniMax implements Group {
             bestChild = child;
         }
 
+        System.out.println(maxUtility);
+
     //--RETURN ACTION
         GridState bestState =  graph.depth1Nodes.get(bestChild);
-
         return new actionSet(player, maxUnitCode, bestState.moved.getCoord(), bestState.builded.getCoord());
 
     }

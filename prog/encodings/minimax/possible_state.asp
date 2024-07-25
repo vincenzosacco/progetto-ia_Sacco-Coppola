@@ -39,9 +39,20 @@ buildIn(-1,-1,-1) :- #count{X,Y : buildCell(X,Y,_)} = 0 . % if there are no buil
 :- #count{X,Y : buildIn(X,Y,H)} <> 1.
 
 
+% AFTER UNIT PERFORMS ACTION, CALCULATE VALUE OF THE NEW STATE
 %%%%VALUE%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%4
 % Questo encoding da un valore intero ad una mossa del gioco, un valore più alto vuol dire mossa migliore. 
 
 #show value/1.
-value(V):- moveIn(_,_,V).
+
+% Generate new cells
+newCell(X,Y,H,U):- cell(X,Y,H,U), not buildIn(X,Y,H), not moveIn(X,Y,H). % moveIn is not considered
+newCell(X,Y,Hbuild,U):- buildIn(X,Y,Hbuild), cell(X,Y,H,U).
+
+validMove(X,Y,H):- newCell(X,Y,H,U), H<4, U=-1, moveIn(Xm,Ym,Hm), &sum(H,-Hm ; L), L<2 . 
+newMoveCell(Xnear,Ynear,Hnear):- moveIn(X,Y,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validMove(Xnear,Ynear,Hnear).
+
+highestMoveCell(H):- #max{H1 : newMoveCell(X,Y,H1)} = H.
+
+value(V):- moveIn(_,_,H), highestMoveCell(H1), &sum(H,H1;V).
 

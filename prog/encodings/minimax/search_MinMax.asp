@@ -1,15 +1,13 @@
-% Dato un grafo MinMax "mozzato", restituisce il valore della mossa migliore per il giocatore corrente.
+% Questo encoding da un valore intero ad una mossa del gioco, un valore più alto vuol dire mossa migliore. 
 
-%%FACTS
-%vertex(ID,T,Value). --> vertex of the graph --> ID is the unique identifier of the vertex; T is type {MAX,MIN,LEAF,ROOT} ; Value is the value of the vertex
-%edge(V1,V2). --> edge of the graph --> V1 is the source vertex ID, V2 is the destination vertex ID
+% cell(X,Y,H,U). --> a cell of the grid --> X,Y are the coordinates of the cell, H is the height of the cell, U is the unitCode of the unit on the cell (-1 if no unit)
+% unit(U) -> unit that perfomerd the action 
+% moveCell(X,Y,H). --> cell where I can move unit
 
-% #show best/1.
+#show value/1.
 
-% %%AUXILIARY
-% min_v(ID) :- #max{Value : vertex(ID,"MIN",Value)} = V, vertex(ID,"MIN",V).
+myUnit(X,Y,H):- cell(X,Y,H,U), unit(U).
 
-% %%GUESS
-% best(Max) :- vertex(Max,"MAX",_), ma edge(Max,).
+value(V):- myUnit(_,_,V).
 
 

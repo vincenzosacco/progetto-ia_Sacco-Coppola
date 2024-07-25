@@ -165,8 +165,9 @@ public class GraphBuilder {
                 else if (atom instanceof value v) value = v.getN();
             }
 
-            if (move == null || build == null || value == null)
-                throw new RuntimeException("Missing move or build or value"); //TODO: REMOVE
+            if (move == null)  throw new RuntimeException("Missing move"); //TODO: REMOVE
+            if (build == null) throw new RuntimeException("Missing build"); //TODO: REMOVE
+            if (value == null) throw new RuntimeException("Missing value"); //TODO: REMOVE
 
             if (move.isInvalid() || build.isInvalid()) //TODO : REMOVE
                 throw new RuntimeException("Invalid move or build");

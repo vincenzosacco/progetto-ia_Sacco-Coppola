@@ -15,7 +15,7 @@ maxCol(4).
 %%AUXILIARY
 offset(X,Y) :- os(X), os(Y), &abs(X;Xabs), &abs(Y;Yabs), &sum(Xabs,Yabs;Z), Z<>0. % offset can't be 0,0
 myUnit(X,Y,H,U):- cell(X,Y,H,U), choosedUnit(U). 
-validCell(X,Y,H,U) :-cell(X,Y,H,U), X>=0, Y>=0, X<=Xmax, Y<=Ymax, maxRow(Xmax), maxCol(Ymax).
+validCell(X,Y,H,U) :-cell(X,Y,H,U), X>=0, Y>=0, X<=Xmax, Y<=Ymax, maxRow(Xmax), maxCol(Ymax). %potrei rimuovere Xmax e Ymax, vedi 
 
 %%GUESS
 moveIn(X,Y,H) | moveOut(X,Y) :- moveCell(X,Y,H).
