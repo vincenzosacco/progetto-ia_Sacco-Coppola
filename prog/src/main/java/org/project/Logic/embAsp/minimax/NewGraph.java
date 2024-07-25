@@ -37,6 +37,7 @@ public class NewGraph {
             }
 
             return value + maxChildVal;
+//            return value;
         }
 
         @Override

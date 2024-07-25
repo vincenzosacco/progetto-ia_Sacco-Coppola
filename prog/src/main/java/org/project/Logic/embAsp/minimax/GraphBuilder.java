@@ -145,7 +145,7 @@ public class GraphBuilder {
 
     //--SET FACTS
         possStateHandler.setFactProgram(father);
-
+        possStateHandler.addFactAsString("unit(" + unitCode + ")");
         for (Point p : board.moveableArea(unitCode))
             possStateHandler.addFactAsString("moveCell(" + p.x + "," + p.y + "," + board.heightAt(p) + ")");
 
