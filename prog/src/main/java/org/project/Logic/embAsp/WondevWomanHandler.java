@@ -2,7 +2,7 @@ package org.project.Logic.embAsp;
 
 import it.unical.mat.embasp.languages.IllegalAnnotationException;
 import it.unical.mat.embasp.languages.ObjectNotValidException;
-import org.project.Logic.embAsp.minimax.atoms.value;
+import org.project.Logic.embAsp.graph.atoms.value;
 
 public class WondevWomanHandler extends MyHandler {
 

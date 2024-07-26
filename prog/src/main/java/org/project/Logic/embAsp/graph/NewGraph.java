@@ -1,4 +1,4 @@
-package org.project.Logic.embAsp.minimax;
+package org.project.Logic.embAsp.graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,39 +19,49 @@ public class NewGraph {
             this.isMax = isMax;
             this.children = new ArrayList<>();
         }
+
         // Constructor for root node
         protected Node(GridState state) {
             this.id = state.id;
-            this.value = state.value ;
+            this.value = state.value;
             this.isMax = true;
             this.children = new ArrayList<>();
             parent = null;
         }
 
 
-        int utility(){
+        int utility() {
             // search max value in children
+//            int maxChildVal = 0;
+//            for (Node child : children) {
+//                maxChildVal = Math.max(maxChildVal, child.value);
+//            }
+//
+//            return value + maxChildVal;
+//            return value;
+
+            if (children.isEmpty()) return value;
             int maxChildVal = Integer.MIN_VALUE;
             for (Node child : children) {
-                maxChildVal = Math.max(maxChildVal, child.value);
+                maxChildVal = Math.max(maxChildVal, child.utility());
             }
-
             return value + maxChildVal;
-//            return value;
         }
+
 
         @Override
         public String toString() {
             String root = (isMax ? "Max_" : "Min_") + id + "[" + value + "]";
             String par;
-            if (parent instanceof RootNode r ) par = r.toString();
+            if (parent instanceof RootNode r) par = r.toString();
             else if (parent == null)
                 throw new NullPointerException("Parent is null");
-            else par = (parent.isMax ? "Max_" : "Min_")+parent.id;
+            else par = (parent.isMax ? "Max_" : "Min_") + parent.id;
 
-            return root +"<- "+ par;
+            return root + "<- " + par;
         }
     }
+
     static class RootNode extends Node {
 
         RootNode(GridState state) {
@@ -80,15 +90,16 @@ public class NewGraph {
         return root;
     }
 
-    private int first ;
+    private int first;
+
     private void addChildren(Node root, GridState rootState, int maxUnitCode, int depth, boolean isMax) throws Exception {
-    //--END RECURSION
+        //--END RECURSION
         if (depth == 0) {
             // Calcola il valore del nodo e termina la ricorsione
-            return ;
+            return;
         }
 
-    //  Generate children, first children are MAX
+        //  Generate children, first children are MAX
         List<GridState> childrenStates;
         if (isMax)
             childrenStates = GraphBuilder.childrenOf(rootState, maxUnitCode, true); // MAX add only best moves
@@ -106,7 +117,7 @@ public class NewGraph {
                 depth1Nodes.put(child, childState);
             }
 
-            addChildren(child, childState, maxUnitCode, depth - 1, !isMax);
+            addChildren(child, childState, maxUnitCode, depth - 1, isMax);
         }
 
 
@@ -143,8 +154,7 @@ public class NewGraph {
 
         if (root instanceof RootNode rootNode) {
             sb.append(rootNode).append("\n");
-        }
-        else {
+        } else {
             sb.append(root.toString()).append("\n");
         }
 

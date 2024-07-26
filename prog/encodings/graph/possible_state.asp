@@ -25,7 +25,12 @@ moveIn(-1,-1,-1) :- #count{X,Y : moveCell(X,Y,_)} = 0 . % if there are no moveab
 
 %%%%BUILD%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-validBuild(X,Y,H) :-cell(X,Y,H,U), H<4, U=-1.
+%%AFTER MOVE, CALCULATE VALUE OF THE NEW STATE
+% Generate new cells
+newCell(X,Y,H,U):- cell(X,Y,H,U), not moveIn(X,Y,H). % moveIn is not considered
+newCell(X,Y,H,U):- cell(X,Y,H,Uold), unit(Uold), U = -1. % unit is moved
+
+validBuild(X,Y,H) :-newCell(X,Y,H,U), H<4, U=-1.
 buildCell(Xnear,Ynear,Hnear):- moveIn(X,Y,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validBuild(Xnear,Ynear,Hnear).
 
 %%GUESS
@@ -43,21 +48,20 @@ buildIn(-1,-1,-1) :- #count{X,Y : buildCell(X,Y,_)} = 0 . % if there are no buil
 
 #show value/1.
 
-% Generate new cells
-newCell(X,Y,H,U):- cell(X,Y,H,U), not buildIn(X,Y,H), not moveIn(X,Y,H). % moveIn is not considered
-newCell(X,Y,H,U):- cell(X,Y,H,Uold), unit(Uold), U = -1. % unit is moved
-newCell(X,Y,Hbuild,U):- cell(X,Y,H,U), buildIn(X,Y,Hbuild) . % builded cell is increased by 1
+% newCell(X,Y,Hbuild,U):- cell(X,Y,H,U), buildIn(X,Y,Hbuild) . % builded cell is increased by 1
+
 % #show newCell/4.
 
-% Generate new move cells
-validMove(X,Y,H):- newCell(X,Y,H,U), H<4, U=-1, moveIn(Xm,Ym,Hm), &sum(H,-Hm ; L), L<2 . 
-newMoveCell(Xnear,Ynear,Hnear):- moveIn(X,Y,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validMove(Xnear,Ynear,Hnear).
-% #show newMoveCell/3.
+% % Generate new move cells
+% validMove(X,Y,H):- newCell(X,Y,H,U), H<4, U=-1, moveIn(Xm,Ym,Hm), &sum(H,-Hm ; L), L<2 . 
+% newMoveCell(Xnear,Ynear,Hnear):- moveIn(X,Y,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validMove(Xnear,Ynear,Hnear).
+% % #show newMoveCell/3.
 
-highestMoveCell(H):- #max{H1 : newMoveCell(X,Y,H1)} = H.
+% highestMoveCell(H):- #max{H1 : newMoveCell(X,Y,H1)} = H.
 
 
-value(V):- moveIn(_,_,H), highestMoveCell(H1), &sum(H,H1;V).
+% value(V):- moveIn(_,_,H), highestMoveCell(H1), &sum(H,H1;V).
+value(V):- moveIn(_,_,V).
 
 
 % cell(0,0,0,-1). cell(0,1,0,-1). cell(0,2,0,-1). cell(0,3,0,-1). cell(0,4,0,0). cell(1,0,0,-1). cell(1,1,0,-1). cell(1,2,0,-1). cell(1,3,0,-1). cell(1,4,0,-1). cell(2,0,0,-1). cell(2,1,0,-1). cell(2,2,0,-1). cell(2,3,0,-1). cell(2,4,0,-1). cell(3,0,0,-1). cell(3,1,0,-1). cell(3,2,0,-1). cell(3,3,0,-1). cell(3,4,0,-1). cell(4,0,0,-1). cell(4,1,0,-1). cell(4,2,0,1). cell(4,3,0,-1). cell(4,4,0,-1). moveCell(0,3,0). moveCell(1,3,0). moveCell(1,4,0).

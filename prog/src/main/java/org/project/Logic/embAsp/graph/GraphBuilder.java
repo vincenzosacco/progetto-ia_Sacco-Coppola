@@ -1,5 +1,4 @@
-package org.project.Logic.embAsp.minimax;
-
+package org.project.Logic.embAsp.graph;
 
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
@@ -7,12 +6,13 @@ import it.unical.mat.embasp.languages.asp.AnswerSet;
 import org.project.Logic.LogicSettings;
 import org.project.Logic.embAsp.WondevWomanHandler;
 import org.project.Logic.embAsp.buildIn;
-import org.project.Logic.embAsp.minimax.atoms.value;
+import org.project.Logic.embAsp.graph.atoms.value;
 import org.project.Logic.embAsp.moveIn;
 import org.project.UI.Model.BoardAivsAi;
 
 import java.awt.*;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedList;
 
 import static org.project.UI.Model.BoardAivsAi.BoardCopy;
 
@@ -28,12 +28,12 @@ public class GraphBuilder {
     static {
         stateValueHandler = new WondevWomanHandler();
         ASPInputProgram stateValue = new ASPInputProgram();
-        stateValue.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/search_MinMax.asp");
+        stateValue.addFilesPath(LogicSettings.PATH_ENCOD_GRAPH + "/search_MinMax.asp");
         stateValueHandler.setEncoding(stateValue);
 
         possStateHandler = new WondevWomanHandler();
         ASPInputProgram possState = new ASPInputProgram();
-        possState.addFilesPath(LogicSettings.PATH_ENCOD_MINIMAX + "/possible_state.asp");
+        possState.addFilesPath(LogicSettings.PATH_ENCOD_GRAPH + "/possible_state.asp");
         possStateHandler.setEncoding(possState);
         possStateHandler.showAllAnswerSet(true);
 
@@ -64,6 +64,7 @@ public class GraphBuilder {
 
     /**
      * For each leaf node in the graph, add all min children
+     *
      * @param maxGraph
      * @return
      * @throws Exception
@@ -117,8 +118,6 @@ public class GraphBuilder {
 //        return graph;
 //
 //    }
-
-
     static LinkedList<GridState> childrenOf(GridState father, int unitCode, boolean betterThanFather) throws Exception {
         LinkedList<GridState> children = childrenFromAsp(father, unitCode);
 
@@ -129,28 +128,28 @@ public class GraphBuilder {
             children.removeIf(c -> c.value < max || c.value < father.value);
         }
 
-    //--RETURN CHILDREN
+        //--RETURN CHILDREN
         return children;
 
     }
 
     private static LinkedList<GridState> childrenFromAsp(GridState father, int unitCode) throws Exception {
-        if (father == null ) throw new IllegalArgumentException("father cannot be null");
+        if (father == null) throw new IllegalArgumentException("father cannot be null");
 
         BoardAivsAi board = father.board; // reference to the board, don't make actions on it
 
-    //--STOP CONDITION
+        //--STOP CONDITION
         if (father.isTerminal())
             return new LinkedList<>();
 
-    //--SET FACTS
+        //--SET FACTS
         possStateHandler.setFactProgram(father);
         possStateHandler.addFactAsString("unit(" + unitCode + ")");
         for (Point p : board.moveableArea(unitCode))
             possStateHandler.addFactAsString("moveCell(" + p.x + "," + p.y + "," + board.heightAt(p) + ")");
 
 
-    //--FOR EACH LEGAL ACTION-> CREATE A CHILD
+        //--FOR EACH LEGAL ACTION-> CREATE A CHILD
         LinkedList<GridState> children = new LinkedList<>();
         possStateHandler.startSync();
 
@@ -165,7 +164,7 @@ public class GraphBuilder {
                 else if (atom instanceof value v) value = v.getN();
             }
 
-            if (move == null)  throw new RuntimeException("Missing move"); //TODO: REMOVE
+            if (move == null) throw new RuntimeException("Missing move"); //TODO: REMOVE
             if (build == null) throw new RuntimeException("Missing build"); //TODO: REMOVE
             if (value == null) throw new RuntimeException("Missing value"); //TODO: REMOVE
 
@@ -186,7 +185,7 @@ public class GraphBuilder {
         }
 
 
-    //--RETURN
+        //--RETURN
         return children;
     }
 }

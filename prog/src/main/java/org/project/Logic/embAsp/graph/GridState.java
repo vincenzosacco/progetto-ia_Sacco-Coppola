@@ -1,4 +1,4 @@
-package org.project.Logic.embAsp.minimax;
+package org.project.Logic.embAsp.graph;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.embAsp.buildIn;
@@ -7,7 +7,8 @@ import org.project.UI.Model.BoardAivsAi;
 
 import java.util.Comparator;
 import java.util.Objects;
-import  static org.project.UI.Model.BoardAivsAi.BoardCopy;
+
+import static org.project.UI.Model.BoardAivsAi.BoardCopy;
 
 public class GridState extends ASPInputProgram {
     private static int NEXT_ID = 0;
@@ -16,19 +17,9 @@ public class GridState extends ASPInputProgram {
     final buildIn builded;
     final int value;
     final boolean isTerminal;
-    final BoardAivsAi board ; // reference to the board
+    final BoardAivsAi board; // reference to the board
 
     public static Comparator<GridState> ValueComp = (s1, s2) -> Integer.compare(s2.value, s1.value);
-
-//    private GridState(String name, BoardCopy board, boolean isTerminal) throws Exception {
-//        super(board.getGridState().getPrograms());
-//        this.name = name + "_" + NEXT_ID++;
-//        this.isTerminal = isTerminal;
-//        moved = null;
-//        builded = null;
-//        value = 0; // TODO: verificare che vada bene come default
-//        this.board = board;
-//    }
 
     public GridState(BoardCopy board, moveIn moved, buildIn builded, int value) throws Exception {
         super(board.getGridState().getPrograms());
@@ -48,11 +39,13 @@ public class GridState extends ASPInputProgram {
     }
 
 
-
     public boolean isTerminal() {
         return isTerminal;
     }
-    public boolean isWinning() { return  moved.getHeight() == 3; }
+
+    public boolean isWinning() {
+        return moved.getHeight() == 3;
+    }
 
 //    @Override
 //    public String toString() {
@@ -61,6 +54,7 @@ public class GridState extends ASPInputProgram {
 
     /**
      * Two GridState are equals if they have the same move and build.
+     *
      * @param o the object to compare.
      * @return true if the two GridState are equals, false otherwise.
      */
@@ -70,8 +64,8 @@ public class GridState extends ASPInputProgram {
         if (o == null || getClass() != o.getClass()) return false;
         GridState that = (GridState) o;
 //            return moved.equals(that.moved) && builded.equals(that.builded) && isTerminal == that.isTerminal && board.equals(that.board);
-            return moved.equals(that.moved) && builded.equals(that.builded) && value == that.value;
-        }
+        return moved.equals(that.moved) && builded.equals(that.builded) && value == that.value;
+    }
 
     @Override
     public int hashCode() {

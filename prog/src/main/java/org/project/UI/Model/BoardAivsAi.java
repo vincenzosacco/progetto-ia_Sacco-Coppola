@@ -2,16 +2,10 @@ package org.project.UI.Model;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.Board;
-import org.project.Logic.Game.Player;
-import org.project.Logic.Game.Unit;
 import org.project.Logic.Game.player.ai.PlayerAi;
-import org.project.Logic.LogicSettings;
-import org.project.Logic.embAsp.MyHandler;
-import org.project.Logic.embAsp.WondevWomanHandler;
 import org.project.Logic.embAsp.cell;
 
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 
 import static org.project.UI.Settings.BOARD_COLS;
 import static org.project.UI.Settings.BOARD_ROWS;
@@ -97,9 +91,10 @@ public class BoardAivsAi extends Board {
             }
         }
     }
+
     //--GAME METHODS--------------------------------------------------------------------------------------------------------
     boolean moveUnitSafe(int unitCode, Point coord) {
-         super._moveUnitSafe(unitCode, coord);
+        super._moveUnitSafe(unitCode, coord);
         try {
             refreshGridState();
         } catch (Exception e) {
@@ -128,12 +123,8 @@ public class BoardAivsAi extends Board {
      * The difference with the class BoardAivsAi is that the action methods are public and can be used to test the board.
      */
     public static class BoardCopy extends BoardAivsAi {
-        private final MyHandler parser;
-
         BoardCopy(BoardAivsAi board) throws Exception {
             super(board);
-            parser = new WondevWomanHandler();
-            parser.addEncodingPath(LogicSettings.PATH_ENCOD_PARSER);
         }
 
 

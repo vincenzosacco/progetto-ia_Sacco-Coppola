@@ -1,4 +1,4 @@
-package org.project.Logic.embAsp.minimax.atoms;
+package org.project.Logic.embAsp.graph.atoms;
 
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;

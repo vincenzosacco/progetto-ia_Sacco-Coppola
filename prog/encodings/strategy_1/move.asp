@@ -34,7 +34,7 @@ moveIn(X,Y,H) | moveOut(X,Y) :- moveCell(X,Y,H).
 
 % prefer moving to a cell from where myUnit can block enemyUnit to win 
 nearEnemyMoveCell_h3(Xnear,Ynear) :- enemyMoveCell(X,Y,3,U), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,_,U). % cells near enemy moveCell
-blockEnemyCell(X,Y) :- nearEnemyMoveCell_h3(X,Y), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear),  moveCell(Xnear,Ynear,_) . % cells from where myUnit can block enemyUnit to win
+blockEnemyCell(X,Y) :- nearEnemyMoveCell_h3(X,Y), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), moveCell(Xnear,Ynear,_) . % cells from where myUnit can block enemyUnit to win
 
 :~ moveOut(X,Y), blockEnemyCell(X,Y).  [1@9, X,Y]   % penalty if exist a cell from where myUnit can block enemyUnit to win and don't move to it
 

@@ -1,4 +1,4 @@
-package org.project.Logic.embAsp.minimax.atoms;
+package org.project.Logic.embAsp.graph.atoms;
 
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
@@ -34,6 +34,7 @@ public class vertex {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -41,6 +42,7 @@ public class vertex {
     public int getValue() {
         return value;
     }
+
     public void setValue(int value) {
         this.value = value;
     }

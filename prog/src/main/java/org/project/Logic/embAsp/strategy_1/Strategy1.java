@@ -1,4 +1,4 @@
-package org.project.Logic.embAsp.gruppo_1;
+package org.project.Logic.embAsp.strategy_1;
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.project.Logic.Game.Player;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 //TODO: IMPLEMENTA CAMBIO STRATEGIA SE GIOCO PER PRIMO O SECONDO. CHI GIOCA PER PRIMA CONVIENE MUOVERSI LONTANO DALL'AVVERSARIO
 
-public class Group1 implements Group {
+public class Strategy1 implements Group {
     private BoardAivsAi.BoardCopy myBoard;
     private PlayerAi myPlayer;
     private PlayerAi enemyPlayer;
@@ -76,7 +76,7 @@ public class Group1 implements Group {
 
     private Point makeMove() throws Exception {
         ASPInputProgram moveProgram = new ASPInputProgram();
-        moveProgram.addFilesPath(LogicSettings.PATH_ENCOD_GROUP1 + "/move.asp");
+        moveProgram.addFilesPath(LogicSettings.PATH_ENCOD_STRATEGY_1 + "/move.asp");
         myHandler.setEncoding(moveProgram);
 
         //--CAN'T MOVE --> WIN CONDITION --> NULL ACTION
@@ -108,7 +108,7 @@ public class Group1 implements Group {
 
     private Point makeBuild() throws Exception {
         ASPInputProgram buildProgram = new ASPInputProgram();
-        buildProgram.addFilesPath(LogicSettings.PATH_ENCOD_GROUP1 + "/build.asp");
+        buildProgram.addFilesPath(LogicSettings.PATH_ENCOD_STRATEGY_1 + "/build.asp");
         myHandler.setEncoding(buildProgram);
 
         //--CAN'T BUILD
