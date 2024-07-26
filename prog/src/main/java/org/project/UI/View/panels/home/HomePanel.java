@@ -76,6 +76,8 @@ public class HomePanel extends MyPanel {
             throw new RuntimeException("Unexpected component: " + selectedLeft + " " + selectedRight);
         }
 
+        player1.setName(((side.TabPanel) selectedLeft).choosedName());
+        player2.setName(((side.TabPanel) selectedRight).choosedName());
         return new Player[]{player1, player2};
     }
 

@@ -5,7 +5,7 @@ import java.awt.*;
 public interface Settings {
     Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension GAME_SIZE_DEFAULT = new Dimension((int) (SCREEN_SIZE.width / 1.5), (int) (SCREEN_SIZE.height / 1.5));
-    Color BACKGROUND_COLOR = new Color(0xD8ECF5);
+    Color BACKGROUND_COLOR = new Color(0xEBF7FF);
 
     //--BOARD SETTINGS--------------------------------------------------------------------------------------------------------
     int BOARD_ROWS = 5;

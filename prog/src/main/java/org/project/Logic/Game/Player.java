@@ -16,6 +16,7 @@ public abstract class Player implements Callable<actionSet> {
     private static int NEXT_UNIT_CODE = -1;
     private static int NEXT_PLAYER_CODE = -1;
     protected final ArrayList<Unit> Units;
+    private String name;
 
     protected Player(Color color) {
         this.playerCode = ++NEXT_PLAYER_CODE;
@@ -100,6 +101,13 @@ public abstract class Player implements Callable<actionSet> {
 
     public ArrayList<Unit> getUnits() {
         return new ArrayList<>(Units);
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
     //--UNIT METHOD-------------------------------------------------------------------------------------------------------------

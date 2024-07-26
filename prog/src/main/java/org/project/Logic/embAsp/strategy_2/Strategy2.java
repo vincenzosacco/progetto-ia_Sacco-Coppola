@@ -28,12 +28,12 @@ public class Strategy2 implements Group {
     public Strategy2() {
         MoveHandler = new WondevWomanHandler();
         ASPInputProgram moveEnc = new ASPInputProgram();
-        moveEnc.addFilesPath(LogicSettings.PATH_ENCOD_STRATEGY_2 + "/move.asp");
+        moveEnc.addFilesPath(LogicSettings.PATH_ENCOD_STRATEGY_2 + "/move2.asp");
         MoveHandler.setEncoding(moveEnc);
 
         BuildHandler = new WondevWomanHandler();
         ASPInputProgram buildEnc = new ASPInputProgram();
-        buildEnc.addFilesPath(LogicSettings.PATH_ENCOD_STRATEGY_2 + "/build.asp");
+        buildEnc.addFilesPath(LogicSettings.PATH_ENCOD_STRATEGY_2 + "/build2.asp");
         BuildHandler.setEncoding(buildEnc);
 
 

@@ -13,18 +13,8 @@ import java.awt.*;
 
 
 public class Graph implements Group {
-    //    private final WondevWomanHandler MinMaxHandler;
-//    private final ASPInputProgram  encodingMinMax;
     record action(moveIn move, buildIn build) {
     }
-
-    public Graph() {
-//        MinMaxHandler = new WondevWomanHandler();
-//        encodingMinMax = new ASPInputProgram();
-//        encodingMinMax.addFilesPath(LogicSettings.PATH_ENCOD_GRAPH + "/search_MinMax.asp");
-//        MinMaxHandler.setEncoding(encodingMinMax);
-    }
-
     private BoardAivsAi myBoard;
 
     @Override

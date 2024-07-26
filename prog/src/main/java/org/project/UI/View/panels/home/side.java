@@ -82,6 +82,10 @@ class side extends JPanel {
         Color choosedColor() {
             return colorButton.getBackground();
         }
+
+        public String choosedName() {
+            return nameField.getText();
+        }
     }
 
     static class AiTabPanel extends TabPanel {
