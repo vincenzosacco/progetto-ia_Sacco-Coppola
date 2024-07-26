@@ -117,7 +117,7 @@ public class NewGraph {
                 depth1Nodes.put(child, childState);
             }
 
-            addChildren(child, childState, maxUnitCode, depth - 1, isMax);
+            addChildren(child, childState, maxUnitCode, depth - 1, !isMax);
         }
 
 

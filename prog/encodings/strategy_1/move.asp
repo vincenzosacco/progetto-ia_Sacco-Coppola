@@ -33,13 +33,13 @@ moveIn(X,Y,H) | moveOut(X,Y) :- moveCell(X,Y,H).
 
 
 % prefer moving to a cell from where myUnit can block enemyUnit to win 
-nearEnemyMoveCell_h3(Xnear,Ynear) :- enemyMoveCell(X,Y,3,U), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,_,U). % cells near enemy moveCell
+nearEnemyMoveCell_h3(Xnear,Ynear) :- enemyMoveCell(X,Y,3,U), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,_,_). % cells near enemy moveCell
 blockEnemyCell(X,Y) :- nearEnemyMoveCell_h3(X,Y), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), moveCell(Xnear,Ynear,_) . % cells from where myUnit can block enemyUnit to win
 
 :~ moveOut(X,Y), blockEnemyCell(X,Y).  [1@9, X,Y]   % penalty if exist a cell from where myUnit can block enemyUnit to win and don't move to it
 
 % prefer moving to a height 2 cell if the cell is near an height 3 ->
-h2_nearMoveCell3(Xnear,Ynear,X,Y):- validCell(X,Y,3,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), validCell(Xnear,Ynear,_,_).
+h2_nearMoveCell3(Xnear,Ynear,X,Y):- validCell(X,Y,3,_), offset(OffX,OffY), &sum(X,OffX;Xnear), &sum(Y,OffY;Ynear), moveCell(X,Y,H).
 
 :~ not moveIn(X,Y,H), moveCell(X,Y,H), h2_nearMoveCell3(X,Y,_,_). [1@8, X,Y] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
 

@@ -54,13 +54,14 @@ public class GameModel {
     public synchronized void playTurn(actionSet action) {
         //--WIN CONDITION -> can not make action
         if (action instanceof NullAction) {
-            board.setWin();
             System.out.println("\nPLAYER " + action.player().getPlayerCode() + "LOSE. CAN'T MAKE ANY ACTION!");
             for ( Player p : board.getPlayers()){
                 if (p.getPlayerCode()!=action.player().getPlayerCode()){
                     winner = p;
                 }
             }
+            board.setWin();
+            return;
         }
 
         System.out.print(action.display());

@@ -276,7 +276,7 @@ public class GamePanel extends MyPanel {
         dialog.setSize(200, 100);
         dialog.setLocationRelativeTo(this);
         dialog.add(new JLabel(GameModel.getInstance().getWinner().getName() + " wins!"));
-        dialog.setVisible(true);
+//        dialog.setVisible(true);
 
     }
 
