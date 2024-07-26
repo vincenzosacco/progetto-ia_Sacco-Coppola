@@ -5,9 +5,7 @@ import org.project.Logic.Game.Player;
 import org.project.Logic.Game.player.ai.actionSet;
 import org.project.UI.Model.GameModel;
 import org.project.UI.View.ProjectView;
-import org.project.UI.View.panels.GamePanel;
 
-import javax.swing.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class GameLoop {
@@ -24,9 +22,9 @@ public class GameLoop {
             while (!board.win() && isAlive) {
                 for (Player p : board.getPlayers()) {
 
-                    long startTime= System.currentTimeMillis();
+                    long startTime = System.currentTimeMillis();
                     actionSet action = p.call(); //TODO: IMPLEMENTARE UN TIMEOUT PER LE AZIONI
-                    long endTime= System.currentTimeMillis();
+                    long endTime = System.currentTimeMillis();
                     long actionTime = endTime - startTime;
 
 
@@ -55,6 +53,8 @@ public class GameLoop {
                     caller.notify();
                 }
             }
+
+            ProjectView.getInstance().winGame();
         }
     }
 

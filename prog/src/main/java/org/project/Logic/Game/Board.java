@@ -1,6 +1,5 @@
 package org.project.Logic.Game;
 
-import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.embAsp.cell;
 
 import java.awt.*;

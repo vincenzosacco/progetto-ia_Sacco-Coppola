@@ -1,6 +1,5 @@
 package org.project.UI.View;
 
-import org.project.UI.Controller.GameLoop;
 import org.project.UI.Settings;
 import org.project.UI.View.panels.GamePanel;
 import org.project.UI.View.panels.home.HomePanel;
@@ -51,11 +50,15 @@ public class ProjectView extends JFrame {
         return gamePanel;
     }
 
-    //--GAME
+//--GAME
     public void startGame(int gameMode) {
         gamePanel = new GamePanel(gameMode);
 
         homePanel.setCenterPanel(gamePanel);
+    }
+
+    public void winGame() {
+        gamePanel.winGame();
     }
 
     public void refreshGamePanel(Thread caller) throws InterruptedException {

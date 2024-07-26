@@ -1,5 +1,6 @@
 package org.project.Logic.embAsp.graph;
 
+import org.project.Logic.Game.player.ai.NullAction;
 import org.project.Logic.Game.player.ai.PlayerAi;
 import org.project.Logic.Game.player.ai.actionSet;
 import org.project.Logic.embAsp.Group;
@@ -41,7 +42,7 @@ public class Graph implements Group {
         buildIn rootBuild = new buildIn(rootCoord.x, rootCoord.y, myBoard.heightAt(rootCoord));
         GridState rootState = new GridState(myBoard.copy(), rootMove, rootBuild, rootMove.getHeight());
 
-        NewGraph.Node root = graph.buildGraph(rootState, maxUnitCode, 1);
+        NewGraph.Node root = graph.buildGraph(rootState, maxUnitCode, 2);
 
         //--SEARCH CHILDREN NODE WITH MAX UTILITY
         int maxUtility = Integer.MIN_VALUE;
@@ -51,13 +52,13 @@ public class Graph implements Group {
             bestChild = child;
         }
 
+        if (bestChild == null)
+            return new NullAction(player, maxUnitCode);
+
         //--RETURN ACTION
         GridState bestState = graph.depth1Nodes.get(bestChild);
         return new actionSet(player, maxUnitCode, bestState.moved.getCoord(), bestState.builded.getCoord());
 
     }
-
-
 }
-
 

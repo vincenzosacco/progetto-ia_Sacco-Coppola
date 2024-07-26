@@ -49,7 +49,7 @@ public class FilesFromEncodings {
 
         try (Stream<Path> paths = Files.list(dir)) {
             paths.forEach(path -> {
-            //  IF THE FILE IS A JAVA FILE
+                //  IF THE FILE IS A JAVA FILE
                 if (path.toString().endsWith(".java")) {
                     try {
                         URL[] urls = {path.toUri().toURL()};

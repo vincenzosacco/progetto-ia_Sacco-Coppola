@@ -21,7 +21,6 @@ public class GameModel {
 
 
     private GameModel() {
-//        gridState= new ASPInputProgram();
     }
 
     public static GameModel getInstance() {
@@ -52,12 +51,16 @@ public class GameModel {
 
 //--GAME METHODS--------------------------------------------------------------------------------------------------------
 
-    public synchronized void playTurn(actionSet action) throws Exception {
+    public synchronized void playTurn(actionSet action) {
         //--WIN CONDITION -> can not make action
         if (action instanceof NullAction) {
             board.setWin();
             System.out.println("\nPLAYER " + action.player().getPlayerCode() + "LOSE. CAN'T MAKE ANY ACTION!");
-            return;
+            for ( Player p : board.getPlayers()){
+                if (p.getPlayerCode()!=action.player().getPlayerCode()){
+                    winner = p;
+                }
+            }
         }
 
         System.out.print(action.display());
@@ -79,9 +82,14 @@ public class GameModel {
         //--WIN CONDITION -> unit on height 3
         if (board.win()) {
             System.out.println("\nPLAYER " + action.player().getPlayerCode() + " WINS!");
-            return;
+            winner = action.player();
         }
     }
 
-
+    private Player winner=null;
+    public Player getWinner(){
+        if (winner==null)
+            throw new RuntimeException("No winner yet");
+        return winner;
+    }
 }

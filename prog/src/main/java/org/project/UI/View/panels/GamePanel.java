@@ -269,6 +269,16 @@ public class GamePanel extends MyPanel {
             g.fillRoundRect(x, y, BOARD_CELL_SIZE - offset, BOARD_CELL_SIZE - offset, 10, 10);
     }
 
+    public void winGame() {
+        repaint();
+        JDialog dialog = new JDialog();
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(200, 100);
+        dialog.setLocationRelativeTo(this);
+        dialog.add(new JLabel("Player "+GameModel.getInstance().getWinner().getPlayerCode() + " wins!"));
+        dialog.setVisible(true);
+
+    }
 
 
     public static class InputButton extends JButton {
